@@ -24,55 +24,33 @@ export default function Navbar() {
     };
 
     handleScroll();
-
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Close menu when clicking outside
   useEffect(() => {
     const handleOutside = (e: MouseEvent) => {
-      if (
-        navRef.current &&
-        !navRef.current.contains(e.target as Node)
-      ) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleOutside);
-
-    return () =>
-      document.removeEventListener(
-        "mousedown",
-        handleOutside
-      );
+    return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
   // ESC close
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpen(false);
-      }
+      if (e.key === "Escape") setOpen(false);
     };
-
     document.addEventListener("keydown", handleEscape);
-
-    return () =>
-      document.removeEventListener(
-        "keydown",
-        handleEscape
-      );
+    return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
   // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-
     return () => {
       document.body.style.overflow = "";
     };
@@ -83,31 +61,22 @@ export default function Navbar() {
       className={clsx(
         "sticky top-0 z-50 border-b transition-all duration-300",
         scrolled
-          ? "border-blue-700 bg-white/95 shadow-sm backdrop-blur-xl" // এখানে গাঢ় নীল বর্ডার দেওয়া হয়েছে
-          : "border-transparent bg-white/90 backdrop-blur-xl"
+          ? "border-[#1e2a4a] bg-[#0a1429]/95 shadow-lg backdrop-blur-xl"
+          : "border-[#1e2a4a] bg-[#0a1429]/90 backdrop-blur-xl"
       )}
     >
       <Container>
         <div ref={navRef}>
-          <div className="flex h-20 items-center justify-between">
+          <div className="flex h-16 items-center justify-between">
             <NavLogo />
-
             <NavMenu />
-
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 lg:mr-4">
               <NavAction />
-
-              <MobileMenu
-                open={open}
-                onToggle={() => setOpen(!open)}
-              />
+              <MobileMenu open={open} onToggle={() => setOpen(!open)} />
             </div>
           </div>
 
-          <MobileNav
-            open={open}
-            onClose={() => setOpen(false)}
-          />
+          <MobileNav open={open} onClose={() => setOpen(false)} />
         </div>
       </Container>
     </header>

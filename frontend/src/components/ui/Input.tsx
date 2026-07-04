@@ -1,4 +1,3 @@
-```tsx
 "use client";
 
 import { forwardRef, InputHTMLAttributes } from "react";

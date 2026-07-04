@@ -1,4 +1,3 @@
-```tsx
 "use client";
 
 import clsx from "clsx";
@@ -43,4 +42,3 @@ export default function Dropdown({
     </select>
   );
 }
-```

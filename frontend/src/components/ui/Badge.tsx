@@ -1,4 +1,3 @@
-```tsx
 import { HTMLAttributes } from "react";
 import clsx from "clsx";
 
@@ -49,4 +48,3 @@ export default function Badge({
     </span>
   );
 }
-```

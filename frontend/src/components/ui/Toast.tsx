@@ -1,4 +1,3 @@
-```tsx
 import clsx from "clsx";
 
 type ToastVariant =
@@ -36,4 +35,3 @@ export default function Toast({
     </div>
   );
 }
-```

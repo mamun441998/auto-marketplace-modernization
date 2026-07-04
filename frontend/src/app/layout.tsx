@@ -1,5 +1,5 @@
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import Footer from "@/components/footer";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -14,15 +14,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata ={
+export const metadata: Metadata = {
   title: {
     default: "MotoHave",
     template: "%s | MotoHave",
   },
-
   description:
-  "MotoHave is the complete automotive SaaS platform for modern dealerships",
-
+    "MotoHave is the complete automotive SaaS platform for modern dealerships",
   icons: {
     icon: "/favicon.ico",
   },
@@ -41,11 +39,11 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
         <Navbar />
 
-        <main className="flex-1">
+        <main className="flex-1 overflow-x-clip">
           {children}
         </main>
 
-        <Footer />
+        <Footer />  {/* ✅ Capital F — component use করছি */}
       </body>
     </html>
   );

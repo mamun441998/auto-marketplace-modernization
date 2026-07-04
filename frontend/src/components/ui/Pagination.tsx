@@ -1,4 +1,3 @@
-```tsx
 "use client";
 
 import Button from "./Button";
@@ -40,4 +39,3 @@ export default function Pagination({
     </div>
   );
 }
-```

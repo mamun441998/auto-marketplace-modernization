@@ -7,38 +7,16 @@ type MobileMenuProps = {
   onToggle: () => void;
 };
 
-export default function MobileMenu({
-  open,
-  onToggle,
-}: MobileMenuProps) {
+export default function MobileMenu({ open, onToggle }: MobileMenuProps) {
   return (
     <button
       type="button"
       onClick={onToggle}
       aria-label="Toggle Menu"
       aria-expanded={open}
-      className="
-        inline-flex
-        h-12
-        w-12
-        items-center
-        justify-center
-        rounded-xl
-        border
-        border-slate-200
-        bg-white
-        text-slate-700
-        shadow-sm
-        transition-all
-        hover:bg-slate-50
-        lg:hidden
-      "
+      className="inline-flex h-16 w-16 items-center justify-center rounded-xl border border-[#1e2a4a] bg-[#0C1A32] text-white lg:hidden"
     >
-      {open ? (
-        <X className="h-6 w-6" />
-      ) : (
-        <Menu className="h-6 w-6" />
-      )}
+      {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
     </button>
   );
 }

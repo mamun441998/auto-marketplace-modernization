@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   CarFront,
   Users,
@@ -8,7 +7,6 @@ import {
   Megaphone,
   BarChart3,
   Sparkles,
-  ArrowDown,
 } from "lucide-react";
 
 const cards = [
@@ -35,186 +33,134 @@ const cards = [
   {
     title: "Analytics",
     icon: BarChart3,
-    color: "bg-green-100 text-green-600",
+    color: "bg-emerald-100 text-emerald-600",
   },
 ];
 
 export default function WhyMotoHaveIllustration() {
   return (
-    <div className="relative mx-auto max-w-md">
+    <div className="relative mx-auto w-full max-w-[430px]">
+      {/* Glow - স্ট্যাটিক রাখা হয়েছে */}
+      <div className="absolute inset-0 rounded-full bg-blue-300/20 blur-[90px]" />
 
-      {/* Background Glow */}
-
-      <div className="absolute inset-0 rounded-full bg-blue-200/20 blur-3xl" />
-
-      <motion.div
-        animate={{
-          y: [0, -12, 0],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+      <div
         className="
           relative
-          overflow-hidden
-          rounded-[32px]
+          rounded-[28px]
           border
           border-slate-200
-          bg-white
-          p-8
-          shadow-2xl
-          shadow-blue-100/40
+          bg-white/90
+          backdrop-blur
+          p-6
+          shadow-[0_30px_80px_rgba(37,99,235,0.12)]
         "
       >
         {/* Header */}
-
-        <div className="mb-8 flex items-center gap-3">
-
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white">
-            <Sparkles size={28} />
+        <div className="mb-6 flex items-center gap-3">
+          <div
+            className="
+              flex
+              h-12
+              w-12
+              items-center
+              justify-center
+              rounded-xl
+              bg-gradient-to-r
+              from-blue-600
+              to-cyan-500
+              text-white
+            "
+          >
+            <Sparkles size={22} />
           </div>
-
           <div>
-
-            <h3 className="text-xl font-bold text-slate-900">
+            <h3 className="text-lg font-bold text-slate-900">
               MotoHave Platform
             </h3>
-
-            <p className="text-sm text-slate-500">
-              Everything Connected
-            </p>
-
+            <p className="text-sm text-slate-500">Everything Connected</p>
           </div>
-
         </div>
 
         {/* Workflow */}
-
-        <div className="space-y-4">
-
+        <div className="space-y-2">
           {cards.map((item, index) => {
             const Icon = item.icon;
 
             return (
-              <motion.div
-                key={item.title}
-                initial={{
-                  opacity: 0,
-                  x: 30,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  x: 0,
-                }}
-                viewport={{
-                  once: true,
-                }}
-                transition={{
-                  delay: index * 0.15,
-                  duration: 0.6,
-                }}
-                whileHover={{
-                  scale: 1.03,
-                  x: 8,
-                }}
-              >
+              <div key={item.title}>
                 <div
                   className="
-                    rounded-2xl
+                    flex
+                    items-center
+                    justify-between
+                    rounded-xl
                     border
                     border-slate-100
                     bg-slate-50
-                    p-4
-                    shadow-sm
+                    px-4
+                    py-3
                   "
                 >
-                  <div className="flex items-center justify-between">
-
-                    <div className="flex items-center gap-4">
-
-                      <div
-                        className={`
-                          flex
-                          h-12
-                          w-12
-                          items-center
-                          justify-center
-                          rounded-xl
-                          ${item.color}
-                        `}
-                      >
-                        <Icon size={24} />
-                      </div>
-
-                      <div>
-
-                        <h4 className="font-semibold text-slate-900">
-                          {item.title}
-                        </h4>
-
-                        <p className="text-sm text-slate-500">
-                          Connected
-                        </p>
-
-                      </div>
-
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`
+                        flex
+                        h-10
+                        w-10
+                        items-center
+                        justify-center
+                        rounded-xl
+                        ${item.color}
+                      `}
+                    >
+                      <Icon size={18} />
                     </div>
-
-                    <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                      Active
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {item.title}
+                      </p>
+                      <p className="text-xs text-slate-500">Connected</p>
                     </div>
-
                   </div>
+                  <span
+                    className="
+                      rounded-full
+                      bg-emerald-100
+                      px-2.5
+                      py-1
+                      text-[10px]
+                      font-semibold
+                      text-emerald-700
+                    "
+                  >
+                    Active
+                  </span>
                 </div>
-
-                {index !== cards.length - 1 && (
-                  <div className="flex justify-center py-2">
-                    <ArrowDown
-                      size={18}
-                      className="text-slate-300"
-                    />
-                  </div>
-                )}
-              </motion.div>
+              </div>
             );
           })}
-
         </div>
 
-        {/* Bottom */}
-
-        <motion.div
-          animate={{
-            scale: [1, 1.05, 1],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-          }}
+        {/* Footer */}
+        <div
           className="
-            mt-8
+            mt-6
             rounded-2xl
             bg-gradient-to-r
             from-blue-600
-            to-indigo-600
-            p-5
+            via-blue-500
+            to-cyan-500
+            py-4
             text-center
             text-white
           "
         >
-          <h4 className="text-lg font-bold">
-            One Login.
-          </h4>
-
-          <p className="mt-1 text-blue-100">
-            One Platform. Unlimited Growth.
+          <h4 className="text-base font-bold">One Login</h4>
+          <p className="mt-1 text-sm text-blue-100">
+            One Platform • Unlimited Growth
           </p>
-        </motion.div>
-
-      </motion.div>
-
+        </div>
+      </div>
     </div>
   );
 }

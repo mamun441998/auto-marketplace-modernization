@@ -1,46 +1,45 @@
 @import "tailwindcss";
 
 :root {
-  
-  /* Brand */
+  /* ==================== Brand Colors (Dark Theme) ==================== */
+  --color-primary: #ff6b00;
+  --color-primary-hover: #ff8533;
 
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
+  /* ==================== Background ==================== */
+  --color-background: #0a1429;
+  --color-surface: #111b33;
 
-  /* Background */
-  --color-background: #f8fafc;
-  --color-surface: #ffffff;
+  /* ==================== Text ==================== */
+  --color-text: #ffffff;
+  --color-text-muted: #94a3b8;
 
+  /* ==================== Border ==================== */
+  --color-border: #1e2a4a;
 
-  /* Text */
+  /* ==================== Status ==================== */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
 
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
-
-/* Border */
-
---color-border: #e2e8f0;
-
-/* Status */
-
---color-success: #16a34a;
---color-warning: #f59e0b;
---color-danger:  #dc2626;
-
-/* Radius */
-
---radius: 16px;
-
-
-
+  /* ==================== Radius ==================== */
+  --radius: 16px;
 }
 
+/* ==================== Base Styles ==================== */
 * {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
@@ -49,7 +48,7 @@ html {
 }
 
 img {
-  max-width: 100%;
+  max-width: 400%;
   display: block;
 }
 
@@ -62,8 +61,75 @@ a {
   color: inherit;
 }
 
-body {
-  background: var(--color-background);
-  color: var(--color-text);
-
+/* ==================== Scrollbar ==================== */
+::-webkit-scrollbar {
+  width: 8px;
 }
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ==================== Hero Animations (আগের মতো রাখা হয়েছে) ==================== */
+@keyframes hero-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -14px, 0); }
+}
+
+@keyframes hero-float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -22px, 0); }
+}
+
+@keyframes hero-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(28px, -22px, 0) scale(1.08); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes hero-drift-slow {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-26px, 18px, 0) scale(1.06); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes hero-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+.hero-float,
+.hero-float-slow,
+.hero-drift,
+.hero-drift-slow,
+.hero-pulse {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-float,
+  .hero-float-slow,
+  .hero-drift,
+  .hero-drift-slow,
+  .hero-pulse {
+    animation: none !important;
+  }
+}
+
+/* ==================== Hero Wave ==================== */
+@keyframes hero-wave-flow {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-12%); }
+  100% { transform: translateX(0); }
+}
+
+.hero-wave {
+  animation: hero-wave-flow 12s ease-in-out infinite;
+  will-change: transform;
+}
+

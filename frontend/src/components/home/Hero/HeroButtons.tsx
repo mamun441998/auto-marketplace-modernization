@@ -1,46 +1,25 @@
-import Link from "next/link";
+"use client";
 
-import Button from "@/components/ui/Button";
+import Link from "next/link";
 
 export default function HeroButtons() {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row">
-
-      <Link href="/register">
-        <Button
-          className="
-            w-full
-            sm:w-auto
-            px-8
-            py-3
-            text-base
-            shadow-lg
-            shadow-blue-600/20
-            hover:-translate-y-0.5
-            hover:shadow-xl
-            hover:shadow-blue-600/30
-          "
-        >
-          Start Free Trial
-        </Button>
+    <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+      
+      {/* Primary Button - Start Free Trial */}
+      <Link
+        href="/register"
+        className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-[#FC5E01] px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-[#E55A00] active:scale-[0.985]"
+      >
+        Start Free Trial
       </Link>
 
-      <Link href="/contact">
-        <Button
-          variant="outline"
-          className="
-            w-full
-            sm:w-auto
-            px-8
-            py-3
-            text-base
-            hover:-translate-y-0.5
-            hover:border-blue-300
-            hover:bg-blue-50
-          "
-        >
-          Book Demo
-        </Button>
+      {/* Secondary Button - See Pricing */}
+      <Link
+        href="/pricing"
+        className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-[#1e2a4a] bg-[#111B33] px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-[#1a263f] hover:border-[#FC5E01]"
+      >
+        See Pricing
       </Link>
 
     </div>

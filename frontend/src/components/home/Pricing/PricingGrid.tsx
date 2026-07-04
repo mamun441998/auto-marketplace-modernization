@@ -23,11 +23,21 @@ export default function PricingGrid() {
 
       <motion.div
         className="
-          mt-16
+          mt-14
+
           grid
-          gap-8
+
+          grid-cols-1
+
+          gap-6
+
+          md:grid-cols-2
+          md:gap-6
 
           lg:grid-cols-3
+          lg:gap-5
+
+          items-stretch
         "
         initial="hidden"
         whileInView="show"
@@ -39,7 +49,7 @@ export default function PricingGrid() {
           hidden: {},
           show: {
             transition: {
-              staggerChildren: 0.15,
+              staggerChildren: 0.12,
             },
           },
         }}
@@ -47,10 +57,11 @@ export default function PricingGrid() {
         {pricingPlans.map((plan) => (
           <motion.div
             key={plan.id}
+            className="flex h-full"
             variants={{
               hidden: {
                 opacity: 0,
-                y: 60,
+                y: 50,
               },
               show: {
                 opacity: 1,
@@ -58,21 +69,24 @@ export default function PricingGrid() {
               },
             }}
             transition={{
-              duration: 0.7,
+              duration: 0.65,
+              ease: [0.22, 1, 0.36, 1],
             }}
           >
-            <PricingCard
-              icon={plan.icon}
-              name={plan.name}
-              description={plan.description}
-              monthlyPrice={plan.monthlyPrice}
-              yearlyPrice={plan.yearlyPrice}
-              yearly={yearly}
-              button={plan.button}
-              popular={plan.popular}
-              badge={plan.badge}
-              features={plan.features}
-            />
+            <div className="w-full">
+              <PricingCard
+                icon={plan.icon}
+                name={plan.name}
+                description={plan.description}
+                monthlyPrice={plan.monthlyPrice}
+                yearlyPrice={plan.yearlyPrice}
+                yearly={yearly}
+                button={plan.button}
+                popular={plan.popular}
+                badge={plan.badge}
+                features={plan.features}
+              />
+            </div>
           </motion.div>
         ))}
       </motion.div>

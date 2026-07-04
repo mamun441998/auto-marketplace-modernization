@@ -1,4 +1,3 @@
-```tsx
 import { ReactNode } from "react";
 import clsx from "clsx";
 
@@ -49,4 +48,3 @@ export default function EmptyState({
     </div>
   );
 }
-```

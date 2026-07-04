@@ -5,16 +5,16 @@ export default function NavLogo() {
   return (
     <Link
       href="/"
-      className="flex items-center shrink-0"
+      className="flex items-center shrink-0 lg:ml-4"
       aria-label="MotoHave Home"
     >
       <Image
-        src="/moto-have.png"
+        src="/moto-have-logo.png"
         alt="MotoHave Logo"
-        width={240}
-        height={100}
+        width={400}
+        height={200}
         priority
-        className="h-20 w-auto"
+        className="h-30 w-auto"
       />
     </Link>
   );

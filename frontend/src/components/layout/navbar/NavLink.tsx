@@ -16,7 +16,6 @@ export default function NavLink({
   onClick,
 }: NavLinkProps) {
   const pathname = usePathname();
-
   const active = pathname === href;
 
   return (
@@ -25,7 +24,7 @@ export default function NavLink({
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       className={clsx(
-        "group relative block font-medium transition-all duration-200",
+        "group relative block text-sm font-medium transition-all duration-200",
 
         // Mobile
         "rounded-xl px-4 py-3",
@@ -35,17 +34,18 @@ export default function NavLink({
         "lg:rounded-none lg:px-0 lg:py-0",
         "lg:hover:bg-transparent",
 
-        // Text
+        // Text Color
         active
-          ? "text-blue-600"
-          : "text-slate-700 hover:text-blue-600"
+          ? "text-[#ff6b00]"
+          : "text-white hover:text-[#AA4D20]"
       )}
     >
       {children}
 
+      {/* Underline - আরেকটু নিচে নামানো হয়েছে */}
       <span
         className={clsx(
-          "absolute bottom-0 left-0 hidden h-0.5 bg-blue-600 transition-all duration-300 lg:block",
+          "absolute bottom-[-3px] left-0 hidden h-0.5 bg-[#ff6b00] transition-all duration-300 lg:block",
           active ? "w-full" : "w-0 group-hover:w-full"
         )}
       />

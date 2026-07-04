@@ -1,88 +1,77 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Sparkles, Check, Star } from "lucide-react";
 
 import HeroButtons from "./HeroButtons";
-import HeroStats from "./HeroStats";
+
+const TRUST = ["No setup fee", "Free migration", "24/7 Support"];
 
 export default function HeroContent() {
   return (
     <motion.div
-      className="max-w-xl lg:mt-8"
-      initial={{
-        opacity: 0,
-        x: -40,
-      }}
-      whileInView={{
-        opacity: 1,
-        x: 0,
-      }}
-      viewport={{
-        once: true,
-      }}
-      transition={{
-        duration: 0.7,
-        ease: "easeOut",
-      }}
+      initial={{ opacity: 0, x: -40 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.7 }}
+      className="flex w-full flex-col items-center justify-center mx-auto max-w-[560px] py-2 text-center lg:mx-0 lg:items-start lg:py-0 lg:text-left"
     >
       {/* Badge */}
-
-      <div className="mb-5 inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-5 py-2 text-sm font-medium text-blue-700">
-        🚗 Trusted by Modern Automotive Dealerships
+      <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#1e2a4a] bg-[#111B33] px-4 py-2 text-xs font-semibold text-[#94a3b8]">
+        <span className="relative flex h-2 w-2">
+          <span className="hero-pulse absolute inline-flex h-full w-full rounded-full bg-[#FC5E01]" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-[#FC5E01]" />
+        </span>
+        <Sparkles size={14} className="text-[#FC5E01]" />
+        Built for Modern Auto Dealerships
       </div>
 
       {/* Heading */}
-
-      <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-slate-900 lg:text-5xl">
-        Grow Your Dealership
-
-        <br />
-
-        With The Complete
-
-        <span className="mt-3 block text-blue-600">
-          Automotive SaaS Platform
+      <h1 className="mt-6 font-bold tracking-tight text-white text-4xl leading-[1.1] sm:text-5xl xl:text-6xl">
+        The Complete
+        <span className="block bg-gradient-to-r from-[#FC5E01] to-[#FF8533] bg-clip-text text-transparent">
+          Dealership Management
         </span>
+        Platform
       </h1>
 
       {/* Description */}
-
-      <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600">
-        MotoHave helps dealerships manage inventory,
-        customers, leads, sales, marketing and websites
-        from one modern cloud platform designed for
-        faster growth.
+      <p className="mt-6 max-w-[520px] text-lg leading-8 text-[#94a3b8]">
+        Manage inventory, CRM, website, marketing, sales and analytics from one powerful platform built for modern automotive businesses.
       </p>
 
       {/* Buttons */}
-
-      <div className="mt-5">
+      <div className="mt-8">
         <HeroButtons />
       </div>
 
-      {/* Trust */}
-
-      <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm text-slate-500">
-        <div className="flex items-center gap-2">
-          ✅ Free 14-Day Trial
+      {/* Trust Signals */}
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 lg:justify-start">
+        <div className="flex -space-x-2">
+          {[1, 2, 3, 4].map((i) => (
+            <span key={i} className="h-8 w-8 rounded-full border-2 border-[#0C1A32] bg-[#FC5E01]" />
+          ))}
         </div>
-
-        <div className="flex items-center gap-2">
-          ✅ No Credit Card Required
+        <div className="flex items-center gap-0.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
+          ))}
         </div>
-
-        <div className="flex items-center gap-2">
-          ✅ Cancel Anytime
-        </div>
+        <span className="text-sm font-medium text-[#94a3b8]">
+          Trusted by <span className="font-semibold text-white">500+</span> dealerships
+        </span>
       </div>
 
-      {/* Divider */}
-
-      <div className="mt-8 mb-6 h-px bg-slate-200" />
-
-      {/* Stats */}
-
-      <HeroStats />
+      {/* Trust Badges */}
+      <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-[#94a3b8] lg:justify-start">
+        {TRUST.map((item) => (
+          <span key={item} className="inline-flex items-center gap-1.5">
+            <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FC5E01]/10">
+              <Check size={11} className="text-[#FC5E01]" strokeWidth={3} />
+            </span>
+            {item}
+          </span>
+        ))}
+      </div>
     </motion.div>
   );
 }

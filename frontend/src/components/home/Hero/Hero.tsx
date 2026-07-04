@@ -1,48 +1,119 @@
 "use client";
 
-import Container from "@/components/layout/Container";
-import HeroContent from "./HeroContent";
-import HeroImage from "./HeroImage";
+import { motion } from "framer-motion";
 
+import Container from "@/components/layout/Container";
+
+import HeroContent from "./HeroContent";
+import HeroVisual from "./HeroVisual";
+
+import HeroGlow from "./background/HeroGlow";
+import HeroGrid from "./background/HeroGrid";
+import HeroShapes from "./background/HeroShapes";
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-blue-100/50 via-white to-white">
-      {/* ব্যাকগ্রাউন্ড ব্লার */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-300/20 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-300/20 blur-[120px] pointer-events-none" />
+    <section className="relative overflow-hidden bg-[#0C1A32]">
+
+  {/* Main Cinematic Glow */}
+  <div
+    className="
+      pointer-events-none
+      absolute
+      inset-0
+      z-0
+    "
+    style={{
+      background: `
+        radial-gradient(
+          ellipse 900px 650px
+          at 52% 12%,
+          rgba(255,168,60,.22) 0%,
+          rgba(255,135,35,.12) 28%,
+          rgba(255,120,25,.05) 48%,
+          rgba(12,26,50,0) 72%
+        )
+      `,
+    }}
+  />
+
+  {/* Warm Center Glow */}
+  <div
+    className="
+      pointer-events-none
+      absolute
+      inset-0
+      z-0
+    "
+    style={{
+      background: `
+        radial-gradient(
+          circle 650px
+          at 58% 38%,
+          rgba(255,120,35,.10) 0%,
+          rgba(255,95,20,.05) 38%,
+          transparent 75%
+        )
+      `,
+    }}
+  />
+
+  {/* Right Golden Glow */}
+  <div
+    className="
+      pointer-events-none
+      absolute
+      inset-0
+      z-0
+    "
+    style={{
+      background: `
+        radial-gradient(
+          circle 520px
+          at 82% 45%,
+          rgba(192, 113, 10, 0.16) 0%,
+          rgba(202, 86, 18, 0.08) 38%,
+          transparent 78%
+        )
+      `,
+    }}
+  />
+
+  {/* Top Left Soft Orange */}
+  <div
+    className="
+      pointer-events-none
+      absolute
+      inset-0
+      z-0
+    "
+    style={{
+      background: `
+        radial-gradient(
+          circle 420px
+          at 8% 8%,
+          rgba(228, 107, 9, 0.08) 0%,
+          transparent 65%
+        )
+      `,
+    }}
+  />
+
+  
+      <HeroGlow />
+      <HeroGrid />
+      <HeroShapes />
 
       <Container>
-        <div className="relative z-10 grid grid-cols-1 items-center gap-12 pt-16 pb-32 lg:grid-cols-2 lg:gap-16 lg:min-h-[600px] lg:pt-10 lg:pb-32">
-          <HeroContent />
-          <HeroImage />
-        </div>
-      </Container>
-
-      {/* 💡 এনিমেশনসহ ওয়েভ ডিজাইন (ওপরের দিকে মুখ করা) */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-        <svg 
-          className="relative block w-[200%] h-[100px] md:h-[150px] animate-wave" 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 1440 320" 
-          preserveAspectRatio="none"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 grid grid-cols-1 items-center gap-8 pt-12 pb-20 lg:grid-cols-[40%_60%] lg:gap-8 lg:min-h-[620px] lg:pt-10 lg:pb-24 xl:min-h-[680px]"
         >
-          <path 
-            className="fill-blue-100"
-            d="M0,192L48,202.7C96,213,192,235,288,234.7C384,235,480,213,576,208C672,203,768,213,864,229.3C960,245,1056,267,1152,256C1248,245,1344,203,1392,181.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          ></path>
-        </svg>
-      </div>
-
-      <style jsx>{`
-        .animate-wave {
-          animation: wave 15s linear infinite;
-        }
-        @keyframes wave {
-          0% { transform: translateX(0); }
-          50% { transform: translateX(-25%); }
-          100% { transform: translateX(0); }
-        }
-      `}</style>
+          <HeroContent />
+          <HeroVisual />
+        </motion.div>
+      </Container>
     </section>
   );
 }

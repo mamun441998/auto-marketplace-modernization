@@ -31,62 +31,42 @@ export default function PricingCard({
   return (
     <motion.div
       whileHover={{
-        y: -10,
-        scale: 1.02,
+        y: -8,
+        scale: popular ? 1.035 : 1.02,
       }}
       transition={{
-        duration: 0.3,
+        duration: 0.35,
       }}
       className={`
         relative
+        flex
+        flex-col
         overflow-hidden
-        rounded-[32px]
+
+        rounded-[28px]
+
         border
+
         bg-white
-        p-8
-        shadow-xl
+
+        p-5
+
+        shadow-lg
+
         transition-all
         duration-300
 
         ${
           popular
-            ? "border-blue-600 shadow-blue-200/60"
+            ? "border-blue-600 shadow-blue-200/60 scale-[1.03] z-10"
             : "border-slate-200 hover:border-blue-200"
         }
       `}
     >
-      {/* Glow */}
-
-      {popular && (
-        <div
-          className="
-            absolute
-            inset-0
-            bg-gradient-to-br
-            from-blue-500/5
-            via-transparent
-            to-cyan-500/5
-          "
-        />
-      )}
-
       {/* Badge */}
 
       {popular && (
-        <div
-          className="
-            absolute
-            right-6
-            top-6
-            rounded-full
-            bg-blue-600
-            px-4
-            py-1.5
-            text-xs
-            font-bold
-            text-white
-          "
-        >
+        <div className="absolute right-5 top-5 rounded-full bg-blue-600 px-3 py-1 text-[10px] font-bold text-white">
           {badge}
         </div>
       )}
@@ -96,8 +76,8 @@ export default function PricingCard({
       <div
         className={`
           flex
-          h-16
-          w-16
+          h-12
+          w-12
           items-center
           justify-center
           rounded-2xl
@@ -109,55 +89,45 @@ export default function PricingCard({
           }
         `}
       >
-        <Icon size={30} />
+        <Icon size={20} />
       </div>
 
-      {/* Name */}
+      {/* Title */}
 
-      <h3 className="mt-7 text-3xl font-bold text-slate-900">
+      <h3 className="mt-4 text-xl font-bold text-slate-900">
         {name}
       </h3>
 
-      <p className="mt-3 leading-7 text-slate-600">
+      {/* Description */}
+
+      <p className="mt-1.5 text-sm leading-5 text-slate-600">
         {description}
       </p>
 
       {/* Price */}
 
-      <div className="mt-8 flex items-end gap-2">
-
+      <div className="mt-4 flex items-end gap-1">
         <motion.h2
           key={yearly ? yearlyPrice : monthlyPrice}
-          initial={{
-            opacity: 0,
-            y: 15,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.3,
-          }}
-          className="text-5xl font-extrabold text-slate-900"
+          className="text-[36px] font-extrabold text-slate-900"
         >
           ${yearly ? yearlyPrice : monthlyPrice}
         </motion.h2>
 
-        <span className="mb-2 text-slate-500">
+        <span className="mb-1 text-sm text-slate-500">
           / {yearly ? "year" : "month"}
         </span>
-
       </div>
 
       {/* Button */}
 
       <button
         className={`
-          mt-8
+          mt-5
           w-full
-          rounded-2xl
-          py-4
+          rounded-xl
+          py-2.5
+          text-sm
           font-semibold
           transition-all
 
@@ -173,38 +143,25 @@ export default function PricingCard({
 
       {/* Divider */}
 
-      <div className="my-8 h-px bg-slate-200" />
+      <div className="my-5 h-px bg-slate-100" />
 
       {/* Features */}
 
-      <div className="space-y-4">
-
+      <div className="space-y-2">
         {features.map((feature) => (
           <div
             key={feature}
-            className="flex items-center gap-3"
+            className="flex items-center gap-2.5"
           >
-            <div
-              className="
-                flex
-                h-7
-                w-7
-                items-center
-                justify-center
-                rounded-full
-                bg-green-100
-                text-green-600
-              "
-            >
-              <Check size={15} />
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-50 text-green-600">
+              <Check size={10} />
             </div>
 
-            <span className="text-slate-700">
+            <span className="text-[13px] text-slate-700 leading-5">
               {feature}
             </span>
           </div>
         ))}
-
       </div>
     </motion.div>
   );

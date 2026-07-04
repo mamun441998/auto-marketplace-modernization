@@ -11,48 +11,48 @@ export const benefits = [
   {
     id: 1,
     icon: Layers3,
-    title: "Replace Multiple Software",
+    title: "One Platform. Everything You Need",
     description:
-      "Inventory, CRM, Website, Marketing and Analytics — everything inside one platform.",
+      "Manage inventory, CRM, dealership website, marketing, analytics and sales from a single modern dashboard.",
   },
 
   {
     id: 2,
     icon: Clock3,
-    title: "Save 15+ Hours Weekly",
+    title: "Save 15+ Hours Every Week",
     description:
-      "Automate repetitive dealership tasks and focus more on selling vehicles.",
+      "Automate repetitive dealership tasks, reduce manual work and spend more time selling vehicles.",
   },
 
   {
     id: 3,
     icon: TrendingUp,
-    title: "Increase Sales",
+    title: "Convert More Leads Into Sales",
     description:
-      "Track every lead, automate follow-ups and convert more customers.",
+      "Track every customer, automate follow-ups and never miss an opportunity to close a deal.",
   },
 
   {
     id: 4,
     icon: Globe,
-    title: "Access Anywhere",
+    title: "Manage Your Business Anywhere",
     description:
-      "Manage your dealership securely from desktop, tablet or mobile.",
+      "Access your dealership securely from desktop, tablet or mobile with real-time synchronization.",
   },
 
   {
     id: 5,
     icon: ShieldCheck,
-    title: "Enterprise Security",
+    title: "Enterprise-Grade Security",
     description:
-      "Automatic backups, secure cloud infrastructure and role-based access.",
+      "Protect your dealership with encrypted cloud storage, automatic backups and role-based permissions.",
   },
 
   {
     id: 6,
     icon: Sparkles,
-    title: "AI Powered Workflow",
+    title: "AI That Works For You",
     description:
-      "Generate descriptions, recommendations and automate daily operations.",
+      "Create vehicle descriptions, generate insights and automate everyday dealership operations with AI.",
   },
 ];

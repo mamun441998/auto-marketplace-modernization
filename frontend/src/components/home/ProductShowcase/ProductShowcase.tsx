@@ -28,7 +28,25 @@ export default function ProductShowcase() {
 
   return (
     // 💡 এখানে pt (padding-top) কমিয়ে আরও স্পেস কমানো হয়েছে
-    <section className="relative w-full bg-gradient-to-b from-blue-100 via-white to-white pt-6 pb-12 md:pt-10 md:pb-16 overflow-hidden">
+    <section
+  className="
+    relative
+    -mt-px
+    w-full
+    overflow-hidden
+
+    bg-gradient-to-b
+    from-blue-100
+    via-white
+    to-white
+
+    pt-6
+    pb-12
+
+    md:pt-10
+    md:pb-16
+  "
+>
       
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-40 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent blur-[140px] rounded-full pointer-events-none" />

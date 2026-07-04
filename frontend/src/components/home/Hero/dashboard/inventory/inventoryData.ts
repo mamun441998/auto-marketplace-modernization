@@ -1,0 +1,38 @@
+export const inventoryData = [
+  {
+    id: 1,
+    image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=300",
+    vehicle: "Toyota Camry XSE",
+    year: 2024,
+    price: "$32,900",
+    mileage: "1,240 mi",
+    status: "Available",
+  },
+  {
+    id: 2,
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300",
+    vehicle: "BMW X5 M Sport",
+    year: 2023,
+    price: "$58,400",
+    mileage: "9,820 mi",
+    status: "Reserved",
+  },
+  {
+    id: 3,
+    image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300",
+    vehicle: "Tesla Model Y",
+    year: 2025,
+    price: "$46,300",
+    mileage: "320 mi",
+    status: "Available",
+  },
+  {
+    id: 4,
+    image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=300",
+    vehicle: "Mercedes C300",
+    year: 2022,
+    price: "$39,500",
+    mileage: "18,900 mi",
+    status: "Sold",
+  },
+];

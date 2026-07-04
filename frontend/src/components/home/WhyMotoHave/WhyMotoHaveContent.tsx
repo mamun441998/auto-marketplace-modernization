@@ -7,12 +7,36 @@ import WhyMotoHaveIllustration from "./WhyMotoHaveIllustration";
 
 export default function WhyMotoHaveContent() {
   return (
-    <div className="mt-20 grid items-center gap-16 lg:grid-cols-2">
+    <div
+      className="
+        mt-14
 
+        grid
+
+        items-center
+
+        gap-10
+
+        lg:grid-cols-[52%_48%]
+
+        xl:gap-14
+      "
+    >
       {/* LEFT */}
 
-      <div className="space-y-5">
+      <div
+        className="
+          grid
 
+          gap-4
+
+          sm:grid-cols-2
+
+          lg:grid-cols-1
+
+          xl:grid-cols-2
+        "
+      >
         {benefits.map((item, index) => {
           const Icon = item.icon;
 
@@ -21,96 +45,138 @@ export default function WhyMotoHaveContent() {
               key={item.id}
               initial={{
                 opacity: 0,
-                x: -50,
+                y: 35,
               }}
               whileInView={{
                 opacity: 1,
-                x: 0,
+                y: 0,
               }}
               viewport={{
                 once: true,
                 amount: 0.2,
               }}
               transition={{
-                delay: index * 0.12,
-                duration: 0.6,
+                delay: index * 0.08,
+                duration: 0.55,
               }}
               whileHover={{
-                x: 8,
-                y: -4,
+                y: -6,
               }}
               className="
                 group
+
                 relative
+
                 overflow-hidden
-                rounded-3xl
+
+                rounded-2xl
+
                 border
                 border-slate-200
+
                 bg-white
-                p-6
+
+                p-5
+
                 shadow-sm
+
                 transition-all
                 duration-300
+
                 hover:border-blue-200
-                hover:shadow-2xl
+                hover:shadow-xl
                 hover:shadow-blue-100/40
               "
             >
-              {/* Glow */}
+              {/* Background Glow */}
 
               <div
                 className="
                   absolute
+
                   inset-0
-                  bg-gradient-to-r
+
+                  bg-gradient-to-br
+
                   from-blue-500/0
+
                   via-blue-500/5
-                  to-sky-500/0
+
+                  to-cyan-500/0
+
                   opacity-0
+
                   transition-opacity
-                  duration-500
+
+                  duration-300
+
                   group-hover:opacity-100
                 "
               />
 
-              <div className="relative flex items-start gap-5">
-
+              <div className="relative">
                 {/* Icon */}
 
                 <div
                   className="
+                    mb-4
+
                     flex
-                    h-16
-                    w-16
+
+                    h-11
+                    w-11
+
                     items-center
                     justify-center
-                    rounded-2xl
+
+                    rounded-xl
+
                     bg-blue-50
+
                     text-blue-600
+
                     transition-all
                     duration-300
-                    group-hover:scale-110
+
                     group-hover:bg-blue-600
                     group-hover:text-white
+                    group-hover:scale-110
                   "
                 >
-                  <Icon size={30} />
+                  <Icon size={20} />
                 </div>
 
-                {/* Text */}
+                {/* Title */}
 
-                <div className="flex-1">
+                <h3
+                  className="
+                    text-base
 
-                  <h3 className="text-xl font-bold text-slate-900">
-                    {item.title}
-                  </h3>
+                    font-bold
 
-                  <p className="mt-3 leading-7 text-slate-600">
-                    {item.description}
-                  </p>
+                    leading-6
 
-                </div>
+                    text-slate-900
+                  "
+                >
+                  {item.title}
+                </h3>
 
+                {/* Description */}
+
+                <p
+                  className="
+                    mt-2
+
+                    text-sm
+
+                    leading-6
+
+                    text-slate-600
+                  "
+                >
+                  {item.description}
+                </p>
               </div>
             </motion.div>
           );
@@ -122,7 +188,7 @@ export default function WhyMotoHaveContent() {
       <motion.div
         initial={{
           opacity: 0,
-          scale: 0.9,
+          scale: 0.94,
         }}
         whileInView={{
           opacity: 1,
@@ -134,11 +200,16 @@ export default function WhyMotoHaveContent() {
         transition={{
           duration: 0.8,
         }}
-        className="relative"
+        className="
+          flex
+
+          justify-center
+
+          lg:justify-end
+        "
       >
         <WhyMotoHaveIllustration />
       </motion.div>
-
     </div>
   );
 }

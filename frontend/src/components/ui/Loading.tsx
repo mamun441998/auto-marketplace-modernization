@@ -1,4 +1,3 @@
-```tsx
 import clsx from "clsx";
 
 type LoadingProps = {

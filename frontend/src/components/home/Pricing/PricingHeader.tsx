@@ -25,7 +25,6 @@ export default function PricingHeader() {
       }}
     >
       {/* Badge */}
-
       <div
         className="
           inline-flex
@@ -43,13 +42,11 @@ export default function PricingHeader() {
         "
       >
         <CreditCard size={16} />
-
         Simple & Transparent Pricing
       </div>
 
-      {/* Heading */}
-
-      <h2 className="mt-7 text-4xl font-extrabold tracking-tight text-slate-900 lg:text-5xl">
+      {/* Heading - আপনার দেওয়া নতুন সাইজ অনুযায়ী */}
+      <h2 className="mt-4 text-2xl md:text-3xl lg:text-3xl font-black text-neutral-900 tracking-tight leading-tight">
         Choose The Perfect Plan
 
         <span className="mt-2 block text-blue-600">
@@ -58,7 +55,6 @@ export default function PricingHeader() {
       </h2>
 
       {/* Description */}
-
       <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-slate-600">
         Start with a free trial and upgrade anytime.
         No hidden fees, no long-term contracts —
