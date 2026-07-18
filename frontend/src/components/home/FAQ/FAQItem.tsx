@@ -26,15 +26,14 @@ export default function FAQItem({
         overflow-hidden
         rounded-2xl
         border
-        bg-white
-        shadow-md
+        shadow-lg
         transition-all
         duration-300
 
         ${
           isOpen
-            ? "border-blue-600 shadow-blue-100"
-            : "border-slate-200 hover:border-blue-200 hover:shadow-lg"
+            ? "border-orange-500 bg-[#1B2A49] shadow-orange-500/10"
+            : "border-[#2B3A5B] bg-[#16213E] hover:border-orange-400/60 hover:shadow-xl"
         }
       `}
     >
@@ -48,11 +47,11 @@ export default function FAQItem({
           items-center
           justify-between
           px-6
-          py-4
+          py-5
           text-left
         "
       >
-        <h3 className="pr-6 text-base font-semibold text-slate-900 lg:text-lg">
+        <h3 className="pr-6 text-base font-semibold text-white lg:text-lg">
           {question}
         </h3>
 
@@ -65,8 +64,8 @@ export default function FAQItem({
           }}
           className={`
             flex
-            h-9
-            w-9
+            h-10
+            w-10
             items-center
             justify-center
             rounded-xl
@@ -74,8 +73,8 @@ export default function FAQItem({
 
             ${
               isOpen
-                ? "bg-blue-600 text-white"
-                : "bg-blue-50 text-blue-600"
+                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/30"
+                : "border border-orange-500/30 bg-orange-500/15 text-orange-400 hover:bg-orange-500 hover:text-white"
             }
           `}
         >
@@ -109,8 +108,8 @@ export default function FAQItem({
               duration: 0.35,
             }}
           >
-            <div className="border-t border-slate-100 px-6 py-4">
-              <p className="text-sm leading-7 text-slate-600">
+            <div className="border-t border-[#2B3A5B] px-6 py-5">
+              <p className="text-sm leading-7 text-slate-300">
                 {answer}
               </p>
             </div>

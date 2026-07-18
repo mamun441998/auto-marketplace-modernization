@@ -1,11 +1,27 @@
 // src/components/home/ProductShowcase/ProductData.ts
 import {
+  LayoutDashboard,
   CarFront,
   Users,
   Globe,
+  Sparkles,
 } from "lucide-react";
 
 export const products = [
+  {
+    id: "dashboard",
+    title: "Dashboard Overview",
+    subtitle: "See your entire dealership at a glance.",
+    icon: LayoutDashboard,
+    description:
+      "Real-time KPIs, sales trends, lead sources and revenue tracking — all in one unified command center.",
+    features: [
+      "Real-time Sales & Revenue Tracking",
+      "Live Lead Source Breakdown",
+      "Team & Role-based Access",
+      "Custom Report Widgets",
+    ],
+  },
   {
     id: "inventory",
     title: "Inventory Management",
@@ -46,6 +62,20 @@ export const products = [
       "Built-in Enterprise SEO Ready",
       "Dynamic Vehicle Search Engines",
       "High-converting Lead Capture Forms",
+    ],
+  },
+  {
+    id: "ai-payments",
+    title: "AI Tools & Payments",
+    subtitle: "Close deals faster with AI and secure checkout.",
+    icon: Sparkles,
+    description:
+      "AI-powered vehicle pricing, auto-generated listings, and integrated checkout supporting Visa, Mastercard, PayPal and Stripe.",
+    features: [
+      "AI Vehicle Pricing Suggestions",
+      "Auto-generated Descriptions",
+      "Secure Multi-gateway Checkout",
+      "Instant Payment Confirmation",
     ],
   },
 ];

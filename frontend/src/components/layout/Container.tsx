@@ -13,7 +13,20 @@ export default function Container({
   return (
     <div
       className={clsx(
-        "mx-auto w-full max-w-7xl px-6 lg:px-8",
+        `
+        relative
+        mx-auto
+        w-full
+
+        max-w-[1600px]
+
+        px-5
+        sm:px-6
+        md:px-8
+        lg:px-10
+        xl:px-12
+        2xl:px-14
+        `,
         className
       )}
     >

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import logo from "@/assets/final-logo-removebg-preview.png";
 
 export default function NavLogo() {
   return (
@@ -9,12 +10,12 @@ export default function NavLogo() {
       aria-label="MotoHave Home"
     >
       <Image
-        src="/moto-have-logo.png"
+        src={logo}
         alt="MotoHave Logo"
-        width={400}
-        height={200}
+        width={160}
+        height={80}
         priority
-        className="h-30 w-auto"
+        className="h-20 w-60 object-contain"
       />
     </Link>
   );

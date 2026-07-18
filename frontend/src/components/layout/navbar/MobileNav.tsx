@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  ChevronDown,
+  ArrowRight,
+} from "lucide-react";
+
 import { navigation } from "@/config/navigation";
 
 type MobileNavProps = {
@@ -10,63 +15,205 @@ type MobileNavProps = {
   onClose: () => void;
 };
 
-export default function MobileNav({ open, onClose }: MobileNavProps) {
-  const [solutionsOpen, setSolutionsOpen] = useState(false);
+export default function MobileNav({
+  open,
+  onClose,
+}: MobileNavProps) {
+  const [solutionsOpen, setSolutionsOpen] =
+    useState(false);
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.25 }}
-          className="border-t border-[#1e2a4a] bg-[#0C1A32] lg:hidden"
+          initial={{
+            opacity: 0,
+            y: -20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          exit={{
+            opacity: 0,
+            y: -20,
+          }}
+          transition={{
+            duration: 0.28,
+          }}
+          className="
+            border-t
+            border-white/10
+
+            bg-[#081221]/98
+
+            backdrop-blur-2xl
+
+            lg:hidden
+          "
         >
-          <div className="px-6 py-8">
-            {/* Navigation Links */}
-            <div className="flex flex-col gap-4">
+          <div className="px-6 py-7">
+
+            {/* Navigation */}
+
+            <div className="space-y-2">
+
               {navigation.map((item) => {
-                // Solutions Dropdown (Toggle)
                 if ("dropdown" in item) {
                   return (
-                    <div key={item.id}>
+                    <div
+                      key={item.id}
+                      className="
+                        rounded-2xl
+                        border
+                        border-white/5
+                        bg-white/[0.02]
+                      "
+                    >
                       <button
-                        onClick={() => setSolutionsOpen(!solutionsOpen)}
-                        className="flex w-full items-center justify-between text-sm font-semibold text-white"
+                        onClick={() =>
+                          setSolutionsOpen(
+                            !solutionsOpen
+                          )
+                        }
+                        className="
+                          flex
+                          w-full
+                          items-center
+                          justify-between
+
+                          px-5
+                          py-4
+
+                          text-[15px]
+                          font-semibold
+                          text-white
+
+                          transition-colors
+
+                          hover:text-[#FD4A05]
+                        "
                       >
                         {item.label}
-                        <span className={`transition-transform ${solutionsOpen ? "rotate-180" : ""}`}>
-                          ▼
-                        </span>
+
+                        <ChevronDown
+                          size={18}
+                          className={`
+                            transition-transform
+                            duration-300
+
+                            ${
+                              solutionsOpen
+                                ? "rotate-180 text-[#FD4A05]"
+                                : ""
+                            }
+                          `}
+                        />
                       </button>
 
-                      {/* Submenu */}
-                      {solutionsOpen && (
-                        <div className="ml-4 mt-3 flex flex-col gap-3 border-l border-[#1e2a4a] pl-4">
-                          {item.dropdown.map((subItem) => (
-                            <Link
-                              key={subItem.id}
-                              href={subItem.href}
-                              onClick={onClose}
-                              className="text-sm text-white hover:text-[#AA4D20] transition-colors"
+                      <AnimatePresence>
+                        {solutionsOpen && (
+                          <motion.div
+                            initial={{
+                              height: 0,
+                              opacity: 0,
+                            }}
+                            animate={{
+                              height: "auto",
+                              opacity: 1,
+                            }}
+                            exit={{
+                              height: 0,
+                              opacity: 0,
+                            }}
+                            transition={{
+                              duration: 0.25,
+                            }}
+                            className="
+                              overflow-hidden
+                            "
+                          >
+                            <div
+                              className="
+                                border-t
+                                border-white/5
+
+                                px-5
+                                py-3
+
+                                space-y-1
+                              "
                             >
-                              {subItem.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
+                              {item.dropdown.map(
+                                (subItem) => (
+                                  <Link
+                                    key={subItem.id}
+                                    href={
+                                      subItem.href
+                                    }
+                                    onClick={
+                                      onClose
+                                    }
+                                    className="
+                                      block
+
+                                      rounded-xl
+
+                                      px-3
+                                      py-3
+
+                                      text-[14px]
+                                      text-white/80
+
+                                      transition-all
+
+                                      hover:bg-white/5
+                                      hover:text-[#FD4A05]
+                                    "
+                                  >
+                                    {
+                                      subItem.label
+                                    }
+                                  </Link>
+                                )
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   );
                 }
 
-                // Normal Links
                 return (
                   <Link
                     key={item.id}
                     href={item.href}
                     onClick={onClose}
-                    className="text-sm text-white hover:text-[#AA4D20] transition-colors py-1"
+                    className="
+                      flex
+                      items-center
+
+                      rounded-2xl
+
+                      border
+                      border-white/5
+
+                      bg-white/[0.02]
+
+                      px-5
+                      py-4
+
+                      text-[15px]
+                      font-medium
+                      text-white
+
+                      transition-all
+
+                      hover:border-[#FD4A05]/20
+                      hover:bg-white/5
+                      hover:text-[#FD4A05]
+                    "
                   >
                     {item.label}
                   </Link>
@@ -74,12 +221,45 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
               })}
             </div>
 
-            {/* Action Buttons */}
-            <div className="mt-8 space-y-3">
+            {/* Divider */}
+
+            <div
+              className="
+                my-8
+                h-px
+                bg-white/10
+              "
+            />
+
+            {/* CTA */}
+
+            <div className="space-y-3">
+
               <Link
                 href="/sign-in"
                 onClick={onClose}
-                className="block w-full rounded-lg border border-white/30 py-3 text-center text-sm font-medium text-white hover:bg-white/5 hover:border-[#AA4D20] transition-all"
+                className="
+                  flex
+                  h-12
+                  items-center
+                  justify-center
+
+                  rounded-xl
+
+                  border
+                  border-white/10
+
+                  bg-white/5
+
+                  text-[14px]
+                  font-medium
+                  text-white
+
+                  transition-all
+
+                  hover:border-[#FD4A05]
+                  hover:text-[#FD4A05]
+                "
               >
                 Sign In
               </Link>
@@ -87,10 +267,42 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
               <Link
                 href="/register"
                 onClick={onClose}
-                className="block w-full rounded-lg bg-[#FF6B00] py-3 text-center text-sm font-semibold text-white hover:bg-[#AA4D20] transition-all"
+                className="
+                  group
+
+                  flex
+                  h-12
+                  items-center
+                  justify-center
+                  gap-2
+
+                  rounded-xl
+
+                  bg-[#FD4A05]
+
+                  text-[14px]
+                  font-semibold
+                  text-white
+
+                  shadow-[0_12px_30px_rgba(253,74,5,.30)]
+
+                  transition-all
+
+                  hover:bg-[#ff5a17]
+                "
               >
                 Get Started
+
+                <ArrowRight
+                  size={16}
+                  className="
+                    transition-transform
+                    duration-300
+                    group-hover:translate-x-1
+                  "
+                />
               </Link>
+
             </div>
           </div>
         </motion.div>

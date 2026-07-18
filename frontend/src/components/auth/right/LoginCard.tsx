@@ -12,23 +12,67 @@ export default function LoginCard() {
     <motion.div
       initial={{ opacity: 0, x: 35 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.55 }}
       className="
         relative
         w-full
-        max-w-[400px]
+        max-w-[430px]
         overflow-hidden
-        rounded-[22px]
+
+        rounded-[30px]
+
         border
-        border-white/80
-        bg-sky-50/60
-        backdrop-blur-xl
-        shadow-[0_20px_50px_rgba(15,23,42,.08)]
-        px-6
-        py-4
+        border-white/8
+
+        bg-[#1B2A49]/88
+        backdrop-blur-[28px]
+
+        shadow-[0_30px_90px_rgba(0,0,0,.55)]
+
+        px-8
+        py-7
       "
     >
-      {/* Top Gradient */}
+      {/* ================= Background Effects ================= */}
+
+      {/* Orange Glow */}
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -top-24
+          left-1/2
+          h-72
+          w-72
+          -translate-x-1/2
+          rounded-full
+          blur-[110px]
+        "
+        style={{
+          background:
+            "radial-gradient(circle, rgba(236,87,7,.18) 0%, transparent 72%)",
+        }}
+      />
+
+      {/* Blue Glow */}
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -bottom-20
+          -right-20
+          h-64
+          w-64
+          rounded-full
+          blur-[120px]
+        "
+        style={{
+          background:
+            "radial-gradient(circle, rgba(59,130,246,.12) 0%, transparent 72%)",
+        }}
+      />
+
+      {/* Top Accent */}
       <div
         className="
           absolute
@@ -37,41 +81,61 @@ export default function LoginCard() {
           h-[3px]
           w-full
           bg-gradient-to-r
-          from-blue-700
-          via-blue-500
-          to-cyan-400
+          from-[#EC5707]
+          via-[#FF8A2B]
+          to-[#FFC371]
         "
       />
 
+      {/* ================= Content ================= */}
+
       <div className="relative z-10">
-        {/* Logo */}
-        <div className="flex justify-center">
-          <Image
-            src="/moto-have.png"
-            alt="MotoHave"
-            width={200}
-            height={80}
-            priority
-          />
-        </div>
+       {/* Logo */}
+<div className="flex justify-center">
+  <Image
+    src="/moto_have-logo.png"
+    alt="MotoHave"
+    width={180}
+    height={90}
+    priority
+  />
+</div>
 
-        {/* Heading */}
-        <h2 className="mt-1 text-center text-[18px] font-bold text-slate-900">
-          Welcome Back
-        </h2>
+{/* Heading */}
+<h2
+  className="
+    mt-2
+    text-center
+    text-[30px]
+    font-bold
+    tracking-tight
+    text-white
+  "
+>
+  Sign In
+</h2>
 
-        <p className="mt-0.5 text-center text-[12px] text-slate-500">
-          Sign in to manage your dealership
-        </p>
+<p
+  className="
+    mt-1
+    text-center
+    text-sm
+    leading-6
+    text-slate-300
+  "
+>
+  Sign in to continue managing your dealership.
+</p>
 
-        {/* Google */}
-        <div className="mt-2">
+        {/* Google Button */}
+        <div className="mt-7">
           <GoogleButton />
         </div>
 
         {/* Divider */}
-        <div className="relative my-2">
-          <div className="h-px bg-slate-200" />
+        <div className="relative my-7">
+          <div className="h-px bg-white/10" />
+
           <span
             className="
               absolute
@@ -79,11 +143,21 @@ export default function LoginCard() {
               top-1/2
               -translate-x-1/2
               -translate-y-1/2
-              bg-white
-              px-2
-              text-[10px]
+
+              rounded-full
+              border
+              border-white/10
+
+              bg-[#1B2A49]
+
+              px-4
+              py-1
+
+              text-[11px]
+              font-semibold
               uppercase
-              tracking-[0.16em]
+              tracking-[0.25em]
+
               text-slate-400
             "
           >
@@ -91,15 +165,23 @@ export default function LoginCard() {
           </span>
         </div>
 
-        {/* Login */}
+        {/* Login Form */}
         <LoginForm />
 
         {/* Bottom */}
-        <div className="mt-2 text-center text-[12px] text-slate-500">
+        <div className="mt-7 text-center text-sm text-slate-400">
           Don't have an account?
+
           <Link
             href="/register"
-            className="ml-1 font-semibold text-blue-600 hover:text-blue-700"
+            className="
+              ml-2
+              font-semibold
+              text-[#EC5707]
+              transition-colors
+              duration-300
+              hover:text-[#FF8A2B]
+            "
           >
             Create Account
           </Link>

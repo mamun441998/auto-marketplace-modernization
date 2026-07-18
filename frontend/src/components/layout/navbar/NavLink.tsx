@@ -2,53 +2,94 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import clsx from "clsx";
 
-type NavLinkProps = {
+type Props = {
   href: string;
   children: React.ReactNode;
-  onClick?: () => void;
 };
 
 export default function NavLink({
   href,
   children,
-  onClick,
-}: NavLinkProps) {
+}: Props) {
   const pathname = usePathname();
+
   const active = pathname === href;
 
   return (
     <Link
       href={href}
-      onClick={onClick}
-      aria-current={active ? "page" : undefined}
-      className={clsx(
-        "group relative block text-sm font-medium transition-all duration-200",
+      className="
+        relative
 
-        // Mobile
-        "rounded-xl px-4 py-3",
-        "hover:bg-slate-100",
+        py-2
 
-        // Desktop
-        "lg:rounded-none lg:px-0 lg:py-0",
-        "lg:hover:bg-transparent",
+        text-[15px]
+        font-medium
 
-        // Text Color
-        active
-          ? "text-[#ff6b00]"
-          : "text-white hover:text-[#AA4D20]"
-      )}
+        transition-all
+        duration-300
+      "
     >
-      {children}
-
-      {/* Underline - আরেকটু নিচে নামানো হয়েছে */}
       <span
-        className={clsx(
-          "absolute bottom-[-3px] left-0 hidden h-0.5 bg-[#ff6b00] transition-all duration-300 lg:block",
-          active ? "w-full" : "w-0 group-hover:w-full"
-        )}
+        className={`
+          transition-colors
+          duration-300
+
+          ${
+            active
+              ? "text-[#FD4A05]"
+              : "text-white hover:text-[#FD4A05]"
+          }
+        `}
+      >
+        {children}
+      </span>
+
+      {/* Bottom Line */}
+      <span
+        className={`
+          absolute
+          left-0
+          -bottom-[7px]
+
+          h-[2px]
+          rounded-full
+
+          bg-[#FD4A05]
+
+          transition-all
+          duration-300
+
+          ${
+            active
+              ? "w-full"
+              : "w-0 group-hover:w-full"
+          }
+        `}
       />
+
+      {/* Hover Underline */}
+      {!active && (
+        <span
+          className="
+            absolute
+            left-0
+            -bottom-[7px]
+
+            h-[2px]
+            w-0
+
+            rounded-full
+            bg-[#FD4A05]
+
+            transition-all
+            duration-300
+
+            hover:w-full
+          "
+        />
+      )}
     </Link>
   );
 }

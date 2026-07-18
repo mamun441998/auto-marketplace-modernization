@@ -12,9 +12,7 @@ const AUTO_PLAY_INTERVAL = 10000; // 10 sec
 
 export default function FeaturesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
   const total = featuresData.length;
 
   const goToIndex = (nextIndex: number) => {
@@ -33,24 +31,11 @@ export default function FeaturesSection() {
   }, [total]);
 
   return (
-    <section className="relative overflow-hidden bg-white py-20 lg:py-24">
+    <section className="relative overflow-hidden bg-[#0F0F0F] py-20 lg:py-24 border-t border-[#262626]">
       <div className="flex flex-col gap-12">
         <FeaturesHeader />
 
-        <div
-          className="
-            mx-auto
-            grid
-            w-full
-            max-w-7xl
-            grid-cols-1
-            items-center
-            gap-14
-            px-6
-            lg:grid-cols-12
-            lg:px-8
-          "
-        >
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-14 px-6 lg:grid-cols-12 lg:px-8">
           {/* LEFT */}
           <div className="relative flex h-[320px] items-center lg:col-span-5">
             <AnimatePresence mode="wait">
@@ -79,8 +64,8 @@ export default function FeaturesSection() {
               aria-label={`Go to feature ${index + 1}`}
               className={`rounded-full transition-all duration-300 ${
                 activeIndex === index
-                  ? "h-2 w-8 bg-blue-600"
-                  : "h-2 w-2 bg-slate-300"
+                  ? "h-2 w-8 bg-[#FC5E01]"
+                  : "h-2 w-2 bg-[#334155]"
               }`}
             />
           ))}

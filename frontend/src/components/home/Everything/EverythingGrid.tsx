@@ -3,17 +3,17 @@
 
 import React from "react";
 import { everythingData } from "./everythingData";
-import EverythingCard from "./EverythingCard"; // 👈 কোনো কার্লি ব্রেসেস নেই (Default Import)
+import EverythingCard from "./EverythingCard";
 
 export default function EverythingGrid() {
   return (
-    <div className="relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+    <div className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
         {everythingData.map((item, index) => (
-          <EverythingCard 
-            key={item.id} 
-            item={item} 
-            index={index} 
+          <EverythingCard
+            key={item.id}
+            item={item}
+            index={index}
           />
         ))}
       </div>

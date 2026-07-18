@@ -39,19 +39,55 @@ export default function HeroFeatures() {
         return (
           <div
             key={item.title}
-            className="flex w-[80%] items-start gap-3"
+            className="flex w-[80%] items-start gap-4"
           >
             {/* Icon */}
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white bg-white shadow-lg">
-              <Icon size={14} className="text-blue-600" />
+            <div
+              className="
+                flex
+                h-11
+                w-11
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                border
+                border-[#EC5707]/20
+                bg-[#1B2A49]
+                shadow-lg
+                shadow-black/20
+              "
+            >
+              <Icon
+                size={18}
+                className="text-[#EC5707]"
+              />
             </div>
 
             {/* Text */}
             <div className="min-w-0 flex-1">
-              <h3 className="text-[15px] font-bold text-blue-700">
+              <h3
+                className="
+                  text-[16px]
+                  font-bold
+                  text-white
+                "
+              >
                 {item.title}
               </h3>
-              <p className="mt-1 w-full overflow-hidden text-ellipsis whitespace-nowrap text-[13px] leading-6 text-blue-500">
+
+              <p
+                className="
+                  mt-1
+                  w-full
+                  overflow-hidden
+                  text-ellipsis
+                  whitespace-nowrap
+                  text-[14px]
+                  leading-6
+                  text-slate-300
+                "
+              >
                 {item.desc}
               </p>
             </div>

@@ -2,6 +2,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { EverythingItem } from "./everythingData";
 
@@ -51,6 +52,19 @@ export default function EverythingCard({ item, index }: EverythingCardProps) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         );
+      case "payment":
+        return (
+          <svg className={iconClasses} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <rect x="2" y="5" width="20" height="14" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2 10h20" />
+          </svg>
+        );
+      case "deal":
+        return (
+          <svg className={iconClasses} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        );
       default:
         return null;
     }
@@ -63,39 +77,44 @@ export default function EverythingCard({ item, index }: EverythingCardProps) {
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ y: -6 }}
-      /* 💡 ফিক্সড সিএসএস: transition-all এর জায়গায় নির্দিষ্ট প্রোপার্টি, সাথে transform-gpu এবং backface-hidden ব্যবহার করে টেক্সট ব্লার হওয়া চিরতরে বন্ধ করা হয়েছে */
-      className="group relative rounded-2xl border border-neutral-200/60 bg-white p-6 md:p-7 overflow-hidden transition-[border-color,box-shadow] duration-300 hover:border-neutral-300 hover:shadow-[0_20px_45px_rgba(0,0,0,0.03)] transform-gpu backface-hidden"
+      className="transform-gpu backface-hidden"
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+      <Link
+        href={item.href}
+        className="group relative flex h-full flex-col rounded-2xl border border-[#262626] bg-[#171717] p-6 overflow-hidden transition-[border-color,box-shadow] duration-300 hover:border-[#2d3d5e] hover:shadow-[0_20px_45px_rgba(0,0,0,0.25)]"
+      >
+        {/* Hover gradient overlay */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
 
-      <div className="relative z-10 flex flex-col h-full justify-between gap-6 select-none">
-        <div className="flex items-center justify-between w-full">
-          <div className={`p-2.5 rounded-xl border transition-all duration-300 ${item.accentColor} shadow-sm`}>
-            {renderIcon()}
+        <div className="relative z-10 flex flex-col h-full justify-between gap-5 select-none">
+          <div className="flex items-center justify-between w-full">
+            <div className={`p-2.5 rounded-xl border transition-all duration-300 ${item.accentColor} shadow-sm`}>
+              {renderIcon()}
+            </div>
+            <div className="p-1.5 rounded-full border border-[#262626] bg-[#141414] group-hover:bg-[#1a263f] group-hover:border-[#2d3d5e] transition-colors duration-300">
+              <svg className="w-4 h-4 text-[#94A3B8] group-hover:text-white transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
+              </svg>
+            </div>
           </div>
-          <div className="p-1.5 rounded-full border border-neutral-100 bg-neutral-50/50 group-hover:bg-white group-hover:border-neutral-200 transition-colors duration-300">
-            <svg className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7V17" />
-            </svg>
+
+          <div className="flex flex-col gap-2">
+            <h3 className="text-base font-bold text-white tracking-tight group-hover:text-[#FC5E01] transition-colors duration-200">
+              {item.title}
+            </h3>
+            <p className="text-xs leading-relaxed text-[#94A3B8] font-normal">
+              {item.description}
+            </p>
+          </div>
+
+          <div className="pt-3.5 border-t border-[#262626] flex items-center justify-between text-[10px] font-mono tracking-wider">
+            <span className="text-[#64748B] font-medium uppercase">{item.liveLabel}</span>
+            <span className="text-white font-bold bg-[#141414] px-2 py-0.5 rounded border border-[#262626] group-hover:bg-[#FC5E01]/10 group-hover:border-[#FC5E01]/30 group-hover:text-[#FC5E01] transition-colors duration-300">
+              {item.liveValue}
+            </span>
           </div>
         </div>
-
-        <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-bold text-neutral-900 tracking-tight group-hover:text-blue-600 transition-colors duration-200">
-            {item.title}
-          </h3>
-          <p className="text-xs leading-relaxed text-neutral-500 font-normalData">
-            {item.description}
-          </p>
-        </div>
-
-        <div className="pt-3.5 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono tracking-wider">
-          <span className="text-neutral-400 font-medium uppercase">{item.liveLabel}</span>
-          <span className="text-neutral-800 font-bold bg-neutral-50 px-2 py-0.5 rounded border border-neutral-100 group-hover:bg-blue-50/50 group-hover:border-blue-100 group-hover:text-blue-600 transition-colors duration-300">
-            {item.liveValue}
-          </span>
-        </div>
-      </div>
+      </Link>
     </motion.div>
   );
 }

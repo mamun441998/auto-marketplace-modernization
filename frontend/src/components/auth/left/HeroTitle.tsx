@@ -1,5 +1,7 @@
 "use client";
+
 import { motion } from "framer-motion";
+
 export default function HeroTitle() {
   return (
     <motion.div
@@ -10,19 +12,25 @@ export default function HeroTitle() {
         ml-6
         sm:ml-10
         lg:ml-16
+        -mt-44
       "
     >
       {/* Badge */}
       <div
         className="
           inline-flex
+          items-center
           rounded-full
+
           border
-          border-blue-200
-          bg-white/90
+          border-[#EC5707]/20
+
+          bg-[#1B2A49]/80
+
           px-5
           py-2
-          shadow-sm
+
+          backdrop-blur-md
         "
       >
         <span
@@ -31,43 +39,51 @@ export default function HeroTitle() {
             font-semibold
             uppercase
             tracking-[0.22em]
-            text-blue-700
+            text-[#EC5707]
           "
         >
           MODERN DEALERSHIP PLATFORM
         </span>
       </div>
+
       {/* Heading */}
       <h1
         className="
-          mt-7
+          mt-5
           whitespace-nowrap
-          text-[16px]
-          sm:text-[20px]
-          lg:text-[24px]
-          xl:text-[28px]
-          font-extrabold
+
+          text-[18px]
+          sm:text-[24px]
+          lg:text-[30px]
+          xl:text-[34px]
+
+          font-black
           leading-[1.1]
-          tracking-[-0.02em]
-          text-slate-900
+          tracking-[-0.03em]
+
+          text-white
         "
       >
         Drive Your Dealership{" "}
-        <span className="bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+        <span className="text-[#EC5707]">
           To The Next Level
         </span>
       </h1>
+
       {/* Description */}
       <p
         className="
           mt-3
-          max-w-[500px]
+          max-w-[520px]
+
           text-[18px]
-          leading-6
-          text-slate-800
+          font-semibold
+          leading-7
+
+          text-slate-300
         "
       >
-       <strong>One Platfrom to Manage Your Dealership All  Operations.</strong> 
+        One Platform to Manage Your Dealership All Operations.
       </p>
     </motion.div>
   );

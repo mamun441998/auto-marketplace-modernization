@@ -37,11 +37,11 @@ const AuthInput = forwardRef<HTMLInputElement, Props>(
       <div>
         <label
           className="
-            mb-1
+            mb-0.5
             block
-            text-[12px]
+            text-[11px]
             font-semibold
-            text-slate-700
+            text-white/80
           "
         >
           {label}
@@ -51,20 +51,20 @@ const AuthInput = forwardRef<HTMLInputElement, Props>(
           className="
             group
             flex
-            h-[42px]
+            h-[40px]
             items-center
             rounded-xl
             border
             border-slate-200
             bg-white
-            px-4
+            px-3
             transition-all
             focus-within:border-blue-500
-            focus-within:ring-3
+            focus-within:ring-2
             focus-within:ring-blue-100
           "
         >
-          <div className="mr-3 text-slate-400 group-focus-within:text-blue-600">
+          <div className="mr-2 text-slate-400 transition-colors group-focus-within:text-blue-600">
             {icon}
           </div>
 
@@ -75,10 +75,10 @@ const AuthInput = forwardRef<HTMLInputElement, Props>(
             className="
               flex-1
               bg-transparent
-              text-[14px]
+              text-[13px]
               text-slate-800
               outline-none
-              placeholder:text-[13px]
+              placeholder:text-[12px]
               placeholder:text-slate-400
             "
           />
@@ -95,9 +95,9 @@ const AuthInput = forwardRef<HTMLInputElement, Props>(
               "
             >
               {showPassword ? (
-                <EyeOff size={16} />
+                <EyeOff size={15} />
               ) : (
-                <Eye size={16} />
+                <Eye size={15} />
               )}
             </button>
           )}
@@ -106,9 +106,9 @@ const AuthInput = forwardRef<HTMLInputElement, Props>(
         {error && (
           <p
             className="
-              mt-1
-              text-[12px]
-              text-red-500
+              mt-0.5
+              text-[11px]
+              text-red-400
             "
           >
             {error}

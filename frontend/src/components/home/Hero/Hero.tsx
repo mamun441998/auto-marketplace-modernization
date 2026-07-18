@@ -1,119 +1,74 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 import Container from "@/components/layout/Container";
 
-import HeroContent from "./HeroContent";
-import HeroVisual from "./HeroVisual";
+import ParticleNetwork from "./background/ParticleNetwork";
 
-import HeroGlow from "./background/HeroGlow";
-import HeroGrid from "./background/HeroGrid";
-import HeroShapes from "./background/HeroShapes";
+import HeroHeading from "./components/HeroHeading";
+import HeroSlider from "./slider/HeroSlider";
+import HeroCTA from "./components/HeroCTA";
+
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#0C1A32]">
+    <section className="relative overflow-hidden bg-[#0D0D10]">
 
-  {/* Main Cinematic Glow */}
-  <div
-    className="
-      pointer-events-none
-      absolute
-      inset-0
-      z-0
-    "
-    style={{
-      background: `
-        radial-gradient(
-          ellipse 900px 650px
-          at 52% 12%,
-          rgba(255,168,60,.22) 0%,
-          rgba(255,135,35,.12) 28%,
-          rgba(255,120,25,.05) 48%,
-          rgba(12,26,50,0) 72%
-        )
-      `,
-    }}
-  />
+      {/* ================= Background Animation ================= */}
+      <ParticleNetwork />
 
-  {/* Warm Center Glow */}
-  <div
-    className="
-      pointer-events-none
-      absolute
-      inset-0
-      z-0
-    "
-    style={{
-      background: `
-        radial-gradient(
-          circle 650px
-          at 58% 38%,
-          rgba(255,120,35,.10) 0%,
-          rgba(255,95,20,.05) 38%,
-          transparent 75%
-        )
-      `,
-    }}
-  />
-
-  {/* Right Golden Glow */}
-  <div
-    className="
-      pointer-events-none
-      absolute
-      inset-0
-      z-0
-    "
-    style={{
-      background: `
-        radial-gradient(
-          circle 520px
-          at 82% 45%,
-          rgba(192, 113, 10, 0.16) 0%,
-          rgba(202, 86, 18, 0.08) 38%,
-          transparent 78%
-        )
-      `,
-    }}
-  />
-
-  {/* Top Left Soft Orange */}
-  <div
-    className="
-      pointer-events-none
-      absolute
-      inset-0
-      z-0
-    "
-    style={{
-      background: `
-        radial-gradient(
-          circle 420px
-          at 8% 8%,
-          rgba(228, 107, 9, 0.08) 0%,
-          transparent 65%
-        )
-      `,
-    }}
-  />
-
-  
-      <HeroGlow />
-      <HeroGrid />
-      <HeroShapes />
+      {/* Glow */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background: `
+            radial-gradient(circle at 50% 18%, rgba(56,189,248,.08), transparent 55%),
+            radial-gradient(circle at 50% 80%, rgba(252,94,1,.05), transparent 60%)
+          `,
+        }}
+      />
 
       <Container>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="relative z-10 grid grid-cols-1 items-center gap-8 pt-12 pb-20 lg:grid-cols-[40%_60%] lg:gap-8 lg:min-h-[620px] lg:pt-10 lg:pb-24 xl:min-h-[680px]"
+
+        <div
+          className="
+            relative
+            z-10
+
+            flex
+            flex-col
+            items-center
+
+            pt-8
+            sm:pt-10
+            md:pt-12
+            lg:pt-14
+
+            pb-8
+          "
         >
-          <HeroContent />
-          <HeroVisual />
-        </motion.div>
+
+          {/* ================= Heading ================= */}
+          <HeroHeading />
+
+          {/* ================= Slider ================= */}
+          <div
+            className="
+              mt-5
+              w-full
+              max-w-[1350px]
+            "
+          >
+            <HeroSlider />
+          </div>
+
+          {/* ================= CTA ================= */}
+          <div className="mt-4">
+            <HeroCTA />
+          </div>
+
+        </div>
+
       </Container>
+
     </section>
   );
 }

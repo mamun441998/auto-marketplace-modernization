@@ -4,7 +4,6 @@ export interface FeatureItem {
   title: string;
   description: string;
   highlightText: string;
-  imagePath: string;
   colorTheme: string;
 }
 
@@ -16,37 +15,33 @@ export const featuresData: FeatureItem[] = [
     description:
       "Launch automated Facebook, Instagram, and Google ads for your dealership inventory in one click. Our smart AI auto-generates copy and targets high-intent car buyers seamlessly.",
     highlightText: "3x Higher Lead Conversion Rate",
-    imagePath: "/feature-first-image.png",
-    colorTheme: "from-blue-600 via-blue-500 to-cyan-400",
+    colorTheme: "from-[#FC5E01] to-[#E5540A]",
   },
   {
     id: 2,
-    badge: "SaaS Dashboard",
-    title: "Next-Gen Intelligent Analytics Hub",
+    badge: "Real-Time Analytics",
+    title: "Next-Gen Intelligent Command Center",
     description:
-      "Track your entire dealership inventory, customer inquiries, and sales metrics from a centralized command center. Real-time data graphs give you total business control.",
-    highlightText: "All dealership data in a single viewport",
-    imagePath: "/images/features/dealership-dashboard.svg",
-    colorTheme: "from-blue-700 via-indigo-600 to-blue-500",
+      "Track your entire dealership inventory, customer inquiries, and sales metrics from a centralized dashboard. Real-time data graphs give you total business control.",
+    highlightText: "All Dealership Data In One Viewport",
+    colorTheme: "from-blue-600 to-indigo-600",
   },
   {
     id: 3,
-    badge: "Smart Selling",
+    badge: "Smart Listing",
     title: "Instant Car Valuation & Listing Engine",
     description:
       "Upload a car image and let our advanced AI vision instantly detect the model, specs, and condition to auto-generate a premium, conversion-optimized marketplace listing.",
-    highlightText: "Reduce listing time by over 90%",
-    imagePath: "/images/features/car-listing-ai.svg",
-    colorTheme: "from-cyan-500 via-blue-500 to-indigo-600",
+    highlightText: "Reduce Listing Time By Over 90%",
+    colorTheme: "from-violet-600 to-fuchsia-600",
   },
   {
     id: 4,
     badge: "Secure Deals",
-    title: "Seamless Dealer-to-Buyer Portal",
+    title: "Seamless Dealer-to-Buyer Checkout",
     description:
       "Close deals faster with secure integrated payment gateways, instant digital documentation signing, and automated invoice generation for a completely paperless workflow.",
     highlightText: "100% Secure & Encrypted Transactions",
-    imagePath: "/images/features/secure-digital-deals.svg",
-    colorTheme: "from-blue-600 via-cyan-500 to-blue-400",
+    colorTheme: "from-emerald-600 to-teal-600",
   },
 ];
