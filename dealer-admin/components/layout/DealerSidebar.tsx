@@ -52,7 +52,7 @@ export default function DealerSidebar() {
         <Link href="/" className="flex items-center justify-center w-full">
           <div className="relative h-16 w-[220px]"> 
           <Image 
-            src="/moto_have-logo.png" 
+            src="/main-brand-logo.png" 
             alt="MotoHave Logo" 
             fill
             sizes="(max-width: 768px) 150px, 200px"

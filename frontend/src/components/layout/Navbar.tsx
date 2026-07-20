@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
-import Container from "./Container";
-
 import NavLogo from "./navbar/NavLogo";
 import NavMenu from "./navbar/NavMenu";
 import NavAction from "./navbar/NavAction";
@@ -23,7 +21,6 @@ export default function Navbar() {
     };
 
     handleScroll();
-
     window.addEventListener("scroll", handleScroll);
 
     return () =>
@@ -40,43 +37,27 @@ export default function Navbar() {
       }
     };
 
-    document.addEventListener(
-      "mousedown",
-      handleOutside
-    );
+    document.addEventListener("mousedown", handleOutside);
 
     return () =>
-      document.removeEventListener(
-        "mousedown",
-        handleOutside
-      );
+      document.removeEventListener("mousedown", handleOutside);
   }, []);
 
   useEffect(() => {
-    const handleEscape = (
-      e: KeyboardEvent
-    ) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
       }
     };
 
-    document.addEventListener(
-      "keydown",
-      handleEscape
-    );
+    document.addEventListener("keydown", handleEscape);
 
     return () =>
-      document.removeEventListener(
-        "keydown",
-        handleEscape
-      );
+      document.removeEventListener("keydown", handleEscape);
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = open
-      ? "hidden"
-      : "";
+    document.body.style.overflow = open ? "hidden" : "";
 
     return () => {
       document.body.style.overflow = "";
@@ -85,42 +66,39 @@ export default function Navbar() {
 
   return (
     <header
-  className={clsx(
-    "sticky top-0 z-50 border-b border-[#232326] bg-[rgb(13,13,16)] backdrop-blur-xl transition-all duration-300",
-    scrolled && "shadow-lg"
-  )}
->
-      <Container>
+      className={clsx(
+        "sticky top-0 z-50 border-b border-[#232326] bg-[#0D0D10]/95 backdrop-blur-xl transition-all duration-300",
+        scrolled && "shadow-lg"
+      )}
+    >
+      {/* FULL WIDTH */}
+      <div className="w-full px-2 lg:px-4">
         <div ref={navRef}>
-          <div className="flex h-[74px] items-center">
-            {/* Logo */}
+          <div className="flex h-[76px] items-center">
 
+            {/* Logo */}
             <div className="shrink-0">
               <NavLogo />
             </div>
 
             {/* Menu */}
-
-            <div className="ml-16 hidden lg:flex">
+            <div className="ml-6 hidden lg:flex">
               <NavMenu />
             </div>
 
-            {/* Spacer */}
-
+            {/* Push CTA Right */}
             <div className="flex-1" />
 
-            {/* Right Buttons */}
-
+            {/* Right */}
             <div className="flex items-center gap-4">
               <NavAction />
 
               <MobileMenu
                 open={open}
-                onToggle={() =>
-                  setOpen(!open)
-                }
+                onToggle={() => setOpen(!open)}
               />
             </div>
+
           </div>
 
           <MobileNav
@@ -128,7 +106,7 @@ export default function Navbar() {
             onClose={() => setOpen(false)}
           />
         </div>
-      </Container>
+      </div>
     </header>
   );
 }

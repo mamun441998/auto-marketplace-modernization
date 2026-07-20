@@ -1,9 +1,6 @@
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/footer";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
-import "./globals.css";
-
+import "@/app/globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,14 +38,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
     >
-      <body className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-        <Navbar />
-
-        <main className="flex-1 overflow-x-clip">{children}</main>
-
-        <Footer />
+      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+        {children}
       </body>
     </html>
   );

@@ -9,7 +9,7 @@ import {
   WebsiteData,
 } from "@/lib/websiteData";
 
-import WebsiteEditor from "@/components/website-builder/WebsiteEditor";
+import WebsiteEditor from "@/components/website-builder/builder/WebsiteEditor";
 import DomainConnect from "@/components/website-builder/DomainConnect";
 
 export default function WebsiteBuilderPage() {

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import InfiniteMarquee from "./InfiniteMarquee";
+import ParticleNetwork from "./ParticleNetwork";
 
 const stats = [
   { icon: Building2, value: "530+", label: "Active Dealerships" },
@@ -19,11 +20,14 @@ const stats = [
 
 export default function Testimonials() {
   return (
-    <section className="relative bg-[#0A0A0A] py-20 lg:py-24 border-t border-[#262626]">
-      {/* Background decoration - overflow-hidden shudhu ei wrapper e (sticky-safe pattern) */}
+    <section className="relative bg-[#0D0D10] py-20 lg:py-24 border-t border-[#262626]">
+      {/* Background decoration with Canvas Particle Layer inside */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
         <div className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full bg-[#FC5E01]/5 blur-3xl" />
+        
+        {/* Particle Network Animation Component */}
+        <ParticleNetwork />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -50,7 +54,7 @@ export default function Testimonials() {
           </p>
         </motion.div>
 
-        {/* Stats - choto kora holo */}
+        {/* Stats */}
         <motion.div
           className="mt-14 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
           initial={{ opacity: 0, y: 40 }}
@@ -82,7 +86,7 @@ export default function Testimonials() {
           })}
         </motion.div>
 
-        {/* Marquee */}
+        {/* Single Row Auto Marquee */}
         <InfiniteMarquee />
       </div>
     </section>

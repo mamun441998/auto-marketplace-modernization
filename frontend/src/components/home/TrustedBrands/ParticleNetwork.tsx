@@ -2,16 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-type Particle = {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  radius: number;
-};
-
-const PARTICLE_COUNT = 90;
-const MAX_DISTANCE = 150;
+const PARTICLE_COUNT = 30; // Optimized count for performance
+const MAX_DISTANCE = 120;
 
 export default function ParticleNetwork() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,123 +11,73 @@ export default function ParticleNetwork() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    let width = 0;
-    let height = 0;
-    let animationId = 0;
-    const mouse = { x: -9999, y: -9999 };
-    const particles: Particle[] = [];
+    let width = 0, height = 0;
+    let particles: { x: number; y: number; vx: number; vy: number }[] = [];
+    let animationFrameId: number;
 
-    function resize() {
-      const rect = canvas!.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
-      const ratio = window.devicePixelRatio || 1;
-      canvas!.width = width * ratio;
-      canvas!.height = height * ratio;
-      canvas!.style.width = `${width}px`;
-      canvas!.style.height = `${height}px`;
-      ctx!.setTransform(ratio, 0, 0, ratio, 0, 0);
-    }
+    const resize = () => {
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    };
 
-    function createParticles() {
-      particles.length = 0;
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.35,
-          vy: (Math.random() - 0.5) * 0.35,
-          radius: Math.random() * 1.8 + 1,
-        });
-      }
-    }
+    const init = () => {
+      particles = Array.from({ length: PARTICLE_COUNT }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+      }));
+    };
 
-    function updateParticles() {
-      for (const p of particles) {
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#38BDF8";
+
+      particles.forEach((p) => {
         p.x += p.vx;
         p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
 
-        // Boundaries
-        if (p.x <= 0 || p.x >= width) p.vx *= -1;
-        if (p.y <= 0 || p.y >= height) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
 
-        // Mouse interaction
-        const dx = mouse.x - p.x;
-        const dy = mouse.y - p.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          const force = (120 - dist) / 120;
-          p.x -= dx * force * 0.015;
-          p.y -= dy * force * 0.015;
-        }
-      }
-    }
-
-    function draw() {
-      ctx!.clearRect(0, 0, width, height);
-
-      // Lines
+      // Draw connections
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.15)";
+      ctx.lineWidth = 0.5;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i];
-          const b = particles[j];
-          const dist = Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
-          if (dist < MAX_DISTANCE) {
-            ctx!.beginPath();
-            ctx!.moveTo(a.x, a.y);
-            ctx!.lineTo(b.x, b.y);
-            ctx!.strokeStyle = `rgba(56,189,248,${(1 - dist / MAX_DISTANCE) * 0.22})`;
-            ctx!.lineWidth = 1;
-            ctx!.stroke();
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          if (Math.sqrt(dx * dx + dy * dy) < MAX_DISTANCE) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
           }
         }
       }
-
-      // Nodes
-      ctx!.shadowBlur = 10;
-      ctx!.shadowColor = "#38BDF8";
-      ctx!.fillStyle = "#38BDF8";
-      for (const p of particles) {
-        ctx!.beginPath();
-        ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx!.fill();
-      }
-      ctx!.shadowBlur = 0;
-    }
-
-    function animate() {
-      updateParticles();
-      draw();
-      animationId = requestAnimationFrame(animate);
-    }
-
-    resize();
-    createParticles();
-    animate();
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas!.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
+      animationFrameId = requestAnimationFrame(draw);
     };
 
+    resize();
+    init();
+    draw();
+
     window.addEventListener("resize", resize);
-    window.addEventListener("mousemove", handleMouseMove);
     return () => {
-      cancelAnimationFrame(animationId);
+      cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 z-0 h-full w-full pointer-events-none"
-    />
-  );
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
 }

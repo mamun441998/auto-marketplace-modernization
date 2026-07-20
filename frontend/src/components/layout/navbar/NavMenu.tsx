@@ -26,6 +26,7 @@ export default function NavMenu() {
         items-center
         gap-10
         lg:flex
+        mt-3
       "
     >
       {navigation.map((item) => {

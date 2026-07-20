@@ -10,7 +10,14 @@ type Particle = {
   radius: number;
 };
 
-const PARTICLE_COUNT = 90;
+const PARTICLE_COUNT =
+  typeof window !== "undefined"
+    ? window.innerWidth < 768
+      ? 35
+      : window.innerWidth < 1200
+      ? 60
+      : 90
+    : 90;
 const MAX_DISTANCE = 150;
 
 export default function ParticleNetwork() {
@@ -21,7 +28,7 @@ export default function ParticleNetwork() {
 
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
     if (!ctx) return;
 
@@ -38,6 +45,9 @@ export default function ParticleNetwork() {
     const particles: Particle[] = [];
 
     function resize() {
+      const canvas = canvasRef.current;
+      if (!canvas || !ctx) return;
+
       // Use the canvas's own bounding box instead of the window,
       // so the coordinate system stays correct even if the canvas
       // isn't full-viewport (e.g. placed inside a section lower on the page).
@@ -46,7 +56,7 @@ export default function ParticleNetwork() {
       width = rect.width;
       height = rect.height;
 
-      const ratio = window.devicePixelRatio || 1;
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
 
       canvas.width = width * ratio;
       canvas.height = height * ratio;
@@ -174,17 +184,27 @@ export default function ParticleNetwork() {
       // Reset shadow so it doesn't leak into the next frame's line draws.
       ctx.shadowBlur = 0;
     }
+    let paused = false;
+
+document.addEventListener("visibilitychange", () => {
+  paused = document.hidden;
+});
 
     function animate() {
-      updateParticles();
-      drawParticles();
+  if (!paused) {
+    updateParticles();
+    drawParticles();
+  }
 
-      animationId = requestAnimationFrame(animate);
-    }
+  animationId = requestAnimationFrame(animate);
+}
 
     animate();
 
     function handleMouseMove(event: MouseEvent) {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
       // Convert viewport-relative coordinates to canvas-relative
       // coordinates using the canvas's own bounding rect. This fixes
       // the mismatch that occurred when the canvas wasn't positioned

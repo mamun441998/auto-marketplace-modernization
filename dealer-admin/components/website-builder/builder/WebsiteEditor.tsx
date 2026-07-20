@@ -1,23 +1,22 @@
 "use client";
 
-"use client";
-
 import { useMemo, useState } from "react";
+import { RefreshCw, CheckCircle2 } from "lucide-react"; 
 
-import BuilderHeader from "./BuilderHeader";
-import BuilderSidebar from "./BuilderSidebar";
-import WebsitePreview from "./WebsitePreview";
+// Using absolute paths (starting with @/) ensures Next.js always finds your files
+// regardless of where WebsiteEditor.tsx is located in your project.
+import PageManager from "@/components/website-builder/PageManager";
+import SettingsPanel from "@/components/website-builder/SettingsPanel";
+import WebsitePreview from "@/components/website-builder/WebsitePreview";
 
-import PageManager from "../PageManager";
-import SettingsPanel from "../SettingsPanel";
+// Importing editors using absolute paths
+import HomePageEditor from "@/components/website-builder/editors/HomePageEditor";
+import InventoryPageEditor from "@/components/website-builder/editors/InventoryPageEditor";
+import AboutPageEditor from "@/components/website-builder/editors/AboutPageEditor";
+import ContactPageEditor from "@/components/website-builder/editors/ContactPageEditor";
+import FinancingPageEditor from "@/components/website-builder/editors/FinancingPageEditor";
 
-import HomePageEditor from "../editors/HomePageEditor";
-import InventoryPageEditor from "../editors/InventoryPageEditor";
-import AboutPageEditor from "../editors/AboutPageEditor";
-import ContactPageEditor from "../editors/ContactPageEditor";
-import FinancingPageEditor from "../editors/FinancingPageEditor";
-
-import { WebsiteData, WebsitePage } from "@/lib/websiteData";
+import { WebsiteData, WebsitePage, defaultWebsiteData } from "@/lib/websiteData";
 
 export default function WebsiteEditor() {
   const [isSaving, setIsSaving] = useState(false);
@@ -25,7 +24,7 @@ export default function WebsiteEditor() {
   const [activePage, setActivePage] = useState<WebsitePage>("home");
   const [websiteData, setWebsiteData] = useState<WebsiteData>(defaultWebsiteData);
 
-  // Ei function ta shudhu selected page er editor component ta return kore
+  // This function returns the specific editor component based on the selected page
   const currentEditor = useMemo(() => {
     switch (activePage) {
       case "home":
@@ -45,8 +44,7 @@ export default function WebsiteEditor() {
 
   const handleSaveConfig = () => {
     setIsSaving(true);
-    // 💡 Backend connect korar somoy: eikhane API call hobe
-    // jemon: await fetch("/api/dealer/website", { method: "PATCH", body: JSON.stringify(websiteData) })
+    // Note: When connecting to the backend, trigger the API call here
     setTimeout(() => {
       setIsSaving(false);
       alert("Website updated successfully (backend not connected yet)");
@@ -61,7 +59,7 @@ export default function WebsiteEditor() {
 
         {currentEditor}
 
-        {/* Global settings (theme, contact, chat widget) - shob page e apply hoy */}
+        {/* Global settings (theme, contact, chat widget) - applied to all pages */}
         <SettingsPanel data={websiteData} onChange={setWebsiteData} />
 
         <button

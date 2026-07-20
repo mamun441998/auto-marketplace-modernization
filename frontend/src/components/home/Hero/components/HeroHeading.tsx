@@ -14,45 +14,45 @@ export default function HeroHeading() {
       className="mx-auto flex w-full max-w-[1200px] flex-col items-center text-center"
     >
       {/* Heading */}
+      <h1
+        className="
+          font-extrabold
+          tracking-[-0.04em]
+          leading-[1.1]
 
-     <h1
-  className="
-    font-extrabold
-    tracking-[-0.04em]
-    leading-[1.08]
+          text-white
 
-    text-white
+          /* Scaled down slightly more for a sharper look */
+          text-[22px]
+          sm:text-[25px]
+          md:text-[28px]
+          lg:text-[34px]
+          xl:text-[38px]
+          2xl:text-[42px]
+        "
+      >
+        {/* Mobile View */}
+        <span className="block md:hidden">
+          The Complete
+          <br />
+          <span className="text-[#FC5E01]"> {/* Updated text color to match the orange theme */}
+            Dealership Management Platform
+          </span>
+        </span>
 
-    text-[28px]
-    sm:text-[34px]
-    md:text-[38px]
-    lg:text-[44px]
-    xl:text-[48px]
-    2xl:text-[52px]
-  "
->
-  {/* Mobile */}
-  <span className="block md:hidden">
-    The Complete
-    <br />
-    <span className="text-[#38BDF8]">
-      Dealership Management Platform
-    </span>
-  </span>
+        {/* Desktop View */}
+        <span className="hidden md:block">
+          The Complete{" "}
+          <span className="text-[#FC5E01]"> {/* Updated text color to match the orange theme */}
+            Dealership Management Platform
+          </span>
+        </span>
+      </h1>
 
-  {/* Desktop */}
-  <span className="hidden md:block">
-    The Complete{" "}
-    <span className="text-[#38BDF8]">
-      Dealership Management Platform
-    </span>
-  </span>
-</h1>
       {/* Description */}
-
       <p
         className="
-          mt-4
+          mt-3.5
 
           max-w-[680px]
 

@@ -1,74 +1,132 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { featuresData } from "./featuresData";
 import { FeaturesHeader } from "./FeaturesHeader";
-import { FeatureCard } from "./FeatureCard";
-import { FeaturesGrid } from "./FeaturesGrid";
-
-const AUTO_PLAY_INTERVAL = 10000; // 10 sec
+import FeatureContent from "./FeatureContent";
+import FeatureAnimation from "./FeatureAnimation";
+import FeatureImage from "./FeatureImage";
+import FeatureProgress from "./FeatureProgress";
 
 export default function FeaturesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const total = featuresData.length;
+  const prefersReducedMotion = useReducedMotion();
 
-  const goToIndex = (nextIndex: number) => {
-    if (nextIndex < 0 || nextIndex > total - 1) return;
-    setActiveIndex(nextIndex);
+  const feature = featuresData[activeIndex] || featuresData[0];
+  const totalFeatures = featuresData.length;
+
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev + 1) % totalFeatures);
   };
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % total);
-    }, AUTO_PLAY_INTERVAL);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [total]);
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev - 1 + totalFeatures) % totalFeatures);
+  };
 
   return (
-    <section className="relative overflow-hidden bg-[#0F0F0F] py-20 lg:py-24 border-t border-[#262626]">
-      <div className="flex flex-col gap-12">
+    <section className="relative overflow-hidden border-t border-white/10 bg-[#0D0D10] py-4 xl:py-6">
+      {/* Background Layer */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <motion.div
+          key={feature.id}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            duration: 0.6,
+          }}
+          className={`absolute inset-0 ${feature.background}`}
+        />
+
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,.04)_1px,transparent_1px)] [background-size:36px_36px] opacity-30" />
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
+
+      {/* Main Content Wrapper */}
+      <div className="relative z-20 flex w-full flex-col">
         <FeaturesHeader />
 
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-14 px-6 lg:grid-cols-12 lg:px-8">
-          {/* LEFT */}
-          <div className="relative flex h-[320px] items-center lg:col-span-5">
-            <AnimatePresence mode="wait">
-              <FeatureCard
-                key={activeIndex}
-                feature={featuresData[activeIndex]}
+        <div
+          className="
+            w-full
+            max-w-[1700px]
+            mx-auto
+            px-6
+            md:px-10
+            xl:px-16
+            mt-2
+          "
+        >
+          {/* Grid Container */}
+          <div
+            className="
+              flex
+              flex-col
+              xl:grid
+              w-full
+              items-center
+              gap-4
+              xl:grid-cols-[380px_280px_minmax(0,1fr)_160px]
+              2xl:grid-cols-[420px_320px_minmax(0,1fr)_180px]
+            "
+          >
+            {/* Left Content with Grid Stack Fix */}
+            <div className="w-full">
+              <FeatureContent
+                feature={feature}
+                allFeatures={featuresData}
+                activeIndex={activeIndex}
               />
-            </AnimatePresence>
-          </div>
+            </div>
 
-          {/* RIGHT */}
-          <div className="flex items-center justify-center lg:col-span-7">
-            <FeaturesGrid
+            {/* Animation Centerpiece */}
+            <div className="w-full flex justify-center my-1 xl:my-0">
+              <FeatureAnimation id={feature.id} />
+            </div>
+
+            {/* Interactive Mockup/Image */}
+            <div className="w-full">
+              <FeatureImage feature={feature} />
+            </div>
+
+            {/* Vertical Progress Tracker */}
+            <FeatureProgress
               features={featuresData}
               activeIndex={activeIndex}
+              onSelect={(index) => setActiveIndex(index)}
             />
           </div>
-        </div>
 
-        {/* Indicator */}
-        <div className="translate-y-2 pb-0 flex justify-center gap-2">
-          {featuresData.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToIndex(index)}
-              aria-label={`Go to feature ${index + 1}`}
-              className={`rounded-full transition-all duration-300 ${
-                activeIndex === index
-                  ? "h-2 w-8 bg-[#FC5E01]"
-                  : "h-2 w-2 bg-[#334155]"
-              }`}
-            />
-          ))}
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
+            {/* Counter Text */}
+            <div className="text-xs font-mono text-white/50">
+              <span className="text-white font-bold">{String(activeIndex + 1).padStart(2, "0")}</span> / {String(totalFeatures).padStart(2, "0")}
+            </div>
+
+            {/* Pill-shaped Unified Arrow Buttons with Orange Hover */}
+            <div className="flex items-center rounded-full bg-[#16171B] border border-white/10 p-1 shadow-lg">
+              <button
+                onClick={handlePrev}
+                aria-label="Previous Feature"
+                className="flex h-9 w-11 items-center justify-center rounded-full text-white/85 transition-all hover:bg-orange-500/10 hover:text-orange-500 active:scale-95 cursor-pointer"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+
+              <div className="h-4 w-[1px] bg-white/10" />
+
+              <button
+                onClick={handleNext}
+                aria-label="Next Feature"
+                className="flex h-9 w-11 items-center justify-center rounded-full text-white/85 transition-all hover:bg-orange-500/10 hover:text-orange-500 active:scale-95 cursor-pointer"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

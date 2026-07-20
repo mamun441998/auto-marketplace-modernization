@@ -1,52 +1,117 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import Container from "@/components/layout/Container";
-import ProductHeader from "./ProductHeader";
-import ProductPreview from "./ProductPreview";
-import ProductTabs from "./ProductTabs";
+import { useMemo, useState } from "react";
 
-const tabs = ["dashboard", "inventory", "crm", "website", "ai-payments"];
+import Container from "@/components/layout/Container";
+
+import ProductData from "./ProductData";
+import ProductHeader from "./ProductHeader";
+import ProductTabs from "./ProductTabs";
+import ProductFeature from "./ProductFeature";
+
+import FeatureCircle from "./components/FeatureCircle";
+
+import useOrbit from "./hooks/useOrbit";
 
 export default function ProductShowcase() {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [isPaused, setIsPaused] = useState(false);
+  const radius = useOrbit();
 
-  const nextTab = useCallback(() => {
-    setActiveTab((currentTab) => {
-      const currentIndex = tabs.indexOf(currentTab);
-      const nextIndex = (currentIndex + 1) % tabs.length;
-      return tabs[nextIndex];
-    });
-  }, []);
+  const modules = useMemo(
+    () => ProductData.modules,
+    []
+  );
 
-  useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(nextTab, 5000);
-    return () => clearInterval(interval);
-  }, [isPaused, nextTab]);
+  const [active, setActive] = useState(modules[0].id);
+
+  const activeModule =
+    modules.find((m) => m.id === active) ??
+    modules[0];
 
   return (
-    <section className="relative -mt-px w-full bg-[#0A0A0A] pt-6 pb-12 md:pt-10 md:pb-16 border-t border-[#262626]">
-      {/* 💡 Background decoration - overflow-hidden shudhu ei wrapper e, section e na */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:32px_32px] opacity-40" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-[#FC5E01]/5 blur-[140px] rounded-full" />
-      </div>
+    <section
+      className="
+        relative
+        overflow-hidden
 
-      <Container className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ProductHeader />
+        border-t
+        border-white/5
+
+        bg-[#0D0D10]
+
+        py-20
+        lg:py-28
+      "
+    >
+      {/* Background */}
+
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:34px_34px] opacity-20" />
 
         <div
-          className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 items-start"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          <ProductTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+          className="
+            absolute
+            left-1/2
+            top-0
 
-          <div className="flex justify-center lg:justify-end w-full lg:sticky lg:top-24 self-start">
-            <ProductPreview activeTab={activeTab} />
+            h-[900px]
+            w-[900px]
+
+            -translate-x-1/2
+
+            rounded-full
+
+            bg-[#FC5E01]/5
+
+            blur-[220px]
+          "
+        />
+      </div>
+
+      <Container className="relative z-10">
+        {/* Header */}
+
+        <ProductHeader />
+
+        {/* Tabs */}
+
+        <div className="mt-10">
+          <ProductTabs
+            modules={modules}
+            active={active}
+            onChange={setActive}
+          />
+        </div>
+
+        {/* Main */}
+
+        <div
+          className="
+            mt-16
+
+            grid
+            grid-cols-1
+            items-center
+            gap-12
+
+            lg:grid-cols-[520px_minmax(0,1fr)]
+          "
+        >
+          {/* LEFT */}
+
+          <div className="flex justify-center">
+            <FeatureCircle
+              features={modules}
+              active={active}
+              radius={radius}
+              onSelect={setActive}
+            />
           </div>
+
+          {/* RIGHT */}
+
+          <ProductFeature
+            active={activeModule}
+          />
         </div>
       </Container>
     </section>

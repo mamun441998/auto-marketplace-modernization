@@ -1,29 +1,20 @@
 "use client";
 
-export default function AuthDivider() {
+import React from 'react';
+
+export const AuthDivider: React.FC<{ text?: string }> = ({ text = 'Or continue with' }) => {
   return (
-    <div className="relative flex items-center py-2">
-      <div className="flex-1 border-t border-slate-200" />
-
-      <span
-        className="
-          bg-white
-
-          px-5
-
-          font-[family:var(--font-inter)]
-
-          text-sm
-
-          font-medium
-
-          text-slate-400
-        "
-      >
-        OR CONTINUE WITH
+    <div className="relative my-6 flex items-center justify-center">
+      {/* বাঁ পাশের লাইন */}
+      <div className="flex-grow border-t border-border/80" />
+      
+      {/* মাঝের টেক্সট - কোনো ব্যাকগ্রাউন্ড ছাড়াই দুইপাশে মার্জিন দিয়ে গ্যাপ রাখা হয়েছে */}
+      <span className="flex-shrink mx-4 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+        {text}
       </span>
-
-      <div className="flex-1 border-t border-slate-200" />
+      
+      {/* ডান পাশের লাইন */}
+      <div className="flex-grow border-t border-border/80" />
     </div>
   );
-}
+};

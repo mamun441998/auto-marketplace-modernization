@@ -1,9 +1,7 @@
 "use client";
 
 import Container from "@/components/layout/Container";
-
 import ParticleNetwork from "./background/ParticleNetwork";
-
 import HeroHeading from "./components/HeroHeading";
 import HeroSlider from "./slider/HeroSlider";
 import HeroCTA from "./components/HeroCTA";
@@ -11,11 +9,8 @@ import HeroCTA from "./components/HeroCTA";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-[#0D0D10]">
-
-      {/* ================= Background Animation ================= */}
       <ParticleNetwork />
 
-      {/* Glow */}
       <div
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
@@ -27,48 +22,20 @@ export default function Hero() {
       />
 
       <Container>
+        <div className="relative z-10 flex flex-col items-center pt-8 sm:pt-12 pb-16">
 
-        <div
-          className="
-            relative
-            z-10
-
-            flex
-            flex-col
-            items-center
-
-            pt-8
-            sm:pt-10
-            md:pt-12
-            lg:pt-14
-
-            pb-8
-          "
-        >
-
-          {/* ================= Heading ================= */}
           <HeroHeading />
 
-          {/* ================= Slider ================= */}
-          <div
-            className="
-              mt-5
-              w-full
-              max-w-[1350px]
-            "
-          >
+          <div className="mt-8 w-full">
             <HeroSlider />
           </div>
 
-          {/* ================= CTA ================= */}
-          <div className="mt-4">
+          <div className="mt-8">
             <HeroCTA />
           </div>
 
         </div>
-
       </Container>
-
     </section>
   );
 }

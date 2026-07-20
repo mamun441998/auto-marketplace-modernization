@@ -1,7 +1,11 @@
+"use client";
+
+import motoM from "@/assets/Footer-logo/Moto-center.png";
+
 export default function FooterBrand() {
   return (
     <div className="w-full select-none space-y-1">
-      {/* Wordmark — MOTO(🛞🛞) HAVE, centered */}
+      {/* Wordmark — [M-logo] O(🛞) T O(🛞) HAVE, centered */}
       <svg viewBox="0 0 760 128" className="block h-auto w-full" role="img" aria-label="MotoHave">
         <defs>
           <g id="mh-wheel">
@@ -14,18 +18,27 @@ export default function FooterBrand() {
               <line x1="-5.29" y1="7.28" x2="-9.99" y2="13.76" />
               <line x1="-8.56" y1="-2.78" x2="-16.17" y2="-5.25" />
             </g>
-            <circle r="4" fill="#29ABE2" />
+            {/* চাকার ভেতরের ছোট ডটটি এখন ব্র্যান্ডের অরেঞ্জ কালার (#FC5E01) */}
+            <circle r="4" fill="#FC5E01" />
           </g>
         </defs>
 
-        <g fontFamily="var(--font-google-sans), sans-serif" fontWeight="700" fontSize="120">
-          <text x="16" y="118" fill="#ffffff">M</text>
-          <text x="223" y="118" fill="#ffffff">T</text>
-          <text x="395" y="118" fill="#29ABE2">HAVE</text>
+        {/* প্রথম M → তোমার logo image */}
+        <image
+          href={motoM.src}
+          x="46" y="24"
+          height="94" width="130"
+          preserveAspectRatio="xMinYMid meet"
+        />
+
+        <g fontFamily="var(--font-fredoka), sans-serif" fontWeight="500" fontSize="120">
+          <text x="255" y="118" fill="#ffffff">T</text>
+          {/* HAVE টেক্সট কালার পরিবর্তন করে অরেঞ্জ (#FC5E01) করা হয়েছে */}
+          <text x="427" y="118" fill="#FC5E01">HAVE</text>
         </g>
 
-        <use href="#mh-wheel" x="180" y="75" className="text-white" />
-        <use href="#mh-wheel" x="347" y="75" className="text-white" />
+        <use href="#mh-wheel" x="212" y="75" className="text-white" />
+        <use href="#mh-wheel" x="379" y="75" className="text-white" />
       </svg>
 
       {/* Tagline — centered */}
@@ -33,7 +46,7 @@ export default function FooterBrand() {
         <text
           x="380" y="23" textAnchor="middle"
           textLength="740" lengthAdjust="spacing"
-          fontFamily="var(--font-google-sans), sans-serif" fontWeight="500" fontSize="26"
+          fontFamily="var(--font-fredoka), sans-serif" fontWeight="500" fontSize="26"
           fill="#ffffff" opacity="0.5"
         >
           YOUR DREAM DEALERSHIP PLATFORM

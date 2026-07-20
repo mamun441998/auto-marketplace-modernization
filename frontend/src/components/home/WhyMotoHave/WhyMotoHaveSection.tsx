@@ -1,34 +1,47 @@
-import Container from "@/components/layout/Container";
-import WhyMotoHaveHeader from "./WhyMotoHaveHeader";
-import WhyMotoHaveContent from "./WhyMotoHaveContent";
+import React, { useState } from 'react';
+import { featuresData } from './data/benefits';
+import { BackgroundGlow } from './components/BackgroundGlow';
+import { FloatingElements } from './components/FloatingElements';
+import { SectionHeader } from './components/SectionHeader';
+import { BenefitsGrid } from './components/BenefitsGrid';
+import { ComparisonPanel } from './components/ComparisonPanel';
+import { AnimatedStats } from './components/AnimatedStats';
 
-export default function WhyMotoHaveSection() {
+export const WhyMotoHaveSection: React.FC = () => {
+  const [activeFeatureId, setActiveFeatureId] = useState<string>(featuresData[0].id);
+
+  const activeFeature = featuresData.find(f => f.id === activeFeatureId) || featuresData[0];
+
   return (
-    <section className="relative bg-[#0D1435] py-16 lg:py-20 border-t border-[#262626]">
-      {/* Background decoration wrapper - overflow-hidden shudhu ekhane, section e na (sticky-safe) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Left Glow */}
-        <div className="absolute -left-32 top-20 h-[420px] w-[420px] rounded-full bg-[#FC5E01]/8 blur-[120px] hero-drift" />
+    <section className="relative bg-[#0A1429] py-24 px-4 sm:px-6 lg:px-12 w-full overflow-hidden">
+      {/* Background Glow & Ambient Effects */}
+      <BackgroundGlow />
+      <FloatingElements />
 
-        {/* Right Glow */}
-        <div className="absolute -right-32 bottom-0 h-[420px] w-[420px] rounded-full bg-blue-500/8 blur-[120px] hero-drift-slow" />
+      <div className="w-full max-w-[1600px] mx-auto relative z-10">
+        {/* Header */}
+        <SectionHeader />
 
-        {/* Center Glow */}
-        <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-[#FC5E01]/5 via-blue-500/5 to-transparent blur-[160px]" />
+        {/* Main Interactive Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Side: Interactive Feature Cards List */}
+          <div className="lg:col-span-5 xl:col-span-4">
+            <BenefitsGrid 
+              features={featuresData}
+              activeFeatureId={activeFeatureId}
+              onSelectFeature={setActiveFeatureId}
+            />
+          </div>
 
-        {/* Floating Particles */}
-        <div className="absolute left-[10%] top-[18%] h-3 w-3 rounded-full bg-[#FC5E01]/40 hero-float" />
-        <div className="absolute right-[12%] top-[22%] h-2 w-2 rounded-full bg-blue-400/50 hero-float-slow" />
-        <div className="absolute left-[22%] bottom-[18%] h-2.5 w-2.5 rounded-full bg-indigo-400/40 hero-float" />
-        <div className="absolute right-[22%] bottom-[25%] h-3 w-3 rounded-full bg-[#FC5E01]/35 hero-float-slow" />
-        <div className="absolute left-1/2 top-[14%] h-2 w-2 -translate-x-1/2 rounded-full bg-[#FC5E01]/40 hero-pulse" />
+          {/* Right Side: 3D Browser Mockup / Live Preview Panel */}
+          <div className="lg:col-span-7 xl:col-span-8">
+            <ComparisonPanel activeFeature={activeFeature} />
+          </div>
+        </div>
+
+        {/* Trust Badges & Metrics Section */}
+        <AnimatedStats />
       </div>
-
-      {/* Content */}
-      <Container className="relative z-10">
-        <WhyMotoHaveHeader />
-        <WhyMotoHaveContent />
-      </Container>
     </section>
   );
-}
+};

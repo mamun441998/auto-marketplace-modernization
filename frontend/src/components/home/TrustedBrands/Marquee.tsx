@@ -1,39 +1,66 @@
 "use client";
 
-import { motion } from "framer-motion";
 import LogoCard from "./LogoCard";
 import { brands } from "./brands";
-
-// মেমোরি অপ্টিমাইজেশনের জন্য marqueeItems কে কম্পোনেন্টের বাইরে রাখা ভালো
-const marqueeItems = [...brands, ...brands, ...brands];
 
 export default function Marquee() {
   return (
     <div className="relative w-full overflow-hidden">
-      {/* Left Fade: সেকশনের মেইন ব্যাকগ্রাউন্ড কালার (#0D111C) এর সাথে ম্যাচ করা হয়েছে */}
+      {/* Left Fade */}
       <div className="pointer-events-none absolute left-0 top-0 z-20 h-full w-32 bg-gradient-to-r from-[#0D111C] via-[#0D111C]/80 to-transparent" />
 
       {/* Right Fade */}
       <div className="pointer-events-none absolute right-0 top-0 z-20 h-full w-32 bg-gradient-to-l from-[#0D111C] via-[#0D111C]/80 to-transparent" />
 
-      <motion.div
-        className="flex w-max items-center gap-14"
-        animate={{
-          x: ["0%", "-33.333%"],
-        }}
-        transition={{
-          duration: 35,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      >
-        {marqueeItems.map((brand, index) => (
-          <LogoCard
-            key={`${brand.id}-${index}`}
-            brand={brand}
-          />
+      <div className="marquee-track">
+        {[0, 1].map((group) => (
+          <div
+            key={group}
+            className="marquee-group"
+            aria-hidden={group === 1}
+          >
+            {brands.map((brand) => (
+              <div
+                key={`${group}-${brand.id}`}
+                className="flex-shrink-0"
+              >
+                <LogoCard brand={brand} />
+              </div>
+            ))}
+          </div>
         ))}
-      </motion.div>
+      </div>
+
+      <style jsx>{`
+        .marquee-track {
+          display: flex;
+          width: max-content;
+
+          will-change: transform;
+          transform: translate3d(0, 0, 0);
+          backface-visibility: hidden;
+          perspective: 1000px;
+
+          animation: marquee 45s linear infinite;
+        }
+
+        .marquee-group {
+          display: flex;
+          align-items: center;
+          gap: 3.5rem;
+          padding-right: 3.5rem;
+          flex-shrink: 0;
+        }
+
+        @keyframes marquee {
+          from {
+            transform: translate3d(0, 0, 0);
+          }
+          to {
+            transform: translate3d(-50%, 0, 0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
