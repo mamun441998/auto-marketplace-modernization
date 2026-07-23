@@ -7,38 +7,32 @@ import DealerSidebar from "@/components/layout/DealerSidebar";
 import DealerTopbar from "@/components/layout/DealerTopbar";
 import { ProfileProvider } from "@/components/layout/ProfileContext";
 
-import { getToken, getUser } from "@/lib/auth";
-
-export default function DealerLayout({
+export default function DealerAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const router = useRouter();
-
-  const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = getToken();
-    const user = getUser();
+    const token = localStorage.getItem("motohave_token");
+    const user = localStorage.getItem("motohave_user");
 
     if (!token || !user) {
       router.replace("/sign-in");
       return;
     }
 
-    setAuthorized(true);
+    setLoading(false);
   }, [router]);
 
-  if (!authorized) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0A0F1E]">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
-
-          <p className="text-sm text-slate-300">
-            Authenticating...
-          </p>
+        <div className="flex flex-col items-center gap-5">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
+          <p className="text-sm text-slate-400">Loading Dashboard...</p>
         </div>
       </div>
     );
@@ -48,13 +42,9 @@ export default function DealerLayout({
     <ProfileProvider>
       <div className="min-h-screen bg-[#0A0F1E]">
         <DealerSidebar />
-
         <div className="ml-[260px]">
           <DealerTopbar />
-
-          <main className="p-6 lg:p-8">
-            {children}
-          </main>
+          <main className="p-6 lg:p-8">{children}</main>
         </div>
       </div>
     </ProfileProvider>

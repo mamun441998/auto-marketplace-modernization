@@ -28,10 +28,10 @@ export default function EverythingHeader() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="mt-4 text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight"
+        className="mt-4 text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight whitespace-nowrap"
       >
-        Everything You Need <br className="hidden sm:block" />
-        To Run A <span className="text-[#FC5E01]">Modern Dealership</span>
+        Everything You Need To Run A <br className="block sm:hidden" />
+        <span className="text-[#FC5E01]">Modern Dealership</span>
       </motion.h2>
 
       <motion.p

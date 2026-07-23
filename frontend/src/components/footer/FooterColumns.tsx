@@ -14,11 +14,15 @@ const columns = [
   {
     title: "Solutions",
     links: [
-      { label: "For Dealerships", href: "/solutions/dealerships" },
-      { label: "For Auto Groups", href: "/solutions/auto-groups" },
-      { label: "AI Campaign Booster", href: "/solutions/ai-campaigns" },
-      { label: "Enterprise Security", href: "/solutions/security" },
-      { label: "Marketplace", href: "/solutions/marketplace" },
+      { label: "Vehicle Inventory", href: "/solutions/inventory" },
+      { label: "AI Automation", href: "/solutions/ai-automation" },
+      { label: "Marketing Suite", href: "/solutions/marketing" },
+      { label: "Analytics & Reports", href: "/solutions/analytics" },
+      { label: "CRM & Lead Management", href: "/solutions/crm" }, 
+      { label: "Website Builder", href: "/solutions/website-builder" }, 
+      { label: "Payments", href: "/solutions/payments" }, 
+      { label: "Sales & Deal Closing", href: "/solutions/deal-closing" }, 
+
     ],
   },
   {

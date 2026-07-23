@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-// ইমেজ ফাইলটি এখানে সরাসরি ইম্পোর্ট করে নেওয়া হলো
+// ইমেজ ফাইলটি এখানে সরাসরি ইম্পোর্ট করে নেওয়া হলো
 import HeroImageFinal from "@/assets/HeroImage/Hero-Image-Final.png";
 
 export default function HeroSlider() {
@@ -13,7 +13,7 @@ export default function HeroSlider() {
       <div className="relative overflow-hidden rounded-[30px] border border-white/5 bg-[#171A20] shadow-[0_40px_120px_rgba(0,0,0,.45)]">
         
         {/* Card Content Layout */}
-        <div className="relative aspect-[21/9] w-full p-2 lg:p-3">
+        <div className="relative aspect-[18/9] w-full p-2 lg:p-3">
           
           {/* Inner Dark Background */}
           <div className="relative h-full w-full overflow-hidden rounded-[22px] border border-white/5 bg-[#0D0D10] flex items-center justify-center">

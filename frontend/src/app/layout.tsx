@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
-import "@/app/globals.css";
+import "./globals.css";
+
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/footer";
+
+// Use the actual auth provider module from the contexts folder
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,10 +45,22 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
     >
-      <body suppressHydrationWarning className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-        {children}
+      <body
+        suppressHydrationWarning
+        className="min-h-screen flex flex-col bg-slate-50 text-slate-900"
+      >
+        <AuthProvider>
+          <Navbar />
+
+          <main className="flex-1">
+            {children}
+          </main>
+
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

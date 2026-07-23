@@ -45,7 +45,7 @@ export default function MobileNav({
             border-t
             border-white/10
 
-            bg-[#081221]/98
+            bg-[#0B0B0A]
 
             backdrop-blur-2xl
 

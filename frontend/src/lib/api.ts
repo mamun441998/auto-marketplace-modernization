@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const apiClient = axios.create({
+const api = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_URL ||
-    "http://localhost:8000/api",
+    "http://127.0.0.1:8000/api",
 
   timeout: 15000,
 
@@ -19,7 +19,7 @@ const apiClient = axios.create({
 |--------------------------------------------------------------------------
 */
 
-apiClient.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("motohave_token");
@@ -41,19 +41,16 @@ apiClient.interceptors.request.use(
 |--------------------------------------------------------------------------
 */
 
-apiClient.interceptors.response.use(
+api.interceptors.response.use(
   (response) => response,
 
   (error) => {
-    if (
-      error.response &&
-      error.response.status === 401
-    ) {
+    if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("motohave_token");
+        localStorage.removeItem("motohave_user");
 
-        // Prevent redirect loop
-        if (!window.location.pathname.startsWith("/sign-in")) {
+        if (window.location.pathname !== "/sign-in") {
           window.location.href = "/sign-in";
         }
       }
@@ -63,4 +60,4 @@ apiClient.interceptors.response.use(
   }
 );
 
-export default apiClient;
+export default api;

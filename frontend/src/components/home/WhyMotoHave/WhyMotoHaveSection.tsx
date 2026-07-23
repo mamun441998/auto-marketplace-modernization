@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { featuresData } from './data/benefits';
 import { BackgroundGlow } from './components/BackgroundGlow';
 import { FloatingElements } from './components/FloatingElements';
@@ -41,6 +42,29 @@ export const WhyMotoHaveSection: React.FC = () => {
 
         {/* Trust Badges & Metrics Section */}
         <AnimatedStats />
+
+        {/* CTA Button at the Bottom */}
+        <div className="mt-16 flex items-center justify-center">
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#FC5E01] px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-[#FC5E01]/25 transition-all duration-300 hover:bg-[#e05401] hover:shadow-xl hover:shadow-[#FC5E01]/40 hover:-translate-y-0.5 active:translate-y-0"
+          >
+            <span>Start Free Trial</span>
+            <svg
+              className="w-4 h-4 transition-transform duration-300 hover:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </svg>
+          </Link>
+        </div>
       </div>
     </section>
   );

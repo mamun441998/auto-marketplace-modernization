@@ -93,16 +93,18 @@ export default function NavMenu() {
                   className="
                     w-[560px]
 
-                    rounded-3xl
+                    rounded-t-none
+                    rounded-b-2xl
 
                     border
-                    border-white/10
+                    border-white/15
+                    border-t-0
 
-                    bg-[#101C35]/95
+                    bg-[#0D0C11]
 
-                    p-6
+                    p-5
 
-                    shadow-[0_24px_80px_rgba(0,0,0,.35)]
+                    shadow-[0_24px_80px_rgba(0,0,0,.45)]
 
                     backdrop-blur-2xl
                   "
@@ -111,7 +113,7 @@ export default function NavMenu() {
                     className="
                       grid
                       grid-cols-2
-                      gap-3
+                      gap-2.5
                     "
                   >
                     {solutionsItem.dropdown.map(
@@ -120,14 +122,14 @@ export default function NavMenu() {
                           key={subItem.id}
                           href={subItem.href}
                           className="
-                            rounded-2xl
+                            rounded-lg
 
                             px-4
                             py-3
 
                             text-[14px]
                             font-medium
-                            text-slate-200
+                            text-slate-300
 
                             transition-all
                             duration-200

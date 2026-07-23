@@ -1,15 +1,58 @@
 // src/components/about/AboutStats.tsx
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { Building2, CarFront, TrendingUp, Users } from "lucide-react";
 
-const stats = [
-  { icon: Building2, value: "530+", label: "Active Dealerships" },
-  { icon: CarFront, value: "15K+", label: "Vehicles Managed" },
-  { icon: TrendingUp, value: "98%", label: "Avg. Sales Growth" },
-  { icon: Users, value: "24/7", label: "Dedicated Support" },
+interface StatItem {
+  icon: typeof Building2;
+  value: string;
+  numericValue?: number;
+  suffix: string;
+  isNumeric: boolean;
+  label: string;
+}
+
+const stats: StatItem[] = [
+  { icon: Building2, value: "530+", numericValue: 530, suffix: "+", isNumeric: true, label: "Active Dealerships" },
+  { icon: CarFront, value: "15K+", numericValue: 15, suffix: "K+", isNumeric: true, label: "Vehicles Managed" },
+  { icon: TrendingUp, value: "98%", numericValue: 98, suffix: "%", isNumeric: true, label: "Avg. Sales Growth" },
+  { icon: Users, value: "24/7", suffix: "", isNumeric: false, label: "Dedicated Support" },
 ];
+
+function Counter({ value, numericValue, suffix, isNumeric }: { value: string; numericValue?: number; suffix: string; isNumeric: boolean }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
+
+  useEffect(() => {
+    if (!isInView || !isNumeric || numericValue === undefined) return;
+
+    let start = 0;
+    const end = numericValue;
+    const duration = 2000; // 2 seconds
+    const incrementTime = Math.max(Math.floor(duration / end), 20);
+
+    const timer = setInterval(() => {
+      start += Math.ceil(end / (duration / incrementTime));
+      if (start >= end) {
+        setCount(end);
+        clearInterval(timer);
+      } else {
+        setCount(start);
+      }
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [isInView, numericValue, isNumeric]);
+
+  return (
+    <span ref={ref}>
+      {isNumeric ? `${count}${suffix}` : value}
+    </span>
+  );
+}
 
 export default function AboutStats() {
   return (
@@ -31,7 +74,12 @@ export default function AboutStats() {
               <Icon size={24} />
             </div>
             <h3 className="mt-4 text-3xl sm:text-4xl font-extrabold text-white">
-              {stat.value}
+              <Counter 
+                value={stat.value} 
+                numericValue={stat.numericValue} 
+                suffix={stat.suffix} 
+                isNumeric={stat.isNumeric} 
+              />
             </h3>
             <p className="mt-1 text-sm text-[#94A3B8]">{stat.label}</p>
           </div>

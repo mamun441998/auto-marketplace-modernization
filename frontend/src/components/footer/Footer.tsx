@@ -1,6 +1,7 @@
 import FooterBrand from "./FooterBrand";
 import FooterCTA from "./FooterCTA";
 import FooterColumns from "./FooterColumns";
+import FooterBottom from "./FooterBottom";
 
 export default function Footer() {
   return (
@@ -22,8 +23,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8">
-        </div>
+        <FooterBottom />
       </div>
     </footer>
   );

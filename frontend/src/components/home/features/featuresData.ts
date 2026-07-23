@@ -7,6 +7,8 @@ export interface FeatureItem {
   readonly image: string;
   readonly accent: string;
   readonly background: string;
+  readonly linkHref?: string;
+  readonly linkText?: string;
 }
 
 export const featuresData: readonly FeatureItem[] = [

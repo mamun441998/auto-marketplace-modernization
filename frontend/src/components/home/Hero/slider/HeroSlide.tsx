@@ -17,7 +17,7 @@ export default function HeroSlide({
       className="
         relative
         w-full
-        aspect-[16/9]
+        aspect-[16/10]
         overflow-hidden
         rounded-[28px]
         bg-[#0F1115]

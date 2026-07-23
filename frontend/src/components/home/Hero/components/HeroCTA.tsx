@@ -14,7 +14,7 @@ export default function HeroCTA() {
         delay: 0.25,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="mt-8 flex flex-wrap items-center justify-center gap-4"
+      className="mt-4 flex flex-wrap items-center justify-center gap-4"
     >
       {/* Primary CTA */}
       <motion.div
@@ -29,25 +29,17 @@ export default function HeroCTA() {
             inline-flex
             items-center
             gap-2
-
             overflow-hidden
-
             rounded-xl
-
             bg-[#FC5E01]
-
             px-8
             py-3
-
             text-sm
             font-bold
             text-white
-
             shadow-[0_0_35px_rgba(252,94,1,.30)]
-
             transition-all
             duration-300
-
             hover:shadow-[0_0_55px_rgba(252,94,1,.55)]
           "
         >
@@ -96,25 +88,18 @@ export default function HeroCTA() {
             inline-flex
             items-center
             justify-center
-
             rounded-xl
-
             border
             border-white/10
-
             bg-white/5
             backdrop-blur-xl
-
             px-8
             py-3
-
             text-sm
             font-semibold
             text-white
-
             transition-all
             duration-300
-
             hover:border-[#FC5E01]
             hover:bg-[#FC5E01]/10
             hover:text-[#FC5E01]

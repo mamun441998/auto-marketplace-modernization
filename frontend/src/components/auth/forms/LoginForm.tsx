@@ -1,116 +1,135 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import apiClient from "@/lib/apiClient";
+import { saveToken, saveUser } from "@/lib/auth";
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
-  
-  // ফর্ম ফিল্ডগুলোর জন্য স্টেট
+
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
   });
 
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // ইনপুট পরিবর্তনের হ্যান্ডলার
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]:
+        type === "checkbox" ? checked : value,
     }));
   };
 
-  // ফর্ম সাবমিট ও API কল হ্যান্ডলার
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
+
     setLoading(true);
-    setErrorMessage('');
+    setErrorMessage("");
 
     try {
-      // Laravel API Endpoint (আপনার ব্যাকএন্ডের URL অনুযায়ী পরিবর্তন করে নেবেন)
-      const response = await fetch('http://127.0.0.1:8000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      const { data } = await apiClient.post("/login", {
+        email: formData.email,
+        password: formData.password,
       });
 
-      const data = await response.json();
+      saveToken(data.token);
+      saveUser(data.user);
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to sign in.');
-      }
-
-      // সফল হলে টোকেন সেভ করুন এবং ড্যাশবোর্ডে পাঠান
-      localStorage.setItem('token', data.token);
-      router.push('/dashboard');
-
+      router.replace("/dealer-admin/dashboard");
     } catch (error: any) {
-      setErrorMessage(error.message || 'Something went wrong.');
+      console.error(error);
+
+      if (error.response?.data?.errors) {
+        const errors = error.response.data.errors;
+        const firstKey = Object.keys(errors)[0];
+
+        setErrorMessage(errors[firstKey][0]);
+      } else {
+        setErrorMessage(
+          error.response?.data?.message ??
+            "Invalid email or password."
+        );
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4"
+    >
       {errorMessage && (
-        <div className="p-3 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl">
+        <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-500">
           {errorMessage}
         </div>
       )}
 
       <div>
-        <label className="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">
+        <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-300">
           Email Address
         </label>
+
         <input
           type="email"
           name="email"
           required
+          autoComplete="email"
           value={formData.email}
           onChange={handleChange}
           placeholder="name@company.com"
-          className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border/80 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-orange-500 transition-colors text-sm"
+          className="w-full rounded-xl border border-border/80 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-orange-500 focus:outline-none"
         />
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-xs font-medium text-slate-300 uppercase tracking-wider">
+        <div className="mb-2 flex items-center justify-between">
+          <label className="block text-xs font-medium uppercase tracking-wider text-slate-300">
             Password
           </label>
-          <Link href="/forgot-password" className="text-xs text-orange-500 hover:underline">
+
+          <Link
+            href="/forgot-password"
+            className="text-xs text-orange-500 hover:underline"
+          >
             Forgot password?
           </Link>
         </div>
+
         <input
           type="password"
           name="password"
           required
+          autoComplete="current-password"
           value={formData.password}
           onChange={handleChange}
           placeholder="••••••••"
-          className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border/80 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-orange-500 transition-colors text-sm"
+          className="w-full rounded-xl border border-border/80 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-orange-500 focus:outline-none"
         />
       </div>
 
       <div className="flex items-center">
-        <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-300">
+        <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
           <input
             type="checkbox"
             name="remember"
             checked={formData.remember}
             onChange={handleChange}
-            className="w-4 h-4 rounded border-border text-orange-500 focus:ring-orange-500 bg-background"
+            className="h-4 w-4 rounded border-border bg-background text-orange-500 focus:ring-orange-500"
           />
           Remember for 30 days
         </label>
@@ -119,10 +138,12 @@ export const LoginForm: React.FC = () => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-medium transition-all shadow-lg shadow-orange-500/20 disabled:opacity-50 text-sm"
+        className="w-full rounded-xl bg-orange-500 px-4 py-3 text-sm font-medium text-white shadow-lg shadow-orange-500/20 transition-all hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {loading ? 'Signing in...' : 'Sign In'}
+        {loading
+          ? "Signing in..."
+          : "Sign In"}
       </button>
     </form>
   );
-};
+}
