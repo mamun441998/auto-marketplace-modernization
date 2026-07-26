@@ -1,18 +1,55 @@
-// src/components/inventory/InventoryGrid.tsx
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Loader2 } from "lucide-react";
 import InventorySidebar from "./InventorySidebar";
 import VehicleCard from "./VehicleCard";
-import { vehicles, priceRanges } from "./inventoryData";
+import { Vehicle, priceRanges } from "./inventoryData";
+import { fetchMarketplaceVehicles, ApiVehicle } from "@/lib/marketplace";
 
 const PAGE_SIZE = 9;
+
+const GRADIENTS = [
+  "from-blue-500 to-cyan-500",
+  "from-red-500 to-rose-500",
+  "from-slate-400 to-slate-600",
+  "from-indigo-500 to-blue-700",
+  "from-emerald-500 to-teal-600",
+  "from-amber-500 to-orange-600",
+];
+
+const cap = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "");
+const titleBody = (b?: string | null) =>
+  !b ? "Other" : b.toLowerCase() === "suv" ? "SUV" : cap(b);
+
+/** Map backend vehicle -> the card's Vehicle shape. */
+function mapVehicle(v: ApiVehicle): Vehicle {
+  return {
+    id: v.id,
+    make: v.make,
+    model: v.model,
+    year: v.year,
+    price: Number(v.price ?? 0),
+    mileage: v.mileage ?? 0,
+    fuelType: cap(v.fuel_type),
+    transmission: cap(v.transmission),
+    bodyType: titleBody(v.body_type),
+    dealerName: v.dealer?.name ?? "Dealer",
+    dealerId: v.dealer_id ?? 0,
+    condition: cap(v.condition),
+    gradient: GRADIENTS[v.id % GRADIENTS.length],
+    image: v.primary_image_url || v.featured_image?.image_url || null,
+  };
+}
 
 export default function InventoryGrid() {
   const searchParams = useSearchParams();
   const dealerIdParam = searchParams.get("dealer");
+  const searchQuery = (searchParams.get("search") || "").toLowerCase();
+
+  const [allVehicles, setAllVehicles] = useState<Vehicle[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [selectedMake, setSelectedMake] = useState("All Makes");
   const [selectedBodyType, setSelectedBodyType] = useState("All Types");
@@ -22,18 +59,40 @@ export default function InventoryGrid() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dealerFilter, setDealerFilter] = useState<number | null>(null);
 
-  // Detect dealer filter from URL (coming from Dealers page "View Inventory")
+  // Load real vehicles from the API (all dealers).
   useEffect(() => {
-    if (dealerIdParam) {
-      setDealerFilter(Number(dealerIdParam));
-    }
+    (async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetchMarketplaceVehicles("?per_page=50&sort_by=created_at&sort_dir=desc");
+        if (res.success) {
+          setAllVehicles((res.vehicles ?? []).map(mapVehicle));
+        }
+      } catch (err) {
+        console.error("Load marketplace failed:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (dealerIdParam) setDealerFilter(Number(dealerIdParam));
   }, [dealerIdParam]);
 
   const filteredVehicles = useMemo(() => {
-    let result = [...vehicles];
+    let result = [...allVehicles];
 
     if (dealerFilter) {
       result = result.filter((v) => v.dealerId === dealerFilter);
+    }
+
+    if (searchQuery) {
+      result = result.filter(
+        (v) =>
+          v.make.toLowerCase().includes(searchQuery) ||
+          v.model.toLowerCase().includes(searchQuery)
+      );
     }
 
     if (selectedMake !== "All Makes") {
@@ -60,7 +119,7 @@ export default function InventoryGrid() {
     }
 
     return result;
-  }, [selectedMake, selectedBodyType, selectedPriceRange, selectedSort, dealerFilter]);
+  }, [allVehicles, selectedMake, selectedBodyType, selectedPriceRange, selectedSort, dealerFilter, searchQuery]);
 
   const totalPages = Math.ceil(filteredVehicles.length / PAGE_SIZE);
   const paginatedVehicles = filteredVehicles.slice(
@@ -78,12 +137,11 @@ export default function InventoryGrid() {
   };
 
   const dealerName = dealerFilter
-    ? vehicles.find((v) => v.dealerId === dealerFilter)?.dealerName
+    ? allVehicles.find((v) => v.dealerId === dealerFilter)?.dealerName
     : null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
-      {/* Sidebar */}
       <InventorySidebar
         selectedMake={selectedMake}
         onMakeChange={(v) => { setSelectedMake(v); setCurrentPage(1); }}
@@ -98,9 +156,7 @@ export default function InventoryGrid() {
         onReset={handleReset}
       />
 
-      {/* Main Content */}
       <div>
-        {/* Top Bar: Result count + Mobile filter button */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <p className="text-sm text-[#94A3B8]">
@@ -122,8 +178,12 @@ export default function InventoryGrid() {
           </button>
         </div>
 
-        {/* Grid */}
-        {paginatedVehicles.length > 0 ? (
+        {isLoading ? (
+          <div className="rounded-2xl border border-[#262626] bg-[#171717] py-20 text-center">
+            <Loader2 size={22} className="animate-spin mx-auto text-[#FC5E01]" />
+            <p className="mt-3 text-sm text-[#94A3B8]">Loading vehicles...</p>
+          </div>
+        ) : paginatedVehicles.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {paginatedVehicles.map((vehicle, index) => (
               <VehicleCard key={vehicle.id} vehicle={vehicle} index={index} />
@@ -135,7 +195,6 @@ export default function InventoryGrid() {
           </div>
         )}
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="mt-10 flex items-center justify-center gap-2">
             <button

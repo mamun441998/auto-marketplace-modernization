@@ -11,87 +11,107 @@ const USER_KEY = "motohave_user";
 
 /*
 |--------------------------------------------------------------------------
-| Token
+| Token Helpers
 |--------------------------------------------------------------------------
 */
 
-export const saveToken = (token: string) => {
+export function saveToken(token: string): void {
   if (typeof window === "undefined") return;
 
   localStorage.setItem(TOKEN_KEY, token);
-};
+}
 
-export const getToken = (): string | null => {
+export function getToken(): string | null {
   if (typeof window === "undefined") return null;
 
   return localStorage.getItem(TOKEN_KEY);
-};
+}
 
-export const removeToken = () => {
+export function removeToken(): void {
   if (typeof window === "undefined") return;
 
   localStorage.removeItem(TOKEN_KEY);
-};
+}
 
 /*
 |--------------------------------------------------------------------------
-| User
+| User Helpers
 |--------------------------------------------------------------------------
 */
 
-export const saveUser = (user: AuthUser) => {
+export function saveUser(user: AuthUser): void {
   if (typeof window === "undefined") return;
 
   localStorage.setItem(USER_KEY, JSON.stringify(user));
-};
+}
 
-export const getUser = (): AuthUser | null => {
+export function getUser(): AuthUser | null {
   if (typeof window === "undefined") return null;
 
-  const user = localStorage.getItem(USER_KEY);
+  const stored = localStorage.getItem(USER_KEY);
 
-  if (!user) return null;
+  if (!stored) return null;
 
   try {
-    return JSON.parse(user);
+    return JSON.parse(stored) as AuthUser;
   } catch {
+    removeUser();
     return null;
   }
-};
+}
 
-export const removeUser = () => {
+export function removeUser(): void {
   if (typeof window === "undefined") return;
 
   localStorage.removeItem(USER_KEY);
-};
+}
 
 /*
 |--------------------------------------------------------------------------
-| Auth Helpers
+| Session Helpers
 |--------------------------------------------------------------------------
 */
 
-export const isAuthenticated = (): boolean => {
-  return !!getToken();
-};
-
-/*
-|--------------------------------------------------------------------------
-| Logout
-|--------------------------------------------------------------------------
-*/
-
-export const logout = async () => {
-  try {
-    await apiClient.post("/logout");
-  } catch (error) {
-    console.warn("Logout API failed:", error);
-  }
-
+export function clearAuth(): void {
   removeToken();
   removeUser();
+}
 
-  if (typeof window !== "undefined") {
-    window.location.href = "/sign-in";
+export function isAuthenticated(): boolean {
+  return !!getToken();
+}
+
+/*
+|--------------------------------------------------------------------------
+| Login Helper
+|--------------------------------------------------------------------------
+*/
+
+export function login(token: string, user: AuthUser): void {
+  saveToken(token);
+  saveUser(user);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Logout Helper
+|--------------------------------------------------------------------------
+*/
+
+export async function logout(): Promise<void> {
+  try {
+    const token = getToken();
+
+    if (token) {
+      await apiClient.post("/logout");
+    }
+  } catch (error) {
+    console.warn("Logout request failed:", error);
+  } finally {
+    clearAuth();
+
+    if (typeof window !== "undefined") {
+      window.location.replace("/sign-in");
+    }
   }
-};
+}

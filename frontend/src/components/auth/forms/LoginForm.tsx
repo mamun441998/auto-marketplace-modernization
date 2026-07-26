@@ -1,16 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import apiClient from "@/lib/apiClient";
-import { saveToken, saveUser } from "@/lib/auth";
+import { goToDashboard } from "@/lib/goToDashboard";
+
+interface LoginFormData {
+  email: string;
+  password: string;
+  remember: boolean;
+}
 
 export const LoginForm: React.FC = () => {
-  const router = useRouter();
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
     remember: false,
@@ -19,72 +22,90 @@ export const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value, type, checked } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+      if (errorMessage) setErrorMessage("");
+    },
+    [errorMessage]
+  );
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        type === "checkbox" ? checked : value,
-    }));
+  const validateForm = (): boolean => {
+    if (!formData.email.trim()) {
+      setErrorMessage("Email is required.");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setErrorMessage("Please enter a valid email.");
+      return false;
+    }
+    if (!formData.password) {
+      setErrorMessage("Password is required.");
+      return false;
+    }
+    return true;
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (loading) return;
+    if (!validateForm()) return;
 
     setLoading(true);
     setErrorMessage("");
 
     try {
-      const { data } = await apiClient.post("/login", {
-        email: formData.email,
+      const response = await apiClient.post("/login", {
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
+        remember: formData.remember,
       });
 
-      saveToken(data.token);
-      saveUser(data.user);
+      const data = response.data;
 
-      router.replace("/dealer-admin/dashboard");
+      if (!data.success || !data.token || !data.user) {
+        throw new Error(data.message || "Login failed.");
+      }
+
+      // ✅ real dealer-admin app (:3001)-এ token সহ পাঠাও
+      goToDashboard(data.token, data.user);
     } catch (error: any) {
-      console.error(error);
-
       if (error.response?.data?.errors) {
         const errors = error.response.data.errors;
         const firstKey = Object.keys(errors)[0];
-
         setErrorMessage(errors[firstKey][0]);
       } else {
         setErrorMessage(
-          error.response?.data?.message ??
+          error.response?.data?.message ||
+            error.message ||
             "Invalid email or password."
         );
       }
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4"
-    >
+    <form onSubmit={handleSubmit} noValidate className="space-y-5">
       {errorMessage && (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-500">
+        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
           {errorMessage}
         </div>
       )}
 
-      <div>
-        <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-300">
+      <div className="space-y-2">
+        <label
+          htmlFor="email"
+          className="text-xs font-semibold uppercase tracking-wider text-slate-300"
+        >
           Email Address
         </label>
-
         <input
+          id="email"
           type="email"
           name="email"
           required
@@ -92,25 +113,28 @@ export const LoginForm: React.FC = () => {
           value={formData.email}
           onChange={handleChange}
           placeholder="name@company.com"
-          className="w-full rounded-xl border border-border/80 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-orange-500 focus:outline-none"
+          disabled={loading}
+          className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-sm text-white placeholder:text-slate-500 transition-all focus:border-[#FC5E01] focus:outline-none focus:ring-2 focus:ring-[#FC5E01]/20 disabled:cursor-not-allowed disabled:opacity-60"
         />
       </div>
 
-      <div>
-        <div className="mb-2 flex items-center justify-between">
-          <label className="block text-xs font-medium uppercase tracking-wider text-slate-300">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label
+            htmlFor="password"
+            className="text-xs font-semibold uppercase tracking-wider text-slate-300"
+          >
             Password
           </label>
-
           <Link
             href="/forgot-password"
-            className="text-xs text-orange-500 hover:underline"
+            className="text-xs text-orange-400 hover:text-orange-300"
           >
             Forgot password?
           </Link>
         </div>
-
         <input
+          id="password"
           type="password"
           name="password"
           required
@@ -118,32 +142,32 @@ export const LoginForm: React.FC = () => {
           value={formData.password}
           onChange={handleChange}
           placeholder="••••••••"
-          className="w-full rounded-xl border border-border/80 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-orange-500 focus:outline-none"
+          disabled={loading}
+          className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-sm text-white placeholder:text-slate-500 transition-all focus:border-[#FC5E01] focus:outline-none focus:ring-2 focus:ring-[#FC5E01]/20 disabled:cursor-not-allowed disabled:opacity-60"
         />
       </div>
 
-      <div className="flex items-center">
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2 text-sm text-slate-300">
           <input
             type="checkbox"
             name="remember"
             checked={formData.remember}
             onChange={handleChange}
-            className="h-4 w-4 rounded border-border bg-background text-orange-500 focus:ring-orange-500"
+            disabled={loading}
+            className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-orange-500"
           />
-          Remember for 30 days
+          Remember me
         </label>
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-orange-500 px-4 py-3 text-sm font-medium text-white shadow-lg shadow-orange-500/20 transition-all hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center justify-center rounded-xl bg-[#FC5E01] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#E05300] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading
-          ? "Signing in..."
-          : "Sign In"}
+        {loading ? "Signing In..." : "Sign In"}
       </button>
     </form>
   );
-}
+};

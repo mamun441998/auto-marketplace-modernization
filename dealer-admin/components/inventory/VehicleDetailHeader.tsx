@@ -1,35 +1,55 @@
-// dealer-admin/components/inventory/VehicleDetailHeader.tsx
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Pencil, Trash2 } from "lucide-react";
-import { InventoryVehicle } from "@/lib/dealerData";
+import { deleteVehicle, Vehicle } from "@/lib/vehicle";
 
 interface VehicleDetailHeaderProps {
-  vehicle: InventoryVehicle;
+  vehicle: Vehicle;
 }
 
-const statusStyles: Record<string, string> = {
-  "In Stock": "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  Reserved: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  Sold: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+const statusMap: Record<string, { label: string; className: string }> = {
+  active:   { label: "In Stock", className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
+  pending:  { label: "Reserved", className: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
+  sold:     { label: "Sold",     className: "bg-slate-500/10 text-slate-400 border-slate-500/20" },
+  draft:    { label: "Draft",    className: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
+  archived: { label: "Archived", className: "bg-slate-500/10 text-slate-400 border-slate-500/20" },
 };
 
 export default function VehicleDetailHeader({ vehicle }: VehicleDetailHeaderProps) {
   const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = () => {
-    // 💡 Backend connect korar somoy: eikhane API call hobe
-    // jemon: await fetch(`/api/vehicles/${vehicle.id}`, { method: "DELETE" })
-    if (confirm(`Delete ${vehicle.make} ${vehicle.model}?`)) {
-      alert("Vehicle deleted (backend not connected yet)");
-      router.push("/inventory");
+  const s = statusMap[vehicle.status] ?? {
+    label: vehicle.status,
+    className: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+  };
+
+  const handleDelete = async () => {
+    if (isDeleting) return;
+    if (!confirm(`Delete ${vehicle.make} ${vehicle.model}?`)) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await deleteVehicle(vehicle.id);
+      if (res.success) {
+        router.push("/inventory");
+        router.refresh();
+      } else {
+        alert((res as any).message || "Failed to delete vehicle.");
+        setIsDeleting(false);
+      }
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Something went wrong while deleting.");
+      setIsDeleting(false);
     }
   };
 
- const handleEdit = () => {
-  router.push(`/inventory/${vehicle.id}/edit`);
-};
+  const handleEdit = () => {
+    router.push(`/inventory/${vehicle.id}/edit`);
+  };
 
   return (
     <div>
@@ -47,15 +67,17 @@ export default function VehicleDetailHeader({ vehicle }: VehicleDetailHeaderProp
             <h1 className="text-2xl font-bold text-white">
               {vehicle.year} {vehicle.make} {vehicle.model}
             </h1>
-            <span className={`rounded-full border px-2.5 py-1 text-xs font-bold ${statusStyles[vehicle.status]}`}>
-              {vehicle.status}
+            <span className={`rounded-full border px-2.5 py-1 text-xs font-bold ${s.className}`}>
+              {s.label}
             </span>
           </div>
-          <p className="text-sm text-[#64748B] font-mono">VIN: {vehicle.vin}</p>
+          <p className="text-sm text-[#64748B] font-mono">VIN: {vehicle.vin ?? "—"}</p>
         </div>
 
         <div className="flex items-center gap-3 flex-shrink-0">
-          <p className="text-2xl font-extrabold text-[#FC5E01]">${vehicle.price.toLocaleString()}</p>
+          <p className="text-2xl font-extrabold text-[#FC5E01]">
+            {vehicle.price != null ? `$${Number(vehicle.price).toLocaleString()}` : "—"}
+          </p>
         </div>
       </div>
 
@@ -69,10 +91,11 @@ export default function VehicleDetailHeader({ vehicle }: VehicleDetailHeaderProp
         </button>
         <button
           onClick={handleDelete}
-          className="flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-2.5 text-sm font-semibold text-rose-400 hover:bg-rose-500/20 transition-colors"
+          disabled={isDeleting}
+          className="flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-2.5 text-sm font-semibold text-rose-400 hover:bg-rose-500/20 transition-colors disabled:opacity-50"
         >
           <Trash2 size={15} />
-          Delete
+          {isDeleting ? "Deleting..." : "Delete"}
         </button>
       </div>
     </div>

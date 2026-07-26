@@ -1,20 +1,16 @@
-// dealer-admin/components/leads/LeadsStats.tsx
 "use client";
 
 import { UserPlus, PhoneCall, Target, CheckCircle2 } from "lucide-react";
-import { leads } from "@/lib/dealerData";
+import { Lead } from "@/lib/lead";
 
-export default function LeadsStats() {
-  const newCount = leads.filter((l) => l.status === "New").length;
-  const contactedCount = leads.filter((l) => l.status === "Contacted").length;
-  const qualifiedCount = leads.filter((l) => l.status === "Qualified").length;
-  const closedCount = leads.filter((l) => l.status === "Closed").length;
+export default function LeadsStats({ leads }: { leads: Lead[] }) {
+  const count = (s: string) => leads.filter((l) => l.status === s).length;
 
   const stats = [
-    { label: "New Leads", value: newCount, icon: UserPlus, accent: "text-blue-400 bg-blue-500/10" },
-    { label: "Contacted", value: contactedCount, icon: PhoneCall, accent: "text-amber-400 bg-amber-500/10" },
-    { label: "Qualified", value: qualifiedCount, icon: Target, accent: "text-violet-400 bg-violet-500/10" },
-    { label: "Closed Won", value: closedCount, icon: CheckCircle2, accent: "text-emerald-400 bg-emerald-500/10" },
+    { label: "New Leads", value: count("new"), icon: UserPlus, accent: "text-blue-400 bg-blue-500/10" },
+    { label: "Contacted", value: count("contacted"), icon: PhoneCall, accent: "text-amber-400 bg-amber-500/10" },
+    { label: "Qualified", value: count("qualified"), icon: Target, accent: "text-violet-400 bg-violet-500/10" },
+    { label: "Closed Won", value: count("closed"), icon: CheckCircle2, accent: "text-emerald-400 bg-emerald-500/10" },
   ];
 
   return (

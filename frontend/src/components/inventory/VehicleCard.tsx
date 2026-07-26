@@ -1,4 +1,3 @@
-// src/components/inventory/VehicleCard.tsx
 "use client";
 
 import { motion } from "framer-motion";
@@ -21,9 +20,14 @@ export default function VehicleCard({ vehicle, index }: VehicleCardProps) {
       whileHover={{ y: -6 }}
       className="group overflow-hidden rounded-2xl border border-[#262626] bg-[#171717] transition-all duration-300 hover:border-[#2d3d5e] hover:shadow-xl hover:shadow-black/20"
     >
-      {/* Image Placeholder */}
-      <div className={`relative h-44 bg-gradient-to-br ${vehicle.gradient} flex items-center justify-center`}>
-        <span className="text-5xl opacity-90">🚗</span>
+      {/* Image */}
+      <div className={`relative h-44 flex items-center justify-center overflow-hidden ${vehicle.image ? "bg-[#0A0A0A]" : `bg-gradient-to-br ${vehicle.gradient}`}`}>
+        {vehicle.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={vehicle.image} alt={`${vehicle.make} ${vehicle.model}`} className="h-full w-full object-cover" />
+        ) : (
+          <span className="text-5xl opacity-90">🚗</span>
+        )}
 
         {vehicle.condition === "New" && (
           <span className="absolute top-3 left-3 rounded-full bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-sm">
@@ -39,7 +43,7 @@ export default function VehicleCard({ vehicle, index }: VehicleCardProps) {
       {/* Content */}
       <div className="p-5">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-base font-bold text-white group-hover:text-[#FC5E01] transition-colors">
+          <h3 className="text-base font-bold text-white group-hover:text-[#FC5E01] transition-colors capitalize">
             {vehicle.make} {vehicle.model}
           </h3>
         </div>
@@ -58,11 +62,11 @@ export default function VehicleCard({ vehicle, index }: VehicleCardProps) {
           </div>
           <div className="flex flex-col items-center gap-1 text-center border-x border-[#262626]">
             <Fuel size={15} className="text-[#64748B]" />
-            <span className="text-[10px] font-semibold text-[#94A3B8]">{vehicle.fuelType}</span>
+            <span className="text-[10px] font-semibold text-[#94A3B8] capitalize">{vehicle.fuelType}</span>
           </div>
           <div className="flex flex-col items-center gap-1 text-center">
             <Settings2 size={15} className="text-[#64748B]" />
-            <span className="text-[10px] font-semibold text-[#94A3B8]">{vehicle.transmission}</span>
+            <span className="text-[10px] font-semibold text-[#94A3B8] capitalize">{vehicle.transmission}</span>
           </div>
         </div>
 

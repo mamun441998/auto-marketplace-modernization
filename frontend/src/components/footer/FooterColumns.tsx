@@ -38,7 +38,7 @@ const columns = [
   {
     title: "Support",
     links: [
-      { label: "Book a Demo", href: "/demo" },
+      { label: "Book a Demo", href: "/contact" },
       { label: "Start Free Trial", href: "/register" },
       { label: "Help Center", href: "/help" },
       { label: "FAQ", href: "/#faq" },

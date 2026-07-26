@@ -1,50 +1,117 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import DealerSidebar from "@/components/layout/DealerSidebar";
 import DealerTopbar from "@/components/layout/DealerTopbar";
 import { ProfileProvider } from "@/components/layout/ProfileContext";
 
+import { useAuth } from "@/contexts/AuthContext";
+
+interface DealerAdminLayoutProps {
+  children: React.ReactNode;
+}
+
 export default function DealerAdminLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: DealerAdminLayoutProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+
+  const {
+    user,
+    authenticated,
+    loading,
+  } = useAuth();
+
+  /*
+  |--------------------------------------------------------------------------
+  | Authentication Guard
+  |--------------------------------------------------------------------------
+  */
 
   useEffect(() => {
-    const token = localStorage.getItem("motohave_token");
-    const user = localStorage.getItem("motohave_user");
+    if (loading) return;
 
-    if (!token || !user) {
+    if (!authenticated) {
       router.replace("/sign-in");
       return;
     }
 
-    setLoading(false);
-  }, [router]);
+    /*
+    |--------------------------------------------------------------------------
+    | Future Role Protection
+    |--------------------------------------------------------------------------
+    |
+    | Example:
+    |
+    | if (user?.role !== "dealer") {
+    |   router.replace("/");
+    | }
+    |
+    */
+
+  }, [
+    loading,
+    authenticated,
+    router,
+  ]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Loading Screen
+  |--------------------------------------------------------------------------
+  */
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0A0F1E]">
         <div className="flex flex-col items-center gap-5">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
-          <p className="text-sm text-slate-400">Loading Dashboard...</p>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#FC5E01] border-t-transparent" />
+
+          <div className="space-y-2 text-center">
+            <h2 className="text-lg font-semibold text-white">
+              Loading Dashboard
+            </h2>
+
+            <p className="text-sm text-slate-400">
+              Please wait...
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
+  /*
+  |--------------------------------------------------------------------------
+  | Prevent Dashboard Flash
+  |--------------------------------------------------------------------------
+  */
+
+  if (!authenticated || !user) {
+    return null;
+  }
+
   return (
     <ProfileProvider>
       <div className="min-h-screen bg-[#0A0F1E]">
+        {/* Sidebar */}
+
         <DealerSidebar />
-        <div className="ml-[260px]">
+
+        {/* Main Content */}
+
+        <div className="ml-[260px] flex min-h-screen flex-col">
+          {/* Header */}
+
           <DealerTopbar />
-          <main className="p-6 lg:p-8">{children}</main>
+
+          {/* Page */}
+
+          <main className="flex-1 overflow-x-hidden p-6 lg:p-8">
+            {children}
+          </main>
         </div>
       </div>
     </ProfileProvider>

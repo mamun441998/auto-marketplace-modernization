@@ -1,39 +1,59 @@
-// dealer-admin/components/inventory/VehicleGallery.tsx
 "use client";
 
 import { useState } from "react";
+import { VehicleImage } from "@/lib/vehicle";
 
 interface VehicleGalleryProps {
-  photoCount?: number;
+  images?: VehicleImage[];
 }
 
-export default function VehicleGallery({ photoCount = 5 }: VehicleGalleryProps) {
+export default function VehicleGallery({ images = [] }: VehicleGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const placeholderPhotos = Array.from({ length: photoCount });
+
+  // No images -> friendly placeholder.
+  if (!images.length) {
+    return (
+      <div className="rounded-2xl border border-[#1e2a4a] bg-[#111B33] p-5">
+        <div className="aspect-video rounded-xl bg-[#0A0F1E] border border-[#1e2a4a] flex flex-col items-center justify-center gap-2">
+          <span className="text-6xl">🚗</span>
+          <span className="text-xs text-[#64748B]">No photos uploaded yet</span>
+        </div>
+      </div>
+    );
+  }
+
+  const safeIndex = Math.min(activeIndex, images.length - 1);
+  const active = images[safeIndex];
 
   return (
     <div className="rounded-2xl border border-[#1e2a4a] bg-[#111B33] p-5">
       {/* Main Image */}
-      <div className="relative aspect-video rounded-xl bg-[#0A0F1E] border border-[#1e2a4a] flex items-center justify-center mb-3">
-        <span className="text-6xl">🚗</span>
+      <div className="relative aspect-video rounded-xl bg-[#0A0F1E] border border-[#1e2a4a] overflow-hidden flex items-center justify-center mb-3">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={active.image_url}
+          alt={active.alt_text ?? ""}
+          className="h-full w-full object-cover"
+        />
         <span className="absolute bottom-3 right-3 rounded-full bg-black/50 backdrop-blur px-2.5 py-1 text-xs font-semibold text-white">
-          {activeIndex + 1} / {photoCount}
+          {safeIndex + 1} / {images.length}
         </span>
       </div>
 
       {/* Thumbnails */}
       <div className="grid grid-cols-5 gap-2">
-        {placeholderPhotos.map((_, index) => (
+        {images.map((img, index) => (
           <button
-            key={index}
+            key={img.id}
             onClick={() => setActiveIndex(index)}
-            className={`aspect-square rounded-lg border flex items-center justify-center transition-colors ${
-              activeIndex === index
-                ? "border-[#FC5E01] bg-[#FC5E01]/10"
-                : "border-[#1e2a4a] bg-[#0A0F1E] hover:border-[#2d3d5e]"
+            className={`aspect-square rounded-lg border overflow-hidden transition-colors ${
+              safeIndex === index
+                ? "border-[#FC5E01] ring-1 ring-[#FC5E01]/40"
+                : "border-[#1e2a4a] hover:border-[#2d3d5e]"
             }`}
           >
-            <span className="text-lg">🚗</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={img.image_url} alt="" className="h-full w-full object-cover" />
           </button>
         ))}
       </div>

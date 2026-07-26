@@ -1,16 +1,31 @@
-// dealer-admin/components/inventory/InventoryStats.tsx
 "use client";
 
+import { useEffect, useState } from "react";
 import { CarFront, CheckCircle2, Clock, DollarSign } from "lucide-react";
-import { inventoryVehicles } from "@/lib/dealerData";
 import { getCurrentDealerPlan } from "@/lib/planConfig";
+import { fetchMyVehicles, Vehicle } from "@/lib/vehicle";
 
 export default function InventoryStats() {
   const currentPlan = getCurrentDealerPlan();
-  const totalVehicles = inventoryVehicles.length;
-  const inStock = inventoryVehicles.filter((v) => v.status === "In Stock").length;
-  const reserved = inventoryVehicles.filter((v) => v.status === "Reserved").length;
-  const totalValue = inventoryVehicles.reduce((sum, v) => sum + v.price, 0);
+
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetchMyVehicles({ per_page: 100 });
+        if (res.success) setVehicles(res.vehicles ?? []);
+      } catch (err) {
+        console.error("Load inventory stats failed:", err);
+      }
+    })();
+  }, []);
+
+  // Real numbers from the dealer's inventory.
+  const totalVehicles = vehicles.length;
+  const inStock = vehicles.filter((v) => v.status === "active").length;
+  const reserved = vehicles.filter((v) => v.status === "pending").length;
+  const totalValue = vehicles.reduce((sum, v) => sum + Number(v.price ?? 0), 0);
 
   const isUnlimited = currentPlan.maxVehicleListings === "unlimited";
   const usagePercent = isUnlimited
@@ -42,7 +57,9 @@ export default function InventoryStats() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FC5E01]/10 text-[#FC5E01]">
             <DollarSign size={20} />
           </div>
-          <p className="mt-3 text-2xl font-extrabold text-white">${(totalValue / 1000).toFixed(0)}K</p>
+          <p className="mt-3 text-2xl font-extrabold text-white">
+            ${(totalValue / 1000).toFixed(0)}K
+          </p>
           <p className="mt-0.5 text-xs text-[#64748B]">Total Inventory Value</p>
         </div>
       </div>

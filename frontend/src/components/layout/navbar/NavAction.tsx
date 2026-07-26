@@ -1,13 +1,101 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LayoutDashboard, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { useAuth } from "@/contexts/AuthContext";
+
 export default function NavAction() {
+  const { authenticated, loading, logout } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
+  if (authenticated) {
+    return (
+      <div className="hidden items-center gap-3 lg:flex">
+        {/* Dashboard */}
+
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.96 }}
+          transition={{
+            type: "spring",
+            stiffness: 500,
+            damping: 22,
+          }}
+        >
+          <Link
+            href="/dealer-admin/dashboard"
+            className="
+              inline-flex
+              h-9
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              border
+              border-[#FC5E01]/30
+              bg-[#FC5E01]/10
+              px-4
+              text-[14px]
+              font-medium
+              text-[#FC5E01]
+              transition-all
+              duration-300
+              hover:bg-[#FC5E01]
+              hover:text-white
+            "
+          >
+            <LayoutDashboard size={16} />
+            Dashboard
+          </Link>
+        </motion.div>
+
+        {/* Logout */}
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.96 }}
+          transition={{
+            type: "spring",
+            stiffness: 500,
+            damping: 22,
+          }}
+          onClick={logout}
+          className="
+            inline-flex
+            h-9
+            items-center
+            justify-center
+            gap-2
+            rounded-xl
+            border
+            border-red-500/20
+            bg-red-500/10
+            px-4
+            text-[14px]
+            font-medium
+            text-red-400
+            transition-all
+            duration-300
+            hover:bg-red-500
+            hover:text-white
+          "
+        >
+          <LogOut size={16} />
+          Logout
+        </motion.button>
+      </div>
+    );
+  }
+
   return (
     <div className="hidden items-center gap-3 lg:flex">
       {/* Sign In */}
+
       <motion.div
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.96 }}
@@ -44,7 +132,8 @@ export default function NavAction() {
         </Link>
       </motion.div>
 
-      {/* Get Started */}
+      {/* Register */}
+
       <motion.div
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.96 }}

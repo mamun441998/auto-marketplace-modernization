@@ -14,6 +14,7 @@ export interface Vehicle {
   dealerId: number;
   condition: string;
   gradient: string;
+  image?: string | null; 
 }
 
 export const vehicles: Vehicle[] = [

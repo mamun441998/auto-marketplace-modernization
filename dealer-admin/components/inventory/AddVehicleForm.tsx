@@ -1,4 +1,3 @@
-// dealer-admin/components/inventory/AddVehicleForm.tsx
 "use client";
 
 import { useState } from "react";
@@ -15,7 +14,13 @@ import {
   FileText,
 } from "lucide-react";
 import { hasFeatureAccess } from "@/lib/planConfig";
-import { InventoryVehicle } from "@/lib/dealerData";
+import {
+  createVehicle,
+  updateVehicle,
+  uploadVehicleImages,
+  VehiclePayload,
+  Vehicle,
+} from "@/lib/vehicle";
 
 const bodyTypes = ["Sedan", "SUV", "Truck", "Coupe", "Hatchback", "Van"];
 const fuelTypes = ["Petrol", "Diesel", "Hybrid", "Electric"];
@@ -23,7 +28,37 @@ const transmissions = ["Automatic", "Manual"];
 const conditions = ["New", "Used", "Certified Pre-Owned"];
 
 interface AddVehicleFormProps {
-  vehicle?: InventoryVehicle; // 💡 Dile "Edit mode", na dile "Add mode"
+  vehicle?: Vehicle; // 💡 Dile "Edit mode", na dile "Add mode"
+}
+
+/* -------------------------------------------------------------------------
+ |  Value mapping helpers (UI <-> backend)
+ |------------------------------------------------------------------------*/
+function toCondition(c: string): string {
+  if (c === "Certified Pre-Owned") return "certified";
+  return c.toLowerCase(); // "New" -> new, "Used" -> used
+}
+
+/** backend "certified" -> display "Certified Pre-Owned" etc. */
+function conditionToDisplay(value?: string | null): string {
+  if (!value) return "Used";
+  if (value === "certified") return "Certified Pre-Owned";
+  const map: Record<string, string> = { new: "New", used: "Used" };
+  return map[value] ?? "Used";
+}
+
+/** Find the dropdown option matching a lowercase backend value. */
+function matchOption(options: string[], value?: string | null, fallback = ""): string {
+  if (!value) return fallback;
+  return options.find((o) => o.toLowerCase() === value.toLowerCase()) ?? fallback;
+}
+
+function extractError(res: any): string {
+  if (res?.errors) {
+    const first = Object.values(res.errors)[0];
+    if (Array.isArray(first) && first.length) return String(first[0]);
+  }
+  return res?.message || "Failed to save vehicle. Please try again.";
 }
 
 export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
@@ -36,17 +71,19 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
     model: vehicle?.model ?? "",
     year: vehicle?.year?.toString() ?? "",
     vin: vehicle?.vin ?? "",
-    bodyType: vehicle?.bodyType ?? "Sedan",
-    condition: "Used",
-    price: vehicle?.price?.toString() ?? "",
-    mileage: vehicle?.mileage?.toString() ?? "",
-    fuelType: vehicle?.fuelType ?? "Petrol",
-    transmission: vehicle?.transmission ?? "Automatic",
-    description: "",
+    bodyType: matchOption(bodyTypes, vehicle?.body_type, "Sedan"),
+    condition: conditionToDisplay(vehicle?.condition),
+    price: vehicle?.price != null ? String(Number(vehicle.price)) : "",
+    mileage: vehicle?.mileage != null ? String(vehicle.mileage) : "",
+    fuelType: matchOption(fuelTypes, vehicle?.fuel_type, "Petrol"),
+    transmission: matchOption(transmissions, vehicle?.transmission, "Automatic"),
+    description: vehicle?.description ?? "",
   });
 
-  const [photos, setPhotos] = useState<string[]>(isEditMode ? ["placeholder", "placeholder"] : []);
+  const [photos, setPhotos] = useState<{ file: File; url: string }[]>([]);
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const updateField = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -56,19 +93,26 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
     const files = e.target.files;
     if (!files) return;
 
-    // 💡 Backend connect korar somoy: eikhane actual file upload hobe (S3/storage)
-    const newPhotos = Array.from(files).map(() => "placeholder");
-    setPhotos((prev) => [...prev, ...newPhotos].slice(0, 8));
+    const selected = Array.from(files).map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+
+    setPhotos((prev) => [...prev, ...selected].slice(0, 8));
+    e.target.value = "";
   };
 
   const removePhoto = (index: number) => {
-    setPhotos((prev) => prev.filter((_, i) => i !== index));
+    setPhotos((prev) => {
+      const target = prev[index];
+      if (target) URL.revokeObjectURL(target.url);
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   const handleGenerateDescription = () => {
     if (!canUseAI) return;
     setIsGeneratingDescription(true);
-    // 💡 Backend connect korar somoy: eikhane AI API call hobe
     setTimeout(() => {
       updateField(
         "description",
@@ -80,19 +124,73 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
     }, 1200);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const buildPayload = (): VehiclePayload => ({
+    title: `${formData.year} ${formData.make} ${formData.model}`.trim(),
+    make: formData.make.trim(),
+    model: formData.model.trim(),
+    year: Number(formData.year),
+    vin: formData.vin ? formData.vin.trim() : null,
+    body_type: formData.bodyType.toLowerCase(),
+    condition: toCondition(formData.condition),
+    price: Number(formData.price),
+    currency: "USD",
+    mileage: formData.mileage ? Number(formData.mileage) : null,
+    fuel_type: formData.fuelType.toLowerCase(),
+    transmission: formData.transmission.toLowerCase(),
+    description: formData.description ? formData.description : null,
+    status: isEditMode ? (vehicle?.status ?? "active") : "active",
+  });
 
-    if (isEditMode) {
-      // 💡 Backend connect korar somoy: eikhane API call hobe
-      // jemon: await fetch(`/api/vehicles/${vehicle!.id}`, { method: "PATCH", body: JSON.stringify(formData) })
-      alert(`Vehicle "${formData.make} ${formData.model}" updated (backend not connected yet)`);
-      router.push(`/inventory/${vehicle!.id}`);
-    } else {
-      // 💡 Backend connect korar somoy: eikhane API call hobe
-      // jemon: await fetch("/api/vehicles", { method: "POST", body: JSON.stringify(formData) })
-      alert("Vehicle added successfully (backend not connected yet)");
-      router.push("/inventory");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const payload = buildPayload();
+
+      if (isEditMode) {
+        // -------- UPDATE --------
+        const res = await updateVehicle(vehicle!.id, payload);
+
+        if (!res.success) {
+          setError(extractError(res));
+          return;
+        }
+
+        // Upload any newly added photos.
+        if (photos.length) {
+          const upRes = await uploadVehicleImages(
+            res.vehicle?.id ?? vehicle!.id,
+            photos.map((p) => p.file)
+          );
+          if (!upRes.success) {
+            setError("Vehicle saved, but photo upload failed: " + extractError(upRes));
+            return;
+          }
+        }
+
+        router.push(`/inventory/${res.vehicle?.id ?? vehicle!.id}`);
+        router.refresh();
+      } else {
+        // -------- CREATE (vehicle + photos in ONE request) --------
+        const res = await createVehicle(payload, photos.map((p) => p.file));
+
+        if (!res.success || !res.vehicle) {
+          setError(extractError(res));
+          return;
+        }
+
+        router.push("/inventory");
+        router.refresh();
+      }
+    } catch (err) {
+      console.error("Vehicle save failed:", err);
+      setError("Something went wrong. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -108,6 +206,13 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
       </button>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* Error banner */}
+        {error && (
+          <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
+            {error}
+          </div>
+        )}
+
         {/* Section 1: Basic Info */}
         <div className="rounded-2xl border border-[#1e2a4a] bg-[#111B33] p-6">
           <div className="flex items-center gap-2.5 mb-5">
@@ -160,7 +265,6 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
               <label className="mb-1.5 block text-xs font-semibold text-[#94A3B8]">VIN Number</label>
               <input
                 type="text"
-                required
                 value={formData.vin}
                 onChange={(e) => updateField("vin", e.target.value.toUpperCase())}
                 placeholder="e.g. 4T1B11HK5KU123456"
@@ -231,7 +335,6 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
               <div className="flex items-center rounded-lg border border-[#1e2a4a] bg-[#0A0F1E] px-3.5 py-2.5">
                 <input
                   type="number"
-                  required
                   value={formData.mileage}
                   onChange={(e) => updateField("mileage", e.target.value)}
                   placeholder="15600"
@@ -281,18 +384,23 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
             </div>
             <div>
               <h2 className="text-sm font-bold text-white">Vehicle Photos</h2>
-              <p className="text-xs text-[#64748B] mt-0.5">Upload up to 8 photos. First photo will be the cover image.</p>
+              <p className="text-xs text-[#64748B] mt-0.5">
+                {isEditMode
+                  ? "Add more photos (existing photos are managed on the detail page)."
+                  : "Upload up to 8 photos. First photo will be the cover image."}
+              </p>
             </div>
           </div>
 
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-            {photos.map((_, index) => (
+            {photos.map((photo, index) => (
               <div
-                key={index}
+                key={photo.url}
                 className="relative aspect-square rounded-xl border border-[#1e2a4a] bg-[#0A0F1E] flex items-center justify-center overflow-hidden"
               >
-                <span className="text-2xl">🚗</span>
-                {index === 0 && (
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={photo.url} alt="" className="h-full w-full object-cover" />
+                {index === 0 && !isEditMode && (
                   <span className="absolute top-1.5 left-1.5 rounded-full bg-[#FC5E01] px-1.5 py-0.5 text-[8px] font-bold text-white">
                     Cover
                   </span>
@@ -365,15 +473,23 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
           <button
             type="button"
             onClick={() => router.push(isEditMode ? `/inventory/${vehicle!.id}` : "/inventory")}
-            className="flex-1 sm:flex-none rounded-xl border border-[#1e2a4a] bg-[#111B33] px-6 py-3 text-sm font-semibold text-white hover:border-[#2d3d5e] transition-colors"
+            disabled={isSubmitting}
+            className="flex-1 sm:flex-none rounded-xl border border-[#1e2a4a] bg-[#111B33] px-6 py-3 text-sm font-semibold text-white hover:border-[#2d3d5e] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex-1 sm:flex-none rounded-xl bg-[#FC5E01] px-6 py-3 text-sm font-semibold text-white hover:bg-[#E5540A] transition-colors"
+            disabled={isSubmitting}
+            className="flex-1 sm:flex-none rounded-xl bg-[#FC5E01] px-6 py-3 text-sm font-semibold text-white hover:bg-[#E5540A] transition-colors disabled:opacity-60"
           >
-            {isEditMode ? "Save Changes" : "Add Vehicle to Inventory"}
+            {isSubmitting
+              ? isEditMode
+                ? "Saving..."
+                : "Adding..."
+              : isEditMode
+              ? "Save Changes"
+              : "Add Vehicle to Inventory"}
           </button>
         </div>
       </form>

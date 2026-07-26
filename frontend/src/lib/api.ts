@@ -13,12 +13,7 @@ const api = axios.create({
   },
 });
 
-/*
-|--------------------------------------------------------------------------
-| Request Interceptor
-|--------------------------------------------------------------------------
-*/
-
+/* Request Interceptor */
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
@@ -28,22 +23,14 @@ api.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
-
     return config;
   },
-
   (error) => Promise.reject(error)
 );
 
-/*
-|--------------------------------------------------------------------------
-| Response Interceptor
-|--------------------------------------------------------------------------
-*/
-
+/* Response Interceptor */
 api.interceptors.response.use(
   (response) => response,
-
   (error) => {
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
@@ -55,7 +42,6 @@ api.interceptors.response.use(
         }
       }
     }
-
     return Promise.reject(error);
   }
 );

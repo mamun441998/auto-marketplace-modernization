@@ -1,10 +1,9 @@
-// dealer-admin/components/dashboard/OnboardingChecklist.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Circle, X, PartyPopper } from "lucide-react";
-import { inventoryVehicles, teamMembers } from "@/lib/dealerData";
+import { fetchMyVehicles } from "@/lib/vehicle";
 
 interface ChecklistItem {
   id: number;
@@ -16,29 +15,40 @@ interface ChecklistItem {
 
 export default function OnboardingChecklist() {
   const [dismissed, setDismissed] = useState(false);
+  const [hasVehicle, setHasVehicle] = useState(false);
 
-  // 💡 Backend connect korar somoy: eikhane real dealer profile/domain status theke asbe
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetchMyVehicles({ per_page: 1 });
+        if (res.success) setHasVehicle((res.vehicles ?? []).length > 0);
+      } catch (err) {
+        console.error("Onboarding checklist load failed:", err);
+      }
+    })();
+  }, []);
+
   const checklistItems: ChecklistItem[] = [
     {
       id: 1,
       label: "Add your first vehicle",
       description: "List a vehicle to start selling on MotoHave.",
       href: "/inventory/add",
-      completed: inventoryVehicles.length > 0,
+      completed: hasVehicle, // ✅ real
     },
     {
       id: 2,
       label: "Complete your dealership profile",
       description: "Add your business details and address.",
       href: "/settings",
-      completed: true, // Mock e already filled dhora hocche
+      completed: true, // dealer exists (onboarding done)
     },
     {
       id: 3,
       label: "Invite your team",
       description: "Add staff members to help manage your dealership.",
       href: "/team",
-      completed: teamMembers.length > 1,
+      completed: false, // team backend not built yet
     },
     {
       id: 4,

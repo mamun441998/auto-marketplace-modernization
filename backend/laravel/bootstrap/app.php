@@ -18,15 +18,18 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /*
         |--------------------------------------------------------------------------
-        | API Middleware
+        | Stateful API (Laravel Sanctum SPA)
         |--------------------------------------------------------------------------
         */
-
-        $middleware->statefulApi();
-
     })
 
     ->withExceptions(function (Exceptions $exceptions): void {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Always return JSON for API routes
+        |--------------------------------------------------------------------------
+        */
 
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*')

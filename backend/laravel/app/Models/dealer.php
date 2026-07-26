@@ -6,34 +6,207 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Dealer extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+
+    /**
+     * --------------------------------------------------------------------------
+     * Mass Assignable
+     * --------------------------------------------------------------------------
+     */
 
     protected $fillable = [
+
+        /*
+        |--------------------------------------------------------------------------
+        | Identity
+        |--------------------------------------------------------------------------
+        */
+
         'uuid',
+        'user_id',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Dealer Information
+        |--------------------------------------------------------------------------
+        */
+
         'name',
         'slug',
         'email',
         'phone',
         'website',
+        'description',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Address
+        |--------------------------------------------------------------------------
+        */
+
         'address',
         'city',
+        'state',
+        'postal_code',
         'country',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Location
+        |--------------------------------------------------------------------------
+        */
+
+        'latitude',
+        'longitude',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Business
+        |--------------------------------------------------------------------------
+        */
+
+        'license_number',
+        'tax_number',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Social Media
+        |--------------------------------------------------------------------------
+        */
+
+        'facebook',
+        'instagram',
+        'linkedin',
+        'youtube',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Branding
+        |--------------------------------------------------------------------------
+        */
+
         'logo',
+        'cover_image',
+        'theme',
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEO
+        |--------------------------------------------------------------------------
+        */
+
+        'meta_title',
+        'meta_description',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Status
+        |--------------------------------------------------------------------------
+        */
+
+        'status',
         'is_active',
+        'is_verified',
+        'is_featured',
+
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+    /**
+     * --------------------------------------------------------------------------
+     * Hidden
+     * --------------------------------------------------------------------------
+     */
+
+    protected $hidden = [
+
+        'deleted_at',
+
     ];
 
-    // Dealer has many Vehicles
-    public function vehicles()
+    /**
+     * --------------------------------------------------------------------------
+     * Casts
+     * --------------------------------------------------------------------------
+     */
+
+    protected function casts(): array
+    {
+        return [
+
+            'latitude' => 'decimal:7',
+            'longitude' => 'decimal:7',
+
+            'is_active' => 'boolean',
+            'is_verified' => 'boolean',
+            'is_featured' => 'boolean',
+
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+
+        ];
+    }
+
+    /**
+     * --------------------------------------------------------------------------
+     * Relationships
+     * --------------------------------------------------------------------------
+     */
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function vehicles(): HasMany
     {
         return $this->hasMany(Vehicle::class);
+    }
+
+    /**
+     * --------------------------------------------------------------------------
+     * Accessors
+     * --------------------------------------------------------------------------
+     */
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        return $this->logo
+            ? asset('storage/' . $this->logo)
+            : null;
+    }
+
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        return $this->cover_image
+            ? asset('storage/' . $this->cover_image)
+            : null;
+    }
+
+    /**
+     * --------------------------------------------------------------------------
+     * Query Scopes
+     * --------------------------------------------------------------------------
+     */
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeVerified($query)
+    {
+        return $query->where('is_verified', true);
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
     }
 }

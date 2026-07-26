@@ -1,20 +1,69 @@
-// dealer-admin/app/inventory/[id]/page.tsx
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Loader2, CarFront } from "lucide-react";
 import VehicleDetailHeader from "@/components/inventory/VehicleDetailHeader";
 import VehicleGallery from "@/components/inventory/VehicleGallery";
 import VehicleSpecs from "@/components/inventory/VehicleSpecs";
-import { inventoryVehicles } from "@/lib/dealerData";
+import { fetchMyVehicle, Vehicle } from "@/lib/vehicle";
 
-interface VehicleDetailPageProps {
-  params: Promise<{ id: string }>;
-}
+export default function VehicleDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params?.id as string;
 
-export default async function VehicleDetailPage({ params }: VehicleDetailPageProps) {
-  const { id } = await params;
-  const vehicle = inventoryVehicles.find((v) => v.id === Number(id));
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!vehicle) {
-    notFound();
+  useEffect(() => {
+    if (!id) return;
+
+    (async () => {
+      setIsLoading(true);
+      setNotFound(false);
+      try {
+        const res = await fetchMyVehicle(id);
+        if (res.success && res.vehicle) {
+          setVehicle(res.vehicle);
+        } else {
+          setNotFound(true);
+        }
+      } catch (err) {
+        console.error("Load vehicle failed:", err);
+        setNotFound(true);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24 text-[#94A3B8]">
+        <Loader2 size={20} className="animate-spin mr-2" />
+        Loading vehicle...
+      </div>
+    );
+  }
+
+  if (notFound || !vehicle) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <CarFront size={40} className="text-[#64748B] mb-4" />
+        <h2 className="text-lg font-bold text-white">Vehicle not found</h2>
+        <p className="mt-1 text-sm text-[#94A3B8]">
+          This vehicle may have been deleted or does not belong to you.
+        </p>
+        <button
+          onClick={() => router.push("/inventory")}
+          className="mt-5 rounded-xl bg-[#FC5E01] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#E5540A] transition-colors"
+        >
+          Back to Inventory
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -22,7 +71,7 @@ export default async function VehicleDetailPage({ params }: VehicleDetailPagePro
       <VehicleDetailHeader vehicle={vehicle} />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
-        <VehicleGallery />
+        <VehicleGallery images={vehicle.images ?? []} />
         <VehicleSpecs vehicle={vehicle} />
       </div>
     </div>

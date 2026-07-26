@@ -6,9 +6,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
   ArrowRight,
+  LayoutDashboard,
+  LogOut,
 } from "lucide-react";
 
 import { navigation } from "@/config/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 type MobileNavProps = {
   open: boolean;
@@ -21,6 +24,12 @@ export default function MobileNav({
 }: MobileNavProps) {
   const [solutionsOpen, setSolutionsOpen] =
     useState(false);
+
+  const {
+    authenticated,
+    loading,
+    logout,
+  } = useAuth();
 
   return (
     <AnimatePresence>
@@ -44,11 +53,8 @@ export default function MobileNav({
           className="
             border-t
             border-white/10
-
             bg-[#0B0B0A]
-
             backdrop-blur-2xl
-
             lg:hidden
           "
         >
@@ -57,7 +63,6 @@ export default function MobileNav({
             {/* Navigation */}
 
             <div className="space-y-2">
-
               {navigation.map((item) => {
                 if ("dropdown" in item) {
                   return (
@@ -72,25 +77,19 @@ export default function MobileNav({
                     >
                       <button
                         onClick={() =>
-                          setSolutionsOpen(
-                            !solutionsOpen
-                          )
+                          setSolutionsOpen(!solutionsOpen)
                         }
                         className="
                           flex
                           w-full
                           items-center
                           justify-between
-
                           px-5
                           py-4
-
                           text-[15px]
                           font-semibold
                           text-white
-
                           transition-colors
-
                           hover:text-[#FD4A05]
                         "
                       >
@@ -101,7 +100,6 @@ export default function MobileNav({
                           className={`
                             transition-transform
                             duration-300
-
                             ${
                               solutionsOpen
                                 ? "rotate-180 text-[#FD4A05]"
@@ -129,18 +127,14 @@ export default function MobileNav({
                             transition={{
                               duration: 0.25,
                             }}
-                            className="
-                              overflow-hidden
-                            "
+                            className="overflow-hidden"
                           >
                             <div
                               className="
                                 border-t
                                 border-white/5
-
                                 px-5
                                 py-3
-
                                 space-y-1
                               "
                             >
@@ -148,32 +142,21 @@ export default function MobileNav({
                                 (subItem) => (
                                   <Link
                                     key={subItem.id}
-                                    href={
-                                      subItem.href
-                                    }
-                                    onClick={
-                                      onClose
-                                    }
+                                    href={subItem.href}
+                                    onClick={onClose}
                                     className="
                                       block
-
                                       rounded-xl
-
                                       px-3
                                       py-3
-
                                       text-[14px]
                                       text-white/80
-
                                       transition-all
-
                                       hover:bg-white/5
                                       hover:text-[#FD4A05]
                                     "
                                   >
-                                    {
-                                      subItem.label
-                                    }
+                                    {subItem.label}
                                   </Link>
                                 )
                               )}
@@ -193,23 +176,16 @@ export default function MobileNav({
                     className="
                       flex
                       items-center
-
                       rounded-2xl
-
                       border
                       border-white/5
-
                       bg-white/[0.02]
-
                       px-5
                       py-4
-
                       text-[15px]
                       font-medium
                       text-white
-
                       transition-all
-
                       hover:border-[#FD4A05]/20
                       hover:bg-white/5
                       hover:text-[#FD4A05]
@@ -221,89 +197,123 @@ export default function MobileNav({
               })}
             </div>
 
-            {/* Divider */}
+            <div className="my-8 h-px bg-white/10" />
 
-            <div
-              className="
-                my-8
-                h-px
-                bg-white/10
-              "
-            />
+            {!loading && (
+              <div className="space-y-3">
 
-            {/* CTA */}
+                {authenticated ? (
+                  <>
+                    <Link
+                      href="/dealer-admin/dashboard"
+                      onClick={onClose}
+                      className="
+                        flex
+                        h-12
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        bg-[#FD4A05]
+                        text-[14px]
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      <LayoutDashboard size={18} />
+                      Dashboard
+                    </Link>
 
-            <div className="space-y-3">
+                    <button
+                      onClick={() => {
+                        onClose();
+                        logout();
+                      }}
+                      className="
+                        flex
+                        h-12
+                        w-full
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-red-500/20
+                        bg-red-500/10
+                        text-[14px]
+                        font-semibold
+                        text-red-400
+                        transition-all
+                        hover:bg-red-500
+                        hover:text-white
+                      "
+                    >
+                      <LogOut size={18} />
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/sign-in"
+                      onClick={onClose}
+                      className="
+                        flex
+                        h-12
+                        items-center
+                        justify-center
+                        rounded-xl
+                        border
+                        border-white/10
+                        bg-white/5
+                        text-[14px]
+                        font-medium
+                        text-white
+                        transition-all
+                        hover:border-[#FD4A05]
+                        hover:text-[#FD4A05]
+                      "
+                    >
+                      Sign In
+                    </Link>
 
-              <Link
-                href="/sign-in"
-                onClick={onClose}
-                className="
-                  flex
-                  h-12
-                  items-center
-                  justify-center
+                    <Link
+                      href="/register"
+                      onClick={onClose}
+                      className="
+                        group
+                        flex
+                        h-12
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        bg-[#FD4A05]
+                        text-[14px]
+                        font-semibold
+                        text-white
+                        shadow-[0_12px_30px_rgba(253,74,5,.30)]
+                        transition-all
+                        hover:bg-[#ff5a17]
+                      "
+                    >
+                      Get Started
 
-                  rounded-xl
+                      <ArrowRight
+                        size={16}
+                        className="
+                          transition-transform
+                          duration-300
+                          group-hover:translate-x-1
+                        "
+                      />
+                    </Link>
+                  </>
+                )}
 
-                  border
-                  border-white/10
+              </div>
+            )}
 
-                  bg-white/5
-
-                  text-[14px]
-                  font-medium
-                  text-white
-
-                  transition-all
-
-                  hover:border-[#FD4A05]
-                  hover:text-[#FD4A05]
-                "
-              >
-                Sign In
-              </Link>
-
-              <Link
-                href="/register"
-                onClick={onClose}
-                className="
-                  group
-
-                  flex
-                  h-12
-                  items-center
-                  justify-center
-                  gap-2
-
-                  rounded-xl
-
-                  bg-[#FD4A05]
-
-                  text-[14px]
-                  font-semibold
-                  text-white
-
-                  shadow-[0_12px_30px_rgba(253,74,5,.30)]
-
-                  transition-all
-
-                  hover:bg-[#ff5a17]
-                "
-              >
-                Get Started
-
-                <ArrowRight
-                  size={16}
-                  className="
-                    transition-transform
-                    duration-300
-                    group-hover:translate-x-1
-                  "
-                />
-              </Link>
-
-            </div>
           </div>
         </motion.div>
       )}
