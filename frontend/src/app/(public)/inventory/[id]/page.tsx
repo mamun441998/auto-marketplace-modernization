@@ -66,7 +66,7 @@ export default function VehicleDetailPage() {
     e.preventDefault();
 
     const dealerId = vehicle?.dealer_id ?? vehicle?.dealer?.id ?? null;
-    if (submitting || !dealerId) {
+        if (submitting || !vehicle || !dealerId) {
       setFormError("Dealer info missing for this vehicle.");
       return;
     }
@@ -132,6 +132,7 @@ export default function VehicleDetailPage() {
   const mainImage = images[activeImg]?.image_url || vehicle.primary_image_url || null;
   const price = vehicle.price != null ? `$${Number(vehicle.price).toLocaleString()}` : "—";
 
+     const d = vehicle.details ?? {};
   const specs = [
     { icon: Calendar, label: "Year", value: vehicle.year?.toString() },
     { icon: Gauge, label: "Mileage", value: vehicle.mileage != null ? `${(vehicle.mileage / 1000).toFixed(1)}K mi` : "—" },
@@ -140,6 +141,12 @@ export default function VehicleDetailPage() {
     { icon: Settings2, label: "Transmission", value: cap(vehicle.transmission) },
     { icon: Tag, label: "Condition", value: cap(vehicle.condition) },
     { icon: Palette, label: "Color", value: cap(vehicle.color) },
+    { icon: Settings2, label: "Engine", value: d.engine || "—" },
+    { icon: Settings2, label: "Drivetrain", value: d.drivetrain || "—" },
+    { icon: CarFront, label: "Doors", value: d.doors != null ? String(d.doors) : "—" },
+    { icon: CarFront, label: "Seats", value: d.seats != null ? String(d.seats) : "—" },
+    { icon: Palette, label: "Interior", value: d.interior_color || "—" },
+    { icon: Tag, label: "Warranty", value: d.warranty || "—" },
     { icon: Tag, label: "VIN", value: vehicle.vin || "—" },
   ];
 
@@ -205,10 +212,23 @@ export default function VehicleDetailPage() {
                 })}
               </div>
 
-              {vehicle.description && (
+                            {d.highlights && (
                 <div className="mt-5 pt-5 border-t border-[#262626]">
-                  <h3 className="text-xs font-semibold text-[#94A3B8] mb-2">Description</h3>
-                  <p className="text-sm text-[#94A3B8] leading-relaxed whitespace-pre-line">{vehicle.description}</p>
+                  <h3 className="text-xs font-semibold text-[#94A3B8] mb-2">Highlights</h3>
+                  <p className="text-sm text-[#94A3B8] leading-relaxed whitespace-pre-line">{d.highlights}</p>
+                </div>
+              )}
+
+              {d.features && d.features.length > 0 && (
+                <div className="mt-5 pt-5 border-t border-[#262626]">
+                  <h3 className="text-xs font-semibold text-[#94A3B8] mb-3">Features</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {d.features.map((f) => (
+                      <span key={f} className="rounded-full border border-[#262626] bg-[#0A0A0A]/50 px-3 py-1 text-xs text-white">
+                        {f}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

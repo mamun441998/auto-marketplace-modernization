@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Sparkles, HelpCircle, MessageSquare, ArrowRight } from "lucide-react";
 import Container from "@/components/layout/Container";
+import { fetchFaqs } from "@/lib/content";
 
 const HEADING =
   "font-extrabold tracking-[-0.04em] leading-[1.1] text-white text-[22px] sm:text-[25px] md:text-[28px] lg:text-[34px] xl:text-[38px] 2xl:text-[42px]";
 
+// Fallback shown only if the admin has not published any FAQs yet.
 const DEALER_FAQS = [
   {
     q: "How quickly can we migrate our existing car inventory into MotoHave?",
@@ -31,8 +33,24 @@ const DEALER_FAQS = [
   },
 ];
 
+type FaqItem = { q: string; a: string };
+
 export default function FAQSection() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [items, setItems] = useState<FaqItem[]>(DEALER_FAQS);
+
+  useEffect(() => {
+    let active = true;
+    fetchFaqs().then((data) => {
+      if (!active) return;
+      if (data.length > 0) {
+        setItems(data.map((f) => ({ q: f.question, a: f.answer })));
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <section className="relative overflow-hidden bg-[#171617] py-24 lg:py-32 text-white selection:bg-[#FC5E01] selection:text-white">
@@ -75,7 +93,7 @@ export default function FAQSection() {
 
           {/* FAQ List Component */}
           <div className="max-w-4xl mx-auto space-y-4">
-            {DEALER_FAQS.map((faq, i) => {
+            {items.map((faq, i) => {
               const isOpen = openFaq === i;
               return (
                 <div

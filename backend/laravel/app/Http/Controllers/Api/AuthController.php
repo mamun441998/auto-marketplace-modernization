@@ -41,12 +41,15 @@ class AuthController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = User::create([
-                'name'     => trim($request->name),
-                'email'    => strtolower(trim($request->email)),
-                'password' => $request->password,
-                'status'   => 'active',
-                'role'     => 'dealer',
+                        $user = User::create([
+                'name'                => trim($request->name),
+                'email'               => strtolower(trim($request->email)),
+                'password'            => $request->password,
+                'status'              => 'active',
+                'role'                => 'dealer',
+                'trial_ends_at'       => now()->addDays((int) config('plans.trial_days', 14)),
+                'subscription_status' => 'trialing',
+                'plan'                => null,
             ]);
 
             $code = (string) random_int(100000, 999999);
@@ -153,6 +156,35 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Logged out successfully.',
+        ]);
+    }
+
+        /** Change Password (authenticated) */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'current_password' => ['required', 'string'],
+            'new_password'     => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = $request->user();
+
+        if (! Hash::check($data['current_password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect.',
+            ], 422);
+        }
+
+        $user->forceFill(['password' => $data['new_password']])->save();
+
+        // Log out other sessions for safety, keep current token.
+        $current = $request->user()->currentAccessToken();
+        $user->tokens()->where('id', '!=', $current?->id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed successfully.',
         ]);
     }
 

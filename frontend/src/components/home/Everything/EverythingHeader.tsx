@@ -41,8 +41,7 @@ export default function EverythingHeader() {
         transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         className="mt-3 text-[#94A3B8] text-sm md:text-base max-w-2xl mx-auto font-normal leading-relaxed"
       >
-        Replace multiple disconnected systems with one intelligent platform. Manage inventory,
-        customers, websites, marketing, payments and AI automation from a single dashboard.
+        Inventory, leads, marketing, website and analytics — every tool in one place, built for car dealers.
       </motion.p>
     </div>
   );

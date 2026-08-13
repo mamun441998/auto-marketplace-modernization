@@ -1,4 +1,5 @@
 import Button from "@/components/ui/Button";
+import PayDepositButton from "@/components/payment/PayDepositButton";
 
 async function getVehicle(id: string) {
     const res = await fetch(
@@ -30,10 +31,14 @@ export default async function VehicleDetails({
                 </h1>
             
 
-            <div className="mb-6">
+                        <div className="mb-6 flex flex-wrap items-center gap-3">
                 <Button>
                     Contact Dealer
                 </Button>
+                <PayDepositButton
+                    vehicleId={vehicle.data.id}
+                    title={vehicle.data.title}
+                />
             </div>
 
                 <div className="grid grid-cols-3 gap-4 mb-6">

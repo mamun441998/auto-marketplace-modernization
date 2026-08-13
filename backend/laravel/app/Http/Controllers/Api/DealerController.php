@@ -22,9 +22,7 @@ use Throwable;
 
 class DealerController extends Controller
 {
-    /**
-     * List Dealers (Public) — search + filter + pagination
-     */
+    /** List Dealers (Public) — search + filter + pagination */
     public function index(Request $request): JsonResponse
     {
         $query = Dealer::query()
@@ -66,9 +64,7 @@ class DealerController extends Controller
         ]);
     }
 
-    /**
-     * Show Single Dealer (Public)
-     */
+    /** Show Single Dealer (Public) */
     public function show(Dealer $dealer): JsonResponse
     {
         $dealer->load('user')->loadCount('vehicles');
@@ -79,14 +75,14 @@ class DealerController extends Controller
         ]);
     }
 
-    /**
-     * Current logged-in user-এর dealer (না থাকলে null)।
-     */
+    /** Current logged-in user's dealer (owner or team member). */
     public function myDealer(Request $request): JsonResponse
     {
-        $dealer = Dealer::where('user_id', $request->user()->id)
-            ->withCount('vehicles')
-            ->first();
+        $dealer = $request->user()->currentDealer();
+
+        if ($dealer) {
+            $dealer->loadCount('vehicles');
+        }
 
         return response()->json([
             'success' => true,
@@ -94,9 +90,7 @@ class DealerController extends Controller
         ]);
     }
 
-    /**
-     * Create Dealer (Authenticated)
-     */
+    /** Create Dealer (Authenticated) */
     public function store(StoreDealerRequest $request): JsonResponse
     {
         $userId = $request->user()->id;
@@ -116,6 +110,8 @@ class DealerController extends Controller
             $data['user_id'] = $userId;
             $data['uuid']    = (string) Str::uuid();
             $data['slug']    = $this->uniqueSlug($data['name']);
+            $data['status']    = 'active';
+            $data['is_active'] = true;
 
             $dealer = Dealer::create($data);
 
@@ -143,9 +139,7 @@ class DealerController extends Controller
         }
     }
 
-    /**
-     * Update Dealer (Owner only)
-     */
+    /** Update Dealer (Owner only) */
     public function update(UpdateDealerRequest $request, Dealer $dealer): JsonResponse
     {
         $this->authorizeOwner($request, $dealer);
@@ -173,9 +167,43 @@ class DealerController extends Controller
         }
     }
 
-    /**
-     * Delete Dealer (Owner only, soft delete)
-     */
+    /** PUT /api/dealer/settings — save custom domain + notification prefs. */
+    public function updateSettings(Request $request): JsonResponse
+    {
+        $dealer = $request->user()->currentDealer();
+        if (! $dealer) {
+            return response()->json(['success' => false, 'message' => 'No dealership found.'], 404);
+        }
+
+        if ((int) $dealer->user_id !== (int) $request->user()->id) {
+            return response()->json(['success' => false, 'message' => 'Only the owner can change settings.'], 403);
+        }
+
+        $data = $request->validate([
+            'custom_domain'           => ['nullable', 'string', 'max:190'],
+            'notifications'           => ['nullable', 'array'],
+            'notifications.leads'     => ['boolean'],
+            'notifications.inventory' => ['boolean'],
+            'notifications.billing'   => ['boolean'],
+        ]);
+
+        if ($request->has('custom_domain')) {
+            $dealer->custom_domain = $data['custom_domain'] ? trim($data['custom_domain']) : null;
+        }
+        if ($request->has('notifications')) {
+            $dealer->notification_prefs = $data['notifications'];
+        }
+        $dealer->save();
+
+        return response()->json([
+            'success'       => true,
+            'message'       => 'Settings saved.',
+            'custom_domain' => $dealer->custom_domain,
+            'notifications' => $dealer->notification_prefs,
+        ]);
+    }
+
+    /** Delete Dealer (Owner only, soft delete) */
     public function destroy(Request $request, Dealer $dealer): JsonResponse
     {
         $this->authorizeOwner($request, $dealer);
@@ -188,15 +216,13 @@ class DealerController extends Controller
         ]);
     }
 
-    /**
-     * Upload Logo (Owner only)
-     */
+    /** Upload Logo (Owner only) */
     public function uploadLogo(Request $request, Dealer $dealer): JsonResponse
     {
         $this->authorizeOwner($request, $dealer);
 
         $request->validate([
-            'logo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'], // ✅ 5MB
+            'logo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
 
         if ($dealer->logo) {
@@ -213,15 +239,13 @@ class DealerController extends Controller
         ]);
     }
 
-    /**
-     * Upload Cover Image (Owner only)
-     */
+    /** Upload Cover Image (Owner only) */
     public function uploadCoverImage(Request $request, Dealer $dealer): JsonResponse
     {
         $this->authorizeOwner($request, $dealer);
 
         $request->validate([
-            'cover_image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'], // ✅ 10MB
+            'cover_image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ]);
 
         if ($dealer->cover_image) {
@@ -244,20 +268,19 @@ class DealerController extends Controller
     |--------------------------------------------------------------------------
     */
 
-        private function authorizeOwner(Request $request, Dealer $dealer): void
+    private function authorizeOwner(Request $request, Dealer $dealer): void
     {
         if ((int) $dealer->user_id !== (int) $request->user()->id) {
             abort(403, 'You are not allowed to modify this dealership.');
         }
     }
 
-        private function uniqueSlug(string $name): string
+    private function uniqueSlug(string $name): string
     {
         $base = Str::slug($name);
         $slug = $base ?: 'dealer';
         $i = 1;
 
-        // ✅ soft-deleted row-ও গোনো (DB unique constraint সেগুলো ধরে)
         while (Dealer::withTrashed()->where('slug', $slug)->exists()) {
             $slug = $base . '-' . $i++;
         }

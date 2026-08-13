@@ -20,19 +20,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class VehicleController extends Controller
 {
-    /**
-     * Statuses that are visible on the public marketplace.
-     * Must exist in the vehicles enum: draft, active, pending, sold, archived.
-     */
     private const PUBLIC_STATUSES = ['active', 'pending', 'sold'];
 
-    /* =====================================================================
-     |  PUBLIC ENDPOINTS
-     |=====================================================================*/
+    /* ================= PUBLIC ================= */
 
     public function index(Request $request): JsonResponse
     {
         $query = $this->buildVehicleQuery($request);
+
+        // Filter by dealer (used by dealer's own website).
+        if ($request->filled('dealer_id')) {
+            $query->where('dealer_id', (int) $request->input('dealer_id'));
+        }
 
         $query->whereIn('status', self::PUBLIC_STATUSES);
 
@@ -70,20 +69,16 @@ class VehicleController extends Controller
         ]);
     }
 
-    /* =====================================================================
-     |  DEALER (AUTHENTICATED) ENDPOINTS
-     |=====================================================================*/
+    /* ================= DEALER ================= */
 
     public function dealerVehicles(Request $request): JsonResponse
     {
         $dealer = $this->getDealer($request);
-
         if (! $dealer) {
             return $this->noDealerResponse();
         }
 
-        $query = $this->buildVehicleQuery($request)
-            ->where('dealer_id', $dealer->id);
+        $query = $this->buildVehicleQuery($request)->where('dealer_id', $dealer->id);
 
         $perPage = (int) $request->integer('per_page', 15);
         $perPage = max(1, min($perPage, 50));
@@ -105,7 +100,6 @@ class VehicleController extends Controller
     public function store(StoreVehicleRequest $request): JsonResponse
     {
         $dealer = $this->getDealer($request);
-
         if (! $dealer) {
             return $this->noDealerResponse();
         }
@@ -139,15 +133,8 @@ class VehicleController extends Controller
                 return $vehicle;
             });
         } catch (\Throwable $e) {
-            Log::error('Vehicle creation failed', [
-                'dealer_id' => $dealer->id,
-                'error'     => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create vehicle. Please try again.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Vehicle creation failed', ['dealer_id' => $dealer->id, 'error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Failed to create vehicle. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $vehicle->load(['images', 'dealer']);
@@ -162,31 +149,24 @@ class VehicleController extends Controller
     public function edit(Request $request, Vehicle $vehicle): JsonResponse
     {
         $dealer = $this->getDealer($request);
-
         if (! $dealer) {
             return $this->noDealerResponse();
         }
-
         if ($denied = $this->authorizeDealer($dealer, $vehicle)) {
             return $denied;
         }
 
         $vehicle->load(['images', 'dealer', 'inventorySource']);
 
-        return response()->json([
-            'success' => true,
-            'vehicle' => new VehicleResource($vehicle),
-        ]);
+        return response()->json(['success' => true, 'vehicle' => new VehicleResource($vehicle)]);
     }
 
     public function update(UpdateVehicleRequest $request, Vehicle $vehicle): JsonResponse
     {
         $dealer = $this->getDealer($request);
-
         if (! $dealer) {
             return $this->noDealerResponse();
         }
-
         if ($denied = $this->authorizeDealer($dealer, $vehicle)) {
             return $denied;
         }
@@ -214,15 +194,8 @@ class VehicleController extends Controller
                 $vehicle->save();
             });
         } catch (\Throwable $e) {
-            Log::error('Vehicle update failed', [
-                'vehicle_id' => $vehicle->id,
-                'error'      => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update vehicle. Please try again.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Vehicle update failed', ['vehicle_id' => $vehicle->id, 'error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Failed to update vehicle. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json([
@@ -235,11 +208,9 @@ class VehicleController extends Controller
     public function destroy(Request $request, Vehicle $vehicle): JsonResponse
     {
         $dealer = $this->getDealer($request);
-
         if (! $dealer) {
             return $this->noDealerResponse();
         }
-
         if ($denied = $this->authorizeDealer($dealer, $vehicle)) {
             return $denied;
         }
@@ -247,35 +218,21 @@ class VehicleController extends Controller
         try {
             $vehicle->delete();
         } catch (\Throwable $e) {
-            Log::error('Vehicle deletion failed', [
-                'vehicle_id' => $vehicle->id,
-                'error'      => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to delete vehicle. Please try again.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Vehicle deletion failed', ['vehicle_id' => $vehicle->id, 'error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Failed to delete vehicle. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Vehicle deleted successfully.',
-        ]);
+        return response()->json(['success' => true, 'message' => 'Vehicle deleted successfully.']);
     }
 
-    /* =====================================================================
-     |  IMAGE ENDPOINTS
-     |=====================================================================*/
+    /* ================= IMAGES ================= */
 
     public function uploadImages(Request $request, Vehicle $vehicle): JsonResponse
     {
         $dealer = $this->getDealer($request);
-
         if (! $dealer) {
             return $this->noDealerResponse();
         }
-
         if ($denied = $this->authorizeDealer($dealer, $vehicle)) {
             return $denied;
         }
@@ -288,22 +245,11 @@ class VehicleController extends Controller
 
         try {
             DB::transaction(function () use ($vehicle, $request) {
-                $this->uploadVehicleImages(
-                    $vehicle,
-                    $request->file('images'),
-                    $request->input('featured_image')
-                );
+                $this->uploadVehicleImages($vehicle, $request->file('images'), $request->input('featured_image'));
             });
         } catch (\Throwable $e) {
-            Log::error('Vehicle image upload failed', [
-                'vehicle_id' => $vehicle->id,
-                'error'      => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to upload images. Please try again.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Vehicle image upload failed', ['vehicle_id' => $vehicle->id, 'error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Failed to upload images. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json([
@@ -316,20 +262,14 @@ class VehicleController extends Controller
     public function deleteImage(Request $request, VehicleImage $image): JsonResponse
     {
         $dealer = $this->getDealer($request);
-
         if (! $dealer) {
             return $this->noDealerResponse();
         }
 
         $vehicle = $image->vehicle;
-
         if (! $vehicle) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Vehicle not found for this image.',
-            ], Response::HTTP_NOT_FOUND);
+            return response()->json(['success' => false, 'message' => 'Vehicle not found for this image.'], Response::HTTP_NOT_FOUND);
         }
-
         if ($denied = $this->authorizeDealer($dealer, $vehicle)) {
             return $denied;
         }
@@ -337,7 +277,6 @@ class VehicleController extends Controller
         try {
             DB::transaction(function () use ($vehicle, $image) {
                 $wasFeatured = (bool) $image->is_featured;
-
                 $this->deleteVehicleImageFromStorage($image->image_path);
                 $image->delete();
 
@@ -349,15 +288,8 @@ class VehicleController extends Controller
                 }
             });
         } catch (\Throwable $e) {
-            Log::error('Vehicle image deletion failed', [
-                'image_id' => $image->id,
-                'error'    => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to delete image. Please try again.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Vehicle image deletion failed', ['image_id' => $image->id, 'error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Failed to delete image. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json([
@@ -370,20 +302,14 @@ class VehicleController extends Controller
     public function setFeaturedImage(Request $request, Vehicle $vehicle, VehicleImage $image): JsonResponse
     {
         $dealer = $this->getDealer($request);
-
         if (! $dealer) {
             return $this->noDealerResponse();
         }
-
         if ($denied = $this->authorizeDealer($dealer, $vehicle)) {
             return $denied;
         }
-
         if ((int) $image->vehicle_id !== (int) $vehicle->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Image does not belong to this vehicle.',
-            ], Response::HTTP_NOT_FOUND);
+            return response()->json(['success' => false, 'message' => 'Image does not belong to this vehicle.'], Response::HTTP_NOT_FOUND);
         }
 
         try {
@@ -392,16 +318,8 @@ class VehicleController extends Controller
                 $image->update(['is_featured' => true]);
             });
         } catch (\Throwable $e) {
-            Log::error('Set featured image failed', [
-                'vehicle_id' => $vehicle->id,
-                'image_id'   => $image->id,
-                'error'      => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to set featured image. Please try again.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Set featured image failed', ['vehicle_id' => $vehicle->id, 'image_id' => $image->id, 'error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Failed to set featured image. Please try again.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json([
@@ -411,33 +329,24 @@ class VehicleController extends Controller
         ]);
     }
 
-    /* =====================================================================
-     |  PRIVATE HELPERS
-     |=====================================================================*/
+    /* ================= HELPERS ================= */
 
     private function getDealer(Request $request): ?Dealer
     {
-        return Dealer::where('user_id', $request->user()->id)->first();
+                return $request->user()->currentDealer();
     }
 
     private function authorizeDealer(Dealer $dealer, Vehicle $vehicle): ?JsonResponse
     {
         if ((int) $vehicle->dealer_id !== (int) $dealer->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You are not allowed to access this vehicle.',
-            ], Response::HTTP_FORBIDDEN);
+            return response()->json(['success' => false, 'message' => 'You are not allowed to access this vehicle.'], Response::HTTP_FORBIDDEN);
         }
-
         return null;
     }
 
     private function noDealerResponse(): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => 'No dealership profile found. Please create your dealership first.',
-        ], Response::HTTP_FORBIDDEN);
+        return response()->json(['success' => false, 'message' => 'No dealership profile found. Please create your dealership first.'], Response::HTTP_FORBIDDEN);
     }
 
     private function buildVehicleQuery(Request $request)
@@ -473,9 +382,7 @@ class VehicleController extends Controller
         }
 
         $sortable = ['created_at', 'price', 'year', 'mileage', 'title'];
-        $sortBy   = in_array($request->input('sort_by'), $sortable, true)
-            ? $request->input('sort_by')
-            : 'created_at';
+        $sortBy   = in_array($request->input('sort_by'), $sortable, true) ? $request->input('sort_by') : 'created_at';
         $sortDir  = strtolower($request->input('sort_dir')) === 'asc' ? 'asc' : 'desc';
 
         $query->orderBy($sortBy, $sortDir);
@@ -550,6 +457,7 @@ class VehicleController extends Controller
             'title', 'description', 'vin', 'make', 'model', 'year',
             'price', 'currency', 'mileage', 'fuel_type', 'transmission',
             'condition', 'body_type', 'color', 'status', 'inventory_source_id',
+            'details',
         ])->toArray();
     }
 }

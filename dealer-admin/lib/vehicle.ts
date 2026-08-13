@@ -17,6 +17,17 @@ export interface VehicleImage {
   updated_at: string | null;
 }
 
+export interface VehicleDetails {
+  features?: string[];
+  engine?: string | null;
+  drivetrain?: string | null;
+  doors?: number | null;
+  seats?: number | null;
+  interior_color?: string | null;
+  warranty?: string | null;
+  highlights?: string | null;
+}
+
 export interface Vehicle {
   id: number;
   uuid: string;
@@ -34,6 +45,7 @@ export interface Vehicle {
   fuel_type: string | null;
   transmission: string | null;
   color: string | null;
+  details?: VehicleDetails | null;
   mileage: number | null;
 
   price: string | number | null;
@@ -98,6 +110,7 @@ export interface VehiclePayload {
   condition: string;
   body_type?: string | null;
   color?: string | null;
+  details?: VehicleDetails | null;
   status?: string;
 }
 
@@ -105,16 +118,13 @@ export interface VehiclePayload {
  |  Helpers
  |=========================================================================*/
 
-/** Turn a filters object into a `?a=1&b=2` query string (skips empty values). */
 function buildQuery(filters: VehicleFilters = {}): string {
   const params = new URLSearchParams();
-
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {
       params.append(key, String(value));
     }
   });
-
   const qs = params.toString();
   return qs ? `?${qs}` : "";
 }
@@ -123,7 +133,6 @@ function buildQuery(filters: VehicleFilters = {}): string {
  |  Public marketplace
  |=========================================================================*/
 
-/** GET /api/vehicles — public marketplace listing. */
 export async function fetchVehicles(filters: VehicleFilters = {}) {
   return apiGet<{
     success: boolean;
@@ -132,18 +141,14 @@ export async function fetchVehicles(filters: VehicleFilters = {}) {
   }>(`/vehicles${buildQuery(filters)}`);
 }
 
-/** GET /api/vehicles/{idOrSlug} — public single vehicle. */
 export async function fetchVehicle(idOrSlug: string | number) {
-  return apiGet<{ success: boolean; vehicle: Vehicle }>(
-    `/vehicles/${idOrSlug}`
-  );
+  return apiGet<{ success: boolean; vehicle: Vehicle }>(`/vehicles/${idOrSlug}`);
 }
 
 /* =========================================================================
  |  Dealer inventory (authenticated)
  |=========================================================================*/
 
-/** GET /api/dealer/vehicles — logged-in dealer's own inventory. */
 export async function fetchMyVehicles(filters: VehicleFilters = {}) {
   return apiGet<{
     success: boolean;
@@ -152,17 +157,13 @@ export async function fetchMyVehicles(filters: VehicleFilters = {}) {
   }>(`/dealer/vehicles${buildQuery(filters)}`);
 }
 
-/** GET /api/dealer/vehicles/{id} — load one owned vehicle for editing. */
 export async function fetchMyVehicle(id: number | string) {
-  return apiGet<{ success: boolean; vehicle: Vehicle }>(
-    `/dealer/vehicles/${id}`
-  );
+  return apiGet<{ success: boolean; vehicle: Vehicle }>(`/dealer/vehicles/${id}`);
 }
 
 /**
  * POST /api/dealer/vehicles — create a new vehicle.
- * If `files` are provided, everything is sent as ONE multipart request
- * (the backend store() method saves the images together with the vehicle).
+ * With files -> one multipart request; object values (details) go as JSON.
  */
 export async function createVehicle(
   payload: VehiclePayload,
@@ -173,7 +174,10 @@ export async function createVehicle(
     const fd = new FormData();
 
     Object.entries(payload).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
+      if (value === null || value === undefined) return;
+      if (typeof value === "object") {
+        fd.append(key, JSON.stringify(value)); // details -> JSON string
+      } else {
         fd.append(key, String(value));
       }
     });
@@ -196,7 +200,6 @@ export async function createVehicle(
   );
 }
 
-/** PUT /api/dealer/vehicles/{id} — update an owned vehicle. */
 export async function updateVehicle(
   id: number | string,
   payload: Partial<VehiclePayload>
@@ -207,53 +210,36 @@ export async function updateVehicle(
   );
 }
 
-/** DELETE /api/dealer/vehicles/{id} — soft-delete an owned vehicle. */
 export async function deleteVehicle(id: number | string) {
-  return apiDelete<{ success: boolean; message: string }>(
-    `/dealer/vehicles/${id}`
-  );
+  return apiDelete<{ success: boolean; message: string }>(`/dealer/vehicles/${id}`);
 }
 
 /* =========================================================================
  |  Images
  |=========================================================================*/
 
-/**
- * POST /api/dealer/vehicles/{id}/images — upload one or more images.
- * `featuredIndex` = which uploaded file (0-based) should be the featured one.
- */
 export async function uploadVehicleImages(
   vehicleId: number | string,
   files: File[],
   featuredIndex?: number
 ) {
   const formData = new FormData();
-
-  files.forEach((file) => {
-    formData.append("images[]", file);
-  });
-
+  files.forEach((file) => formData.append("images[]", file));
   if (featuredIndex !== undefined) {
     formData.append("featured_image", String(featuredIndex));
   }
-
   return apiUpload<{ success: boolean; message: string; vehicle: Vehicle }>(
     `/dealer/vehicles/${vehicleId}/images`,
     formData
   );
 }
 
-/** DELETE /api/dealer/vehicle-images/{imageId} — delete one image. */
 export async function deleteVehicleImage(imageId: number | string) {
   return apiDelete<{ success: boolean; message: string; vehicle: Vehicle }>(
     `/dealer/vehicle-images/${imageId}`
   );
 }
 
-/**
- * POST /api/dealer/vehicles/{vehicleId}/featured-image/{imageId}
- * Mark one image as the featured image.
- */
 export async function setFeaturedVehicleImage(
   vehicleId: number | string,
   imageId: number | string

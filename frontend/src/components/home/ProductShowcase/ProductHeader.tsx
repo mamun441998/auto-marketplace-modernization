@@ -55,9 +55,9 @@ export default function ProductHeader() {
         }}
         className="mt-4 text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight"
       >
-        Everything Your
+        See your entire
         <br className="sm:hidden" />{" "}
-        <span>Dealership Needs</span>
+        <span>Dealership in one dashboard</span>
       </motion.h2>
     </div>
   );

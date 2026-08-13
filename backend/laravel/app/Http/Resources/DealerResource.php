@@ -57,6 +57,11 @@ class DealerResource extends JsonResource
             'meta_title'       => $this->meta_title,
             'meta_description' => $this->meta_description,
 
+            // Settings
+            'custom_domain'      => $this->custom_domain,
+            'notification_prefs' => $this->notification_prefs,
+
+
             // Status
             'status'      => $this->status,
             'is_active'   => (bool) $this->is_active,

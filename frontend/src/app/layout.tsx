@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/footer";
-
-// Use the actual auth provider module from the contexts folder
+import AppChrome from "@/components/layout/AppChrome";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
@@ -53,13 +50,7 @@ export default function RootLayout({
         className="min-h-screen flex flex-col bg-slate-50 text-slate-900"
       >
         <AuthProvider>
-          <Navbar />
-
-          <main className="flex-1">
-            {children}
-          </main>
-
-          <Footer />
+          <AppChrome>{children}</AppChrome>
         </AuthProvider>
       </body>
     </html>

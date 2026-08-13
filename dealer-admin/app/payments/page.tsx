@@ -1,5 +1,6 @@
 // dealer-admin/app/payments/page.tsx
 import { Metadata } from "next";
+import PaymentGatewaySettings from "@/components/payments/PaymentGatewaySettings";
 import PaymentsStats from "@/components/payments/PaymentsStats";
 import TransactionsTable from "@/components/payments/TransactionsTable";
 
@@ -18,6 +19,10 @@ export default function PaymentsPage() {
         </p>
       </div>
 
+
+      {/* Payment Gateway configuration */}
+      <PaymentGatewaySettings />
+      
       {/* Stats */}
       <PaymentsStats />
 

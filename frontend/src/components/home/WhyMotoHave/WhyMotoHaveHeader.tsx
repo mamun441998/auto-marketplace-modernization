@@ -9,7 +9,7 @@ export const SectionHeader: React.FC = () => {
       </div>
       
       <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight whitespace-normal lg:whitespace-nowrap">
-        One Platform. <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FC5E01] to-amber-500">Every Dealership Need.</span>
+        One Platform <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FC5E01] to-amber-500">Every Dealership Need.</span>
       </h2>
       
       <p className="mt-4 text-base md:text-lg text-[#94A3B8] leading-relaxed max-w-2xl mx-auto">

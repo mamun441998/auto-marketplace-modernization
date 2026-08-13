@@ -1,110 +1,149 @@
-// dealer-admin/components/settings/BillingSettings.tsx
 "use client";
 
-import { useState } from "react";
-import { CreditCard, Download, Calendar, ArrowUpRight, ShieldCheck } from "lucide-react";
-import UpdatePaymentMethodModal from "./UpdatePaymentMethodModal";
+import { useEffect, useState } from "react";
+import { CheckCircle2, Loader2, Clock, AlertTriangle, Zap } from "lucide-react";
+import {
+  fetchPlans,
+  fetchSubscription,
+  PlanConfig,
+  SubscriptionStatus,
+} from "@/lib/subscription";
+
+const PLAN_ORDER = ["starter", "professional", "enterprise"];
 
 export default function BillingSettings() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [plans, setPlans] = useState<Record<string, PlanConfig>>({});
+  const [sub, setSub] = useState<SubscriptionStatus | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const invoices = [
-    { id: "INV-2026-007", date: "2026-07-01", amount: "$129.00", status: "Paid", method: "Visa •••• 4242" },
-    { id: "INV-2026-006", date: "2026-06-01", amount: "$129.00", status: "Paid", method: "Visa •••• 4242" },
-    { id: "INV-2026-005", date: "2026-05-01", amount: "$129.00", status: "Paid", method: "Visa •••• 4242" },
-  ];
+  useEffect(() => {
+    (async () => {
+      try {
+        const [p, s] = await Promise.all([fetchPlans(), fetchSubscription()]);
+        if (p.success) setPlans(p.plans ?? {});
+        if (s.success) setSub(s.subscription);
+      } catch (err) {
+        console.error("Load billing failed:", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleChoose = (planKey: string) => {
+    // 💳 Phase 2: Stripe/SSLCommerz checkout will start here.
+    alert(`Checkout for "${plans[planKey]?.name}" will be connected in the next step (payment gateway).`);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-[#94A3B8]">
+        <Loader2 size={20} className="animate-spin mr-2" />
+        Loading billing...
+      </div>
+    );
+  }
+
+  const activePlan = sub?.active_plan;
+  const usage = sub?.usage;
+  const limitLabel = usage?.vehicle_limit == null ? "Unlimited" : usage?.vehicle_limit;
 
   return (
-    <div className="bg-[#111B33] border border-[#1e2a4a] rounded-2xl p-6 space-y-6">
-      <div>
-        <h3 className="text-sm font-bold text-white">Billing & Invoices</h3>
-        <p className="text-xs text-[#64748B] mt-0.5">Manage your payment method and view billing history.</p>
+    <div className="flex flex-col gap-6">
+      {/* Current status */}
+      <div className="rounded-2xl border border-[#1e2a4a] bg-[#111B33] p-6">
+        <h3 className="text-sm font-bold text-white mb-4">Current Plan</h3>
+
+        {sub?.on_trial ? (
+          <div className="flex items-center gap-2 text-[#FC5E01]">
+            <Clock size={18} />
+            <span className="text-sm font-semibold">
+              Free Trial — {sub.trial_days_left} {sub.trial_days_left === 1 ? "day" : "days"} left
+              <span className="text-[#94A3B8] font-normal"> (Professional access)</span>
+            </span>
+          </div>
+        ) : sub?.status === "active" ? (
+          <div className="flex items-center gap-2 text-emerald-400">
+            <Zap size={18} />
+            <span className="text-sm font-semibold capitalize">{plans[activePlan ?? ""]?.name || sub.plan} — Active</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 text-rose-400">
+            <AlertTriangle size={18} />
+            <span className="text-sm font-semibold">No active plan — trial ended</span>
+          </div>
+        )}
+
+        {/* Usage bar */}
+        {usage && (
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-2 text-xs">
+              <span className="text-[#94A3B8]">Vehicle Listings</span>
+              <span className="font-semibold text-white">{usage.vehicle_listings} / {limitLabel}</span>
+            </div>
+            {usage.vehicle_limit != null && (
+              <div className="h-2 rounded-full bg-[#0A0F1E] overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${usage.vehicle_percent >= 90 ? "bg-rose-500" : "bg-[#FC5E01]"}`}
+                  style={{ width: `${usage.vehicle_percent}%` }}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Payment Method + Renewal */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="bg-gradient-to-br from-[#1e2a4a] to-[#0A0F1E] border border-[#1e2a4a] rounded-xl p-5 relative overflow-hidden flex flex-col justify-between h-40">
-          <div className="absolute top-0 right-0 h-32 w-32 bg-[#FC5E01]/5 rounded-full blur-2xl pointer-events-none" />
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="block text-[10px] font-semibold uppercase text-[#64748B] tracking-wider">Payment Method</span>
-              <span className="text-sm text-white font-semibold mt-1 block">Visa Card</span>
-            </div>
-            <CreditCard size={18} className="text-[#FC5E01]" />
-          </div>
-          <div className="space-y-1">
-            <span className="block text-sm font-mono text-white tracking-widest">•••• •••• •••• 4242</span>
-            <div className="flex items-center justify-between text-xs text-[#64748B] font-mono pt-1">
-              <span>Exp: 12/29</span>
-              <span className="flex items-center gap-1 text-emerald-400 font-sans font-semibold">
-                <ShieldCheck size={11} /> Active
-              </span>
-            </div>
-          </div>
-        </div>
+      {/* Plans */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {PLAN_ORDER.map((key) => {
+          const plan = plans[key];
+          if (!plan) return null;
+          const isCurrent = sub?.status === "active" && activePlan === key;
+          const popular = key === "professional";
 
-        <div className="bg-[#0A0F1E]/60 border border-[#1e2a4a] rounded-xl p-5 flex flex-col justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 text-sm font-semibold text-white">
-              <Calendar size={14} className="text-[#FC5E01]" />
-              Next Billing Date
+          return (
+            <div
+              key={key}
+              className={`rounded-2xl border p-6 flex flex-col ${
+                popular ? "border-[#FC5E01] bg-[#111B33]" : "border-[#1e2a4a] bg-[#111B33]"
+              }`}
+            >
+              {popular && (
+                <span className="self-start mb-2 rounded-full bg-[#FC5E01] px-2.5 py-0.5 text-[10px] font-bold text-white">
+                  MOST POPULAR
+                </span>
+              )}
+              <h4 className="text-base font-bold text-white">{plan.name}</h4>
+              <p className="mt-2 text-3xl font-extrabold text-white">
+                ${plan.price}
+                <span className="text-sm font-normal text-[#64748B]">/{plan.interval}</span>
+              </p>
+
+              <ul className="mt-4 flex flex-col gap-2 text-xs text-[#94A3B8] flex-1">
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-400" /> {plan.vehicle_listings == null ? "Unlimited" : plan.vehicle_listings} vehicle listings</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-400" /> {plan.team_members == null ? "Unlimited" : plan.team_members} team members</li>
+                {plan.features?.website_builder && <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-400" /> Website builder</li>}
+                {plan.features?.advanced_analytics && <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-400" /> Advanced analytics</li>}
+                {plan.features?.ai_pricing && <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-400" /> AI vehicle pricing</li>}
+                {plan.features?.custom_erp && <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-400" /> Custom ERP integration</li>}
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-400" /> {plan.support} support</li>
+              </ul>
+
+              <button
+                onClick={() => handleChoose(key)}
+                disabled={isCurrent}
+                className={`mt-5 w-full rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                  isCurrent
+                    ? "bg-[#0A0F1E] border border-[#1e2a4a] text-[#64748B] cursor-default"
+                    : "bg-[#FC5E01] text-white hover:bg-[#E5540A]"
+                }`}
+              >
+                {isCurrent ? "Current Plan" : "Choose Plan"}
+              </button>
             </div>
-            <p className="text-xs text-[#64748B] leading-relaxed pt-1">
-              Your subscription renews on <span className="text-white font-medium">Aug 1, 2026</span>. Your
-              card ending in 4242 will be charged <span className="text-white font-medium">$129.00</span>{" "}
-              automatically.
-            </p>
-          </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full text-center py-2.5 rounded-lg border border-[#1e2a4a] text-xs font-semibold text-[#94A3B8] bg-[#0A0F1E] hover:border-[#FC5E01]/40 hover:text-[#FC5E01] transition-colors flex items-center justify-center gap-1.5"
-          >
-            Update Payment Method
-            <ArrowUpRight size={12} />
-          </button>
-        </div>
+          );
+        })}
       </div>
-
-      {/* Invoice History */}
-      <div className="space-y-2 pt-2">
-        <span className="text-xs font-semibold text-[#94A3B8] block">Invoice History</span>
-        <div className="overflow-x-auto border border-[#1e2a4a] rounded-xl bg-[#0A0F1E]/40">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-[#1e2a4a] bg-[#0A0F1E]/60 text-[#64748B] font-semibold uppercase text-[10px] tracking-wider">
-                <th className="p-3">Invoice ID</th>
-                <th className="p-3">Date</th>
-                <th className="p-3">Payment Method</th>
-                <th className="p-3">Amount</th>
-                <th className="p-3">Status</th>
-                <th className="p-3 text-right">Receipt</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#1e2a4a]">
-              {invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-[#0A0F1E]/40 transition-colors">
-                  <td className="p-3 text-white font-semibold">{inv.id}</td>
-                  <td className="p-3 text-[#94A3B8]">{inv.date}</td>
-                  <td className="p-3 text-[#94A3B8]">{inv.method}</td>
-                  <td className="p-3 text-white font-semibold">{inv.amount}</td>
-                  <td className="p-3">
-                    <span className="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold border border-emerald-500/20">
-                      {inv.status}
-                    </span>
-                  </td>
-                  <td className="p-3 text-right">
-                    <button className="p-1.5 rounded-lg bg-[#0A0F1E] border border-[#1e2a4a] text-[#64748B] hover:text-white hover:border-[#FC5E01] transition-colors">
-                      <Download size={13} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <UpdatePaymentMethodModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

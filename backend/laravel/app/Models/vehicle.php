@@ -72,6 +72,7 @@ class Vehicle extends Model
             'price'        => 'decimal:2',
             'year'         => 'integer',
             'mileage'      => 'integer',
+            'details'      => 'array', 
             'published_at' => 'datetime',
             'created_at'   => 'datetime',
             'updated_at'   => 'datetime',

@@ -21,6 +21,16 @@ export interface ApiVehicle {
   fuel_type: string | null;
   transmission: string | null;
   color: string | null;
+  details?: {
+    features?: string[];
+    engine?: string | null;
+    drivetrain?: string | null;
+    doors?: number | null;
+    seats?: number | null;
+    interior_color?: string | null;
+    warranty?: string | null;
+    highlights?: string | null;
+  } | null;
   mileage: number | null;
   price: string | number | null;
   currency: string;

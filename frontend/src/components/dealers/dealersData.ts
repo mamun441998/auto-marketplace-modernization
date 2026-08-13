@@ -5,13 +5,15 @@ export interface Dealer {
   name: string;
   city: string;
   state: string;
-  rating: number;
-  reviewCount: number;
+  rating?: number;
+  reviewCount?: number;
   inventoryCount: number;
-  specialties: string[];
+  specialties?: string[];
   avatarInitials: string;
   gradient: string;
   verified: boolean;
+  logo?: string | null;
+  slug?: string;
 }
 
 export const dealers: Dealer[] = [

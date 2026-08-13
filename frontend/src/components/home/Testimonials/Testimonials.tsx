@@ -1,32 +1,62 @@
 "use client";
 
-import { motion } from "framer-motion";
-import {
-  Building2,
-  CarFront,
-  ShieldCheck,
-  TrendingUp,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { Building2, CarFront, ShieldCheck, TrendingUp } from "lucide-react";
 
 import InfiniteMarquee from "./InfiniteMarquee";
 import ParticleNetwork from "./ParticleNetwork";
+import { fetchPlatformStats, type PlatformStats } from "@/lib/stats";
 
-const stats = [
-  { icon: Building2, value: "530+", label: "Active Dealerships" },
-  { icon: CarFront, value: "15K+", label: "Vehicles Managed" },
-  { icon: TrendingUp, value: "98%", label: "Sales Growth" },
-  { icon: ShieldCheck, value: "99%", label: "Customer Satisfaction" },
-];
+/* Animated count-up (runs once when scrolled into view) */
+function CountUp({ target, suffix = "", duration = 1.4 }: { target: number; suffix?: string; duration?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  const [val, setVal] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    let raf = 0;
+    let startT: number | null = null;
+    const step = (t: number) => {
+      if (startT === null) startT = t;
+      const p = Math.min(1, (t - startT) / (duration * 1000));
+      const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+      setVal(Math.round(target * eased));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, target, duration]);
+
+  return (
+    <span ref={ref}>
+      {val.toLocaleString()}
+      {suffix}
+    </span>
+  );
+}
 
 export default function Testimonials() {
+  const [stats, setStats] = useState<PlatformStats>({ dealers: 0, vehicles: 0, leads: 0 });
+
+  useEffect(() => {
+    fetchPlatformStats().then(setStats);
+  }, []);
+
+  const items = [
+    { icon: Building2, node: <CountUp target={stats.dealers} suffix="+" />, label: "Active Dealerships" },
+    { icon: CarFront, node: <CountUp target={stats.vehicles} suffix="+" />, label: "Vehicles Managed" },
+    { icon: TrendingUp, node: <CountUp target={stats.leads} suffix="+" />, label: "Leads Generated" },
+    { icon: ShieldCheck, node: <>99%</>, label: "Customer Satisfaction" },
+  ];
+
   return (
     <section className="relative bg-[#0D0D10] py-20 lg:py-24 border-t border-[#262626]">
-      {/* Background decoration with Canvas Particle Layer inside */}
+      {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
         <div className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full bg-[#FC5E01]/5 blur-3xl" />
-        
-        {/* Particle Network Animation Component */}
         <ParticleNetwork />
       </div>
 
@@ -49,8 +79,7 @@ export default function Testimonials() {
           </h2>
 
           <p className="mx-auto mt-5 max-w-2xl text-base sm:text-lg leading-8 text-[#94A3B8]">
-            Hundreds of dealerships trust MotoHave to manage
-            inventory, customers, websites and sales every day.
+            Dealerships trust MotoHave to manage inventory, customers, websites and sales every day.
           </p>
         </motion.div>
 
@@ -62,9 +91,8 @@ export default function Testimonials() {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          {stats.map((item) => {
+          {items.map((item) => {
             const Icon = item.icon;
-
             return (
               <div
                 key={item.label}
@@ -75,18 +103,16 @@ export default function Testimonials() {
                 </div>
 
                 <h3 className="mt-3 text-2xl sm:text-3xl font-extrabold text-white">
-                  {item.value}
+                  {item.node}
                 </h3>
 
-                <p className="mt-1 text-xs sm:text-sm text-[#64748B]">
-                  {item.label}
-                </p>
+                <p className="mt-1 text-xs sm:text-sm text-[#64748B]">{item.label}</p>
               </div>
             );
           })}
         </motion.div>
 
-        {/* Single Row Auto Marquee */}
+        {/* Marquee */}
         <InfiniteMarquee />
       </div>
     </section>

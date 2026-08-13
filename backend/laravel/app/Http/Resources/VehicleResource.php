@@ -62,6 +62,8 @@ class VehicleResource extends JsonResource
 
             'color' => $this->color,
 
+            'details' => $this->details ?? [],
+
             'mileage' => $this->mileage,
 
             /*

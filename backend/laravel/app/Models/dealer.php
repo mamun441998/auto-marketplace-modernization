@@ -14,29 +14,12 @@ class Dealer extends Model
     use HasFactory;
     use SoftDeletes;
 
-    /**
-     * --------------------------------------------------------------------------
-     * Mass Assignable
-     * --------------------------------------------------------------------------
-     */
-
     protected $fillable = [
-
-        /*
-        |--------------------------------------------------------------------------
-        | Identity
-        |--------------------------------------------------------------------------
-        */
-
+        // Identity
         'uuid',
         'user_id',
 
-        /*
-        |--------------------------------------------------------------------------
-        | Dealer Information
-        |--------------------------------------------------------------------------
-        */
-
+        // Dealer Information
         'name',
         'slug',
         'email',
@@ -44,121 +27,72 @@ class Dealer extends Model
         'website',
         'description',
 
-        /*
-        |--------------------------------------------------------------------------
-        | Address
-        |--------------------------------------------------------------------------
-        */
-
+        // Address
         'address',
         'city',
         'state',
         'postal_code',
         'country',
 
-        /*
-        |--------------------------------------------------------------------------
-        | Location
-        |--------------------------------------------------------------------------
-        */
-
+        // Location
         'latitude',
         'longitude',
 
-        /*
-        |--------------------------------------------------------------------------
-        | Business
-        |--------------------------------------------------------------------------
-        */
-
+        // Business
         'license_number',
         'tax_number',
 
-        /*
-        |--------------------------------------------------------------------------
-        | Social Media
-        |--------------------------------------------------------------------------
-        */
-
+        // Social Media
         'facebook',
         'instagram',
         'linkedin',
         'youtube',
 
-        /*
-        |--------------------------------------------------------------------------
-        | Branding
-        |--------------------------------------------------------------------------
-        */
-
+        // Branding
         'logo',
         'cover_image',
         'theme',
 
-        /*
-        |--------------------------------------------------------------------------
-        | SEO
-        |--------------------------------------------------------------------------
-        */
-
+        // SEO
         'meta_title',
         'meta_description',
 
-        /*
-        |--------------------------------------------------------------------------
-        | Status
-        |--------------------------------------------------------------------------
-        */
+        // Settings
+        'custom_domain',
+        'notification_prefs',
 
+        // Status
         'status',
         'is_active',
         'is_verified',
         'is_featured',
-
     ];
-
-    /**
-     * --------------------------------------------------------------------------
-     * Hidden
-     * --------------------------------------------------------------------------
-     */
 
     protected $hidden = [
-
         'deleted_at',
-
     ];
-
-    /**
-     * --------------------------------------------------------------------------
-     * Casts
-     * --------------------------------------------------------------------------
-     */
 
     protected function casts(): array
     {
         return [
-
-            'latitude' => 'decimal:7',
+            'latitude'  => 'decimal:7',
             'longitude' => 'decimal:7',
 
-            'is_active' => 'boolean',
+            'is_active'   => 'boolean',
             'is_verified' => 'boolean',
             'is_featured' => 'boolean',
+
+            'notification_prefs' => 'array',
 
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
-
         ];
     }
 
-    /**
-     * --------------------------------------------------------------------------
-     * Relationships
-     * --------------------------------------------------------------------------
-     */
-
+    /*
+    | Relationships
+    */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -169,32 +103,22 @@ class Dealer extends Model
         return $this->hasMany(Vehicle::class);
     }
 
-    /**
-     * --------------------------------------------------------------------------
-     * Accessors
-     * --------------------------------------------------------------------------
-     */
-
+    /*
+    | Accessors
+    */
     public function getLogoUrlAttribute(): ?string
     {
-        return $this->logo
-            ? asset('storage/' . $this->logo)
-            : null;
+        return $this->logo ? asset('storage/' . $this->logo) : null;
     }
 
     public function getCoverImageUrlAttribute(): ?string
     {
-        return $this->cover_image
-            ? asset('storage/' . $this->cover_image)
-            : null;
+        return $this->cover_image ? asset('storage/' . $this->cover_image) : null;
     }
 
-    /**
-     * --------------------------------------------------------------------------
-     * Query Scopes
-     * --------------------------------------------------------------------------
-     */
-
+    /*
+    | Query Scopes
+    */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

@@ -11,6 +11,7 @@ import SalesChart from "@/components/dashboard/SalesChart";
 import LeadsSourceChart from "@/components/dashboard/LeadsSourceChart";
 import TopInventoryTable from "@/components/dashboard/TopInventoryTable";
 import RecentLeadsTable from "@/components/dashboard/RecentLeadsTable";
+import TrialBanner from "@/components/subscription/TrialBanner";
 
 export default function DashboardPage() {
   const [dealer, setDealer] = useState<Dealer | null>(null);
@@ -42,6 +43,8 @@ export default function DashboardPage() {
 
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
+            {/* Trial / subscription banner */}
+      <TrialBanner />
 
       {/* KPI Stats */}
       <DashboardStats />

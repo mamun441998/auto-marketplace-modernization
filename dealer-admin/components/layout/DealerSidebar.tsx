@@ -17,6 +17,8 @@ import {
   Settings,
   Lock,
   LogOut,
+  LifeBuoy,
+  Wallet,
 } from "lucide-react";
 import PlanBadge from "./PlanBadge";
 import { getCurrentDealerPlan } from "@/lib/planConfig";
@@ -39,6 +41,8 @@ const navItems: NavItem[] = [
   { label: "Payments", href: "/payments", icon: CreditCard },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Team", href: "/team", icon: UserCog },
+  { label: "Support", href: "/support", icon: LifeBuoy },
+  { label: "Billing", href: "/billing", icon: Wallet },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
@@ -50,15 +54,15 @@ export default function DealerSidebar() {
     <aside className="fixed left-0 top-0 h-screen w-[260px] border-r border-[#1e2a4a] bg-[#0C1A32] flex flex-col z-30">
       <div className="flex items-center justify-center px-4 py-1.5 border-b border-[#1e2a4a]">
         <Link href="/" className="flex items-center justify-center w-full">
-          <div className="relative h-16 w-[220px]"> 
-          <Image 
-            src="/main-brand-logo.png" 
-            alt="MotoHave Logo" 
-            fill
-            sizes="(max-width: 768px) 150px, 200px"
-            className="object-contain object-center" 
-            priority
-/>
+          <div className="relative h-16 w-[220px]">
+            <Image
+              src="/main-brand-logo.png"
+              alt="MotoHave Logo"
+              fill
+              sizes="(max-width: 768px) 150px, 200px"
+              className="object-contain object-center"
+              priority
+            />
           </div>
         </Link>
       </div>

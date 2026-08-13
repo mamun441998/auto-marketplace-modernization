@@ -57,6 +57,18 @@ class StoreVehicleRequest extends FormRequest
 
             'color' => ['nullable', 'string', 'max:50'],
 
+            // Extra details (features list, engine, warranty, etc.)
+            'details'                => ['nullable', 'array'],
+            'details.features'       => ['nullable', 'array', 'max:50'],
+            'details.features.*'     => ['string', 'max:60'],
+            'details.engine'         => ['nullable', 'string', 'max:100'],
+            'details.drivetrain'     => ['nullable', 'string', 'max:50'],
+            'details.doors'          => ['nullable', 'integer', 'min:0', 'max:10'],
+            'details.seats'          => ['nullable', 'integer', 'min:0', 'max:50'],
+            'details.interior_color' => ['nullable', 'string', 'max:50'],
+            'details.warranty'       => ['nullable', 'string', 'max:255'],
+            'details.highlights'     => ['nullable', 'string', 'max:2000'],
+
             // Status  (matches vehicles enum: draft, active, pending, sold, archived)
             'status' => [
                 'nullable',
@@ -89,12 +101,20 @@ class StoreVehicleRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        // When sent as multipart (with images), `details` arrives as a JSON string.
+        $details = $this->details;
+        if (is_string($details)) {
+            $decoded = json_decode($details, true);
+            $details = is_array($decoded) ? $decoded : null;
+        }
+
         $this->merge([
             'make'     => $this->make ? trim($this->make) : null,
             'model'    => $this->model ? trim($this->model) : null,
             'title'    => $this->title ? trim($this->title) : null,
             'currency' => strtoupper($this->currency ?? 'USD'),
             'status'   => $this->status ?? 'draft',
+            'details'  => $details,
         ]);
     }
 }

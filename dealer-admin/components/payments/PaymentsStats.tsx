@@ -1,32 +1,45 @@
-// dealer-admin/components/payments/PaymentsStats.tsx
 "use client";
 
+import { useEffect, useState } from "react";
 import { DollarSign, CheckCircle2, Clock, RotateCcw } from "lucide-react";
-import { paymentStats } from "@/lib/dealerData";
+import { fetchTransactions, type TransactionStats } from "@/lib/dealerTransactions";
 
 export default function PaymentsStats() {
+  const [data, setData] = useState<TransactionStats>({
+    revenue: 0,
+    completed: 0,
+    pending: 0,
+    refunded: 0,
+  });
+
+  useEffect(() => {
+    fetchTransactions().then((res) => {
+      if (res.success) setData(res.stats);
+    });
+  }, []);
+
   const stats = [
     {
       label: "Total Revenue",
-      value: `$${paymentStats.totalRevenue.toLocaleString()}`,
+      value: `$${data.revenue.toLocaleString()}`,
       icon: DollarSign,
       accent: "text-[#FC5E01] bg-[#FC5E01]/10",
     },
     {
       label: "Completed",
-      value: paymentStats.completedCount.toString(),
+      value: data.completed.toString(),
       icon: CheckCircle2,
       accent: "text-emerald-400 bg-emerald-500/10",
     },
     {
       label: "Pending",
-      value: paymentStats.pendingCount.toString(),
+      value: data.pending.toString(),
       icon: Clock,
       accent: "text-amber-400 bg-amber-500/10",
     },
     {
       label: "Refunded",
-      value: paymentStats.refundedCount.toString(),
+      value: data.refunded.toString(),
       icon: RotateCcw,
       accent: "text-rose-400 bg-rose-500/10",
     },

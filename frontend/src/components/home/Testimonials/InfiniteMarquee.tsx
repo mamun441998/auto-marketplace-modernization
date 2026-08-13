@@ -1,13 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TestimonialCard from "./TestimonialCard";
 import { testimonials } from "./TestimonialData";
+import { fetchTestimonials } from "@/lib/content";
 
-const loopedSingleRow = Array(6).fill(testimonials).flat();
+// Gradient palette used when deriving a card color from the testimonial id.
+const GRADIENTS = [
+  "from-blue-500 to-cyan-500",
+  "from-violet-500 to-fuchsia-500",
+  "from-green-500 to-emerald-500",
+  "from-orange-500 to-red-500",
+  "from-sky-500 to-blue-600",
+  "from-pink-500 to-rose-500",
+];
+
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+type CardItem = {
+  id: number;
+  name: string;
+  company: string;
+  role: string;
+  rating: number;
+  avatar: string;
+  gradient: string;
+  quote: string;
+};
 
 export default function InfiniteMarquee() {
   const [isPaused, setIsPaused] = useState(false);
+  const [items, setItems] = useState<CardItem[]>(testimonials as CardItem[]);
+
+  useEffect(() => {
+    let active = true;
+    fetchTestimonials().then((data) => {
+      if (!active) return;
+      if (data.length > 0) {
+        setItems(
+          data.map((t) => ({
+            id: t.id,
+            name: t.name,
+            company: t.company ?? "",
+            role: t.role ?? "",
+            rating: t.rating,
+            avatar: initials(t.name),
+            gradient: GRADIENTS[t.id % GRADIENTS.length],
+            quote: t.quote,
+          }))
+        );
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const loopedSingleRow = Array(6).fill(items).flat();
 
   return (
     /* 💡 overflow-hidden remove kora hoyeche jate card gulo baireo visible thake */

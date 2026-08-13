@@ -260,7 +260,7 @@ class LeadController extends Controller
 
     private function getDealer(Request $request): ?Dealer
     {
-        return Dealer::where('user_id', $request->user()->id)->first();
+                return $request->user()->currentDealer();
     }
 
     private function authorizeLead(Dealer $dealer, Lead $lead): ?JsonResponse
