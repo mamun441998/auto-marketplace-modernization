@@ -17,23 +17,29 @@ return [
         '*',
     ],
 
-    'allowed_origins' => [
+    'allowed_origins' => array_values(array_filter([
 
-        // Frontend (marketing + auth)
+        // Local development
         'http://127.0.0.1:3000',
         'http://localhost:3000',
-
-        // Dealer-Admin (dashboard)
         'http://127.0.0.1:3001',
         'http://localhost:3001',
-
-        // Super Admin panel  ← ✅ নতুন যোগ হলো
         'http://127.0.0.1:3002',
         'http://localhost:3002',
 
-    ],
+        // Production URLs from env (custom domains). Set these in Render:
+        //   FRONTEND_URL, DEALER_ADMIN_URL, ADMIN_URL
+        env('FRONTEND_URL'),
+        env('DEALER_ADMIN_URL'),
+        env('ADMIN_URL'),
 
-    'allowed_origins_patterns' => [],
+    ])),
+
+    // Allow every Vercel deployment (production + preview builds) without
+    // having to whitelist each auto-generated URL.
+    'allowed_origins_patterns' => [
+        '#^https://.*\.vercel\.app$#',
+    ],
 
     'allowed_headers' => [
         '*',
