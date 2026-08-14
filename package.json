@@ -1,12 +1,7 @@
 {
-  "name": "...",
-  "version": "...",
-  "scripts": {
-    "dev": "...",
-    "build": "...",
-    "start": "..."
-  },
-  "dependencies": {
-    ...
-  }
+  "name": "auto-marketplace-modernization",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MotoHave — multi-tenant car dealership SaaS (monorepo). Each app deploys separately: set the Vercel Root Directory to 'frontend', 'dealer-admin', or 'admin'; the Laravel API in 'backend/laravel' deploys to Render.",
+  "license": "UNLICENSED"
 }
