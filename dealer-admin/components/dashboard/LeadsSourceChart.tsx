@@ -84,7 +84,10 @@ export default function LeadsSourceChart() {
                     fontSize: "12px",
                     color: "#fff",
                   }}
-                  formatter={(value: number, name: string) => [`${value} (${((value / total) * 100).toFixed(0)}%)`, name]}
+                  formatter={(value, name) => {
+                    const v = Number(value);
+                    return [`${v} (${((v / total) * 100).toFixed(0)}%)`, name];
+                  }}
                 />
               </PieChart>
             </ResponsiveContainer>

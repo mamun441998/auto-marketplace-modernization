@@ -21,7 +21,7 @@ export default function PaymentsStats() {
   const stats = [
     {
       label: "Total Revenue",
-      value: `$${data.revenue.toLocaleString()}`,
+      value: `$${Number(data.revenue).toLocaleString()}`,
       icon: DollarSign,
       accent: "text-[#FC5E01] bg-[#FC5E01]/10",
     },

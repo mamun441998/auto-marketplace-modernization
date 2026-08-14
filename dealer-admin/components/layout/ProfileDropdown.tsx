@@ -16,6 +16,12 @@ export default function ProfileDropdown() {
   const [name, setName] = useState("User");
   const [email, setEmail] = useState("");
   const [dealership, setDealership] = useState("");
+  const [imgFailed, setImgFailed] = useState(false);
+
+  /* যদি avatar URL বদলায়, error state reset করো */
+  useEffect(() => {
+    setImgFailed(false);
+  }, [avatarUrl]);
 
   /* আসল user + dealership load */
   useEffect(() => {
@@ -51,6 +57,7 @@ export default function ProfileDropdown() {
   };
 
   const hasValidAvatar =
+    !imgFailed &&
     avatarUrl !== null &&
     avatarUrl.trim() !== "" &&
     avatarUrl !== "null" &&
@@ -68,6 +75,7 @@ export default function ProfileDropdown() {
           <img
             src={avatarUrl!}
             alt="Profile"
+            onError={() => setImgFailed(true)}
             className="h-8 w-8 flex-shrink-0 rounded-lg object-cover"
           />
         ) : (
@@ -89,6 +97,7 @@ export default function ProfileDropdown() {
               <img
                 src={avatarUrl!}
                 alt="Profile"
+                onError={() => setImgFailed(true)}
                 className="h-10 w-10 flex-shrink-0 rounded-lg object-cover"
               />
             ) : (

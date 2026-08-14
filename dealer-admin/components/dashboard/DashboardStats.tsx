@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CarFront, UserPlus, ShoppingBag, TrendingUp } from "lucide-react";
-import { fetchMyVehicles, Vehicle } from "@/lib/vehicle";
+import { fetchAllMyVehicles, Vehicle } from "@/lib/vehicle";
 import { fetchMyLeads } from "@/lib/lead";
 
 export default function DashboardStats() {
@@ -12,7 +12,7 @@ export default function DashboardStats() {
   useEffect(() => {
     (async () => {
       try {
-        const vRes = await fetchMyVehicles({ per_page: 100 });
+        const vRes = await fetchAllMyVehicles();
         if (vRes.success) setVehicles(vRes.vehicles ?? []);
 
         const lRes = await fetchMyLeads({ status: "new", per_page: 1 });

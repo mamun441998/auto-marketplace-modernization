@@ -108,12 +108,12 @@ class Dealer extends Model
     */
     public function getLogoUrlAttribute(): ?string
     {
-        return $this->logo ? asset('storage/' . $this->logo) : null;
+        return $this->logo ? url('media/' . $this->logo) : null;
     }
 
     public function getCoverImageUrlAttribute(): ?string
     {
-        return $this->cover_image ? asset('storage/' . $this->cover_image) : null;
+        return $this->cover_image ? url('media/' . $this->cover_image) : null;
     }
 
     /*

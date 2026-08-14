@@ -12,6 +12,12 @@ export default function ProfileSettings() {
   const [dealer, setDealer] = useState<Dealer | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  /* avatar বদলালে img error state reset */
+  useEffect(() => {
+    setImgFailed(false);
+  }, [avatarUrl]);
 
   const [profile, setProfile] = useState({
     dealerName: "",
@@ -62,9 +68,19 @@ export default function ProfileSettings() {
   };
 
   /* Logo upload (real) */
+  const MAX_LOGO_BYTES = 5 * 1024 * 1024; // 5MB
+
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !dealer) return;
+
+    // ৫MB-এর বেশি হলে সাথে সাথে থামাও — সার্ভারে পাঠানোর দরকার নেই
+    if (file.size > MAX_LOGO_BYTES) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      setMessage({ ok: false, text: `Logo is ${mb}MB — please choose an image under 5MB.` });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
 
     // সাথে সাথে preview
     setAvatarUrl(URL.createObjectURL(file));
@@ -106,10 +122,11 @@ export default function ProfileSettings() {
 
         <div className="flex items-center gap-5">
           <div className="relative flex-shrink-0">
-            {avatarUrl ? (
+            {avatarUrl && !imgFailed ? (
               <img
                 src={avatarUrl}
                 alt="Logo"
+                onError={() => setImgFailed(true)}
                 className="h-20 w-20 rounded-2xl border border-[#1e2a4a] object-cover"
               />
             ) : (

@@ -89,7 +89,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return null;
         }
 
-        return asset('storage/' . $this->avatar);
+        return url('media/' . $this->avatar);
     }
 
     /*

@@ -35,6 +35,13 @@ export default function SettingsPage() {
   const [savingPw, setSavingPw] = useState(false);
   const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
+  // Deep-link: open the tab passed as ?tab=... (billing / usage / domain / …)
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("tab");
+    const valid = ["profile", "usage", "billing", "domain", "security", "notifications", "localization"];
+    if (t && valid.includes(t)) setActiveTab(t as SettingTab);
+  }, []);
+
   // Load current settings
   useEffect(() => {
     fetchDealerSettings().then((s) => {

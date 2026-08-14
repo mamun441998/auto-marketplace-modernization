@@ -5,7 +5,7 @@ import { LayoutGrid, List, Loader2 } from "lucide-react";
 import LeadsStats from "@/components/leads/LeadsStats";
 import LeadsTable from "@/components/leads/LeadsTable";
 import LeadsPipeline from "@/components/leads/LeadsPipeline";
-import { fetchMyLeads, Lead } from "@/lib/lead";
+import { fetchAllMyLeads, Lead } from "@/lib/lead";
 
 export default function LeadsPage() {
   const [currentView, setCurrentView] = useState<"table" | "pipeline">("table");
@@ -15,7 +15,7 @@ export default function LeadsPage() {
   const loadLeads = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await fetchMyLeads({ per_page: 200 });
+      const res = await fetchAllMyLeads();
       if (res.success) setLeads(res.leads ?? []);
     } catch (err) {
       console.error("Load leads failed:", err);

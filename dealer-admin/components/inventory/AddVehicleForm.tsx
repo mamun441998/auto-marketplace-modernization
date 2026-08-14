@@ -16,6 +16,7 @@ import {
   Plus,
 } from "lucide-react";
 import { hasFeatureAccess } from "@/lib/planConfig";
+import { generateVehicleDescription } from "@/lib/ai";
 import {
   createVehicle,
   updateVehicle,
@@ -71,12 +72,12 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
     model: vehicle?.model ?? "",
     year: vehicle?.year?.toString() ?? "",
     vin: vehicle?.vin ?? "",
-    bodyType: matchOption(bodyTypes, vehicle?.body_type, "Sedan"),
+    bodyType: matchOption(bodyTypes, vehicle?.body_type, vehicle ? "" : "Sedan"),
     condition: conditionToDisplay(vehicle?.condition),
     price: vehicle?.price != null ? String(Number(vehicle.price)) : "",
     mileage: vehicle?.mileage != null ? String(vehicle.mileage) : "",
-    fuelType: matchOption(fuelTypes, vehicle?.fuel_type, "Petrol"),
-    transmission: matchOption(transmissions, vehicle?.transmission, "Automatic"),
+    fuelType: matchOption(fuelTypes, vehicle?.fuel_type, vehicle ? "" : "Petrol"),
+    transmission: matchOption(transmissions, vehicle?.transmission, vehicle ? "" : "Automatic"),
     description: vehicle?.description ?? "",
   });
 
@@ -129,18 +130,30 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
     });
   };
 
-  const handleGenerateDescription = () => {
-    if (!canUseAI) return;
+  const handleGenerateDescription = async () => {
+    if (!canUseAI || isGeneratingDescription) return;
+
+    const title = `${formData.year} ${formData.make} ${formData.model}`.trim();
+    if (!title) return;
+
     setIsGeneratingDescription(true);
-    setTimeout(() => {
-      updateField(
-        "description",
-        `This well-maintained ${formData.year || "2023"} ${formData.make || "vehicle"} ${
-          formData.model || ""
-        } offers a smooth driving experience with excellent fuel efficiency. Featuring a ${formData.transmission.toLowerCase()} transmission and ${formData.fuelType.toLowerCase()} engine, this ${formData.bodyType.toLowerCase()} is perfect for daily commutes or family trips. Comes with a clean history and is ready for its next owner.`
-      );
-      setIsGeneratingDescription(false);
-    }, 1200);
+
+    const res = await generateVehicleDescription({
+      title,
+      condition: formData.condition,
+      tone: "SEO Optimized",
+      include_features: true,
+    });
+
+    if (res.success && res.description) {
+      updateField("description", res.description);
+    } else if (res.message) {
+      // AI endpoint/key not configured yet — tell the dealer instead of failing silently.
+      updateField("description", formData.description);
+      alert(res.message);
+    }
+
+    setIsGeneratingDescription(false);
   };
 
   const buildPayload = (): VehiclePayload => ({
@@ -149,13 +162,13 @@ export default function AddVehicleForm({ vehicle }: AddVehicleFormProps) {
     model: formData.model.trim(),
     year: Number(formData.year),
     vin: formData.vin ? formData.vin.trim() : null,
-    body_type: formData.bodyType.toLowerCase(),
+    body_type: formData.bodyType ? formData.bodyType.toLowerCase() : null,
     condition: toCondition(formData.condition),
     price: Number(formData.price),
     currency: "USD",
     mileage: formData.mileage ? Number(formData.mileage) : null,
-    fuel_type: formData.fuelType.toLowerCase(),
-    transmission: formData.transmission.toLowerCase(),
+    fuel_type: formData.fuelType ? formData.fuelType.toLowerCase() : null,
+    transmission: formData.transmission ? formData.transmission.toLowerCase() : null,
     description: formData.description ? formData.description : null,
     status: isEditMode ? (vehicle?.status ?? "active") : "active",
     details: {

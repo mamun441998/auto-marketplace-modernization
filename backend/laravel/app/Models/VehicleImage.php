@@ -98,7 +98,7 @@ class VehicleImage extends Model
             return null;
         }
 
-        return asset('storage/' . $this->image_path);
+        return url('media/' . $this->image_path);
     }
 
     /**

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2, Clock, AlertTriangle, Zap } from "lucide-react";
 import {
   fetchPlans,
@@ -30,9 +31,12 @@ export default function BillingSettings() {
     })();
   }, []);
 
-  const handleChoose = (planKey: string) => {
-    // 💳 Phase 2: Stripe/SSLCommerz checkout will start here.
-    alert(`Checkout for "${plans[planKey]?.name}" will be connected in the next step (payment gateway).`);
+  const router = useRouter();
+
+  const handleChoose = (_planKey: string) => {
+    // Real subscription checkout lives on the Billing page
+    // (POST /dealer/subscription/checkout → gateway).
+    router.push("/billing");
   };
 
   if (loading) {

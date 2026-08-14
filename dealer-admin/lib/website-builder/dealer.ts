@@ -4,7 +4,7 @@ import {
     apiPut,
     apiDelete,
     apiUpload,
-} from "./apiClient";
+} from "../apiClient";
 
 /**
  * ------------------------------------------------------------

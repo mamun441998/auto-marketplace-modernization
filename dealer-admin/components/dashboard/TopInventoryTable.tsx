@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { fetchMyVehicles, Vehicle } from "@/lib/vehicle";
+import { fetchAllMyVehicles, Vehicle } from "@/lib/vehicle";
 
 const statusMap: Record<string, { label: string; className: string }> = {
   active:   { label: "In Stock", className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
@@ -22,7 +22,7 @@ export default function TopInventoryTable() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetchMyVehicles({ per_page: 100, sort_by: "price", sort_dir: "desc" });
+        const res = await fetchAllMyVehicles({ sort_by: "price", sort_dir: "desc" });
         if (res.success) setVehicles((res.vehicles ?? []).slice(0, 5));
       } catch (err) {
         console.error("Load top inventory failed:", err);

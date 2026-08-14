@@ -1,13 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Copy, Check, RotateCcw, FileText, Send, BadgeAlert } from "lucide-react";
+import {
+  Sparkles,
+  Copy,
+  Check,
+  RotateCcw,
+  FileText,
+  AlertTriangle,
+} from "lucide-react";
+
+import { generateVehicleDescription } from "@/lib/ai";
 
 export default function AIDescriptionGenerator() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [generatedText, setGeneratedText] = useState("");
-  
+  const [error, setError] = useState("");
+
   const [inputs, setInputs] = useState({
     title: "",
     condition: "Excellent",
@@ -15,19 +25,27 @@ export default function AIDescriptionGenerator() {
     includeFeatures: true,
   });
 
-  const handleGenerate = (e: React.FormEvent) => {
+  const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputs.title) return;
-    
+    if (!inputs.title.trim() || loading) return;
+
     setLoading(true);
-    
-    // Simulated AI Inference Streaming Effect
-    setTimeout(() => {
-      const mockResult = `🔥 PREMIUM LISTING AVAILABLE 🔥\n\nPresenting a stunning, dealer-certified ${inputs.title} in ${inputs.inputsCondition || inputs.condition.toLowerCase()} condition. Fully inspected and ready for immediate showroom delivery.\n\n✨ Highlight Features & Packages:\n• Premium Package Integration\n• Advanced Driver Assistance & Safety Suite\n• Precision Climate Control & Cockpit Ergonomics\n\n💼 Why Buy From Us?\nWe provide instant title transfers, flexible financing matrix options, and nationwide logistics infrastructure support. Schedule your VIP test drive layout today!`;
-      
-      setGeneratedText(mockResult);
-      setLoading(false);
-    }, 1500);
+    setError("");
+
+    const res = await generateVehicleDescription({
+      title: inputs.title.trim(),
+      condition: inputs.condition,
+      tone: inputs.tone,
+      include_features: inputs.includeFeatures,
+    });
+
+    if (res.success && res.description) {
+      setGeneratedText(res.description);
+    } else {
+      setError(res.message || "Something went wrong. Please try again.");
+    }
+
+    setLoading(false);
   };
 
   const copyToClipboard = () => {
@@ -38,9 +56,11 @@ export default function AIDescriptionGenerator() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-      
       {/* Parameters Panel */}
-      <form onSubmit={handleGenerate} className="lg:col-span-2 bg-[#111B33] border border-[#1e2a4a] rounded-2xl p-5 space-y-4">
+      <form
+        onSubmit={handleGenerate}
+        className="lg:col-span-2 bg-[#111B33] border border-[#1e2a4a] rounded-2xl p-5 space-y-4"
+      >
         <div>
           <label className="block text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1.5">
             Vehicle Specs / Year Make Model
@@ -58,7 +78,7 @@ export default function AIDescriptionGenerator() {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1.5">
-              Condition Vector
+              Condition
             </label>
             <select
               value={inputs.condition}
@@ -73,14 +93,14 @@ export default function AIDescriptionGenerator() {
 
           <div>
             <label className="block text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1.5">
-              Marketing Voice Tone
+              Marketing Tone
             </label>
             <select
               value={inputs.tone}
               onChange={(e) => setInputs({ ...inputs, tone: e.target.value })}
               className="w-full rounded-xl border border-[#1e2a4a] bg-[#0A0F1E] px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#FC5E01]"
             >
-              <option value="Luxury & Elegant">Luxury & Premium</option>
+              <option value="Luxury & Elegant">Luxury &amp; Premium</option>
               <option value="Aggressive Sales">Aggressive Sales</option>
               <option value="SEO Optimized">SEO Descriptive</option>
             </select>
@@ -92,11 +112,16 @@ export default function AIDescriptionGenerator() {
             type="checkbox"
             id="features"
             checked={inputs.includeFeatures}
-            onChange={(e) => setInputs({ ...inputs, includeFeatures: e.target.checked })}
+            onChange={(e) =>
+              setInputs({ ...inputs, includeFeatures: e.target.checked })
+            }
             className="rounded border-[#1e2a4a] bg-[#0A0F1E] text-[#FC5E01] focus:ring-0"
           />
-          <label htmlFor="features" className="text-xs text-[#94A3B8] font-medium select-none">
-            Append automated safety & finance sub-blocks
+          <label
+            htmlFor="features"
+            className="text-xs text-[#94A3B8] font-medium select-none"
+          >
+            Include safety &amp; finance highlights
           </label>
         </div>
 
@@ -106,16 +131,18 @@ export default function AIDescriptionGenerator() {
           className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FC5E01] py-2.5 text-xs font-black text-white hover:bg-[#E5540A] transition-all disabled:opacity-50"
         >
           <Sparkles size={13} className={loading ? "animate-spin" : ""} />
-          {loading ? "Inference Matrix Computing..." : "Run AI Copywriter Engine"}
+          {loading ? "Generating..." : "Generate description"}
         </button>
       </form>
 
-      {/* Output Stream Terminal */}
+      {/* Output */}
       <div className="lg:col-span-3 bg-[#111B33] border border-[#1e2a4a] rounded-2xl flex flex-col min-h-[320px] overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-[#1e2a4a] bg-[#0A0F1E]/30">
           <div className="flex items-center gap-2">
             <FileText size={14} className="text-[#FC5E01]" />
-            <span className="text-[11px] font-bold text-white uppercase tracking-wider">Generated Output</span>
+            <span className="text-[11px] font-bold text-white uppercase tracking-wider">
+              Generated Output
+            </span>
           </div>
           {generatedText && (
             <div className="flex items-center gap-2">
@@ -123,7 +150,11 @@ export default function AIDescriptionGenerator() {
                 onClick={copyToClipboard}
                 className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1.5 rounded-lg border border-[#1e2a4a] bg-[#0A0F1E] text-[#94A3B8] hover:text-white transition-colors"
               >
-                {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                {copied ? (
+                  <Check size={11} className="text-emerald-400" />
+                ) : (
+                  <Copy size={11} />
+                )}
                 {copied ? "Copied" : "Copy"}
               </button>
               <button
@@ -139,15 +170,22 @@ export default function AIDescriptionGenerator() {
         <div className="flex-1 p-5 font-sans text-xs leading-relaxed text-slate-300 whitespace-pre-wrap selection:bg-[#FC5E01]/30">
           {generatedText ? (
             generatedText
+          ) : error ? (
+            <div className="h-full flex flex-col items-center justify-center text-center text-amber-300/90">
+              <AlertTriangle size={22} className="mb-2 text-amber-400" />
+              <p className="max-w-sm leading-relaxed">{error}</p>
+            </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center text-[#64748B]">
               <Sparkles size={24} className="mb-2 text-[#1e2a4a]" />
-              <p>Configure parameters and run engine to stream optimized vehicle content.</p>
+              <p>
+                Enter the vehicle details and generate an optimized listing
+                description.
+              </p>
             </div>
           )}
         </div>
       </div>
-
     </div>
   );
 }

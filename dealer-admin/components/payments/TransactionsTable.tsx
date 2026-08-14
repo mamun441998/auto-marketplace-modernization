@@ -175,7 +175,7 @@ export default function TransactionsTable() {
                         <td className="px-5 py-4 text-sm text-[#94A3B8]">{txn.vehicle}</td>
 
                         <td className="px-5 py-4 text-sm font-bold text-white">
-                          ${txn.amount.toLocaleString()}
+                          ${Number(txn.amount).toLocaleString()}
                         </td>
 
                         <td className="px-5 py-4 text-sm text-[#94A3B8]">{txn.method}</td>

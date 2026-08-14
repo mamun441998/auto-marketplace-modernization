@@ -127,7 +127,7 @@ class DealerWebsiteController extends Controller
 
         return response()->json([
             'success' => true,
-            'url'     => asset('storage/' . $path),
+            'url'     => url('media/' . $path),
             'path'    => $path,
         ]);
     }

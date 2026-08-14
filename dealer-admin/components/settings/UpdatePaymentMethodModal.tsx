@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { X, CreditCard, Lock } from "lucide-react";
 
 interface UpdatePaymentMethodModalProps {
@@ -15,21 +16,20 @@ export default function UpdatePaymentMethodModal({ isOpen, onClose }: UpdatePaym
   const [cvv, setCvv] = useState("");
   const [nameOnCard, setNameOnCard] = useState("");
 
+  const router = useRouter();
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // 💡 Backend connect korar somoy: eikhane Stripe/PayPal SDK diye card token
-    // create hobe, tarpor backend e pathano hobe. Real card number kokhono
-    // nijer server e store kora jabe na, shudhu gateway er token store korte hobe.
-    // jemon: const token = await stripe.createToken(cardElement);
-    //        await fetch("/api/billing/payment-method", { method: "PATCH", body: JSON.stringify({ token }) })
-    alert("Payment method updated successfully (backend not connected yet)");
+    // Card data is never handled in-app. Payment methods are managed securely by
+    // the gateway (Stripe customer portal / checkout) on the Billing page.
     setCardNumber("");
     setExpiry("");
     setCvv("");
     setNameOnCard("");
     onClose();
+    router.push("/billing");
   };
 
   // Card number ke "1234 5678 9012 3456" format e dekhanor jonno

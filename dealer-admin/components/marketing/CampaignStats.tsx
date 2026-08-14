@@ -1,6 +1,6 @@
 "use client";
 
-import { Megaphone, Users, Mail, ClickUp, ArrowUpRight, TrendingUp } from "lucide-react";
+import { Megaphone, Users, Mail, MousePointerClick, ArrowUpRight, TrendingUp } from "lucide-react";
 
 export default function CampaignStats() {
   // Mock Production Marketing Analytics Matrix

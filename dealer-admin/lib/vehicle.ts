@@ -157,6 +157,30 @@ export async function fetchMyVehicles(filters: VehicleFilters = {}) {
   }>(`/dealer/vehicles${buildQuery(filters)}`);
 }
 
+/**
+ * Fetch EVERY vehicle for the dealer by paging through the API.
+ * The backend caps per_page at 50, so a single request silently loses data for
+ * dealers with more than 50 vehicles. This loops until all pages are collected.
+ * Returns the same shape as fetchMyVehicles so callers can swap it in directly.
+ */
+export async function fetchAllMyVehicles(filters: VehicleFilters = {}) {
+  const perPage = 50;
+  const all: Vehicle[] = [];
+  let page = 1;
+  let meta: VehiclePaginationMeta | undefined;
+
+  for (let i = 0; i < 200; i++) {
+    const res = await fetchMyVehicles({ ...filters, per_page: perPage, page });
+    const list = res?.vehicles ?? [];
+    all.push(...list);
+    meta = res?.meta;
+    if (!meta || page >= meta.last_page || list.length === 0) break;
+    page++;
+  }
+
+  return { success: true, vehicles: all, meta };
+}
+
 export async function fetchMyVehicle(id: number | string) {
   return apiGet<{ success: boolean; vehicle: Vehicle }>(`/dealer/vehicles/${id}`);
 }

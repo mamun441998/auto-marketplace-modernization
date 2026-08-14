@@ -16,8 +16,8 @@ export default function InviteTeamMemberModal({ isOpen, onClose }: InviteTeamMem
   const [role, setRole] = useState("Sales Staff");
 
   const currentPlan = getCurrentDealerPlan();
-  const isUnlimited = currentPlan.maxTeamMembers === "unlimited";
-  const isAtLimit = !isUnlimited && teamMembers.length >= currentPlan.maxTeamMembers;
+  const maxTeam = currentPlan.maxTeamMembers;
+  const isAtLimit = maxTeam !== "unlimited" && teamMembers.length >= maxTeam;
 
   if (!isOpen) return null;
 

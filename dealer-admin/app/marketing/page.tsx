@@ -24,8 +24,7 @@ const AUDIENCES = [
   { value: "new", label: "New leads" },
   { value: "contacted", label: "Contacted" },
   { value: "qualified", label: "Qualified" },
-  { value: "negotiating", label: "Negotiating" },
-  { value: "won", label: "Won" },
+  { value: "closed", label: "Closed / Won" },
   { value: "lost", label: "Lost" },
   { value: "imported", label: "Imported contacts" },
 ];

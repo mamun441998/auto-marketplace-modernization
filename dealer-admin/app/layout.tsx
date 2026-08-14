@@ -9,6 +9,7 @@ import { ProfileProvider } from "@/components/layout/ProfileContext";
 
 import { getToken, getUser, captureAuthFromUrl, FRONTEND_URL } from "@/lib/auth";
 import { fetchMyDealer } from "@/lib/dealer";
+import { refreshDealerPlan } from "@/lib/planConfig";
 
 import "./globals.css";
 
@@ -41,6 +42,12 @@ export default function RootLayout({
       // dealer profile আছে কিনা চেক
       const dealer = await fetchMyDealer();
       if (!active) return;
+
+      // dealer-এর real plan resolve করে cache করো (feature gating-এর জন্য)
+      if (dealer) {
+        await refreshDealerPlan();
+        if (!active) return;
+      }
 
       const onOnboarding = pathname === "/onboarding";
 

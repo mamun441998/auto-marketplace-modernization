@@ -11,12 +11,14 @@ export default function TeamStats() {
   const invitedCount = teamMembers.filter((m) => m.status === "Invited").length;
   const totalCount = teamMembers.length;
 
-  const isUnlimited = currentPlan.maxTeamMembers === "unlimited";
-  const usagePercent = isUnlimited
-    ? 0
-    : Math.min(100, (totalCount / currentPlan.maxTeamMembers) * 100);
+  const maxTeam = currentPlan.maxTeamMembers;
+  const isUnlimited = maxTeam === "unlimited";
+  const usagePercent =
+    maxTeam === "unlimited"
+      ? 0
+      : Math.min(100, (totalCount / maxTeam) * 100);
   const isNearLimit = !isUnlimited && usagePercent >= 80;
-  const isAtLimit = !isUnlimited && totalCount >= currentPlan.maxTeamMembers;
+  const isAtLimit = maxTeam !== "unlimited" && totalCount >= maxTeam;
 
   return (
     <div className="flex flex-col gap-4">

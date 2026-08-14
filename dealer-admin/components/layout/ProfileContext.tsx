@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { fetchMyDealer } from "@/lib/dealer";
 
 interface ProfileContextType {
   avatarUrl: string | null;
@@ -21,16 +22,37 @@ const isValidUrl = (url: string | null | undefined): boolean => {
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [avatarUrl, setAvatarUrlState] = useState<string | null>(null);
 
-  // Check and load saved avatar from localStorage on component mount
+  // On mount: show the cached avatar INSTANTLY as a placeholder, but ALWAYS
+  // re-fetch the dealer's real logo from the backend and refresh the cache.
+  // This guarantees a stale cached URL (e.g. an old /storage/... path that now
+  // 404s) gets replaced by the current one on every load — not just after
+  // visiting Settings.
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    // রিফ্রেশ করার পর যদি লোকাল স্টোরেজে blob: ইউআরএল থাকে, তবে সেটা লোড না করে রিমুভ করে দেবে
     if (isValidUrl(saved) && !saved!.trim().toLowerCase().startsWith("blob:")) {
-      setAvatarUrlState(saved);
+      setAvatarUrlState(saved); // instant placeholder — refreshed below
     } else {
-      // Clean up local storage if it contains trash values ("null" / "undefined")
+      // Clean up trash values ("null" / "undefined" / blob:).
       localStorage.removeItem(STORAGE_KEY);
     }
+
+    let active = true;
+    fetchMyDealer().then((d) => {
+      if (!active) return;
+      const url = d?.logo_url ?? null;
+      if (isValidUrl(url) && !url!.toLowerCase().startsWith("blob:")) {
+        setAvatarUrlState(url);
+        localStorage.setItem(STORAGE_KEY, url!);
+      } else {
+        // Dealer has no logo — clear any stale cached value.
+        setAvatarUrlState(null);
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const setAvatarUrl = (url: string | null) => {

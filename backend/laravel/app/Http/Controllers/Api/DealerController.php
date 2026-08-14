@@ -223,6 +223,12 @@ class DealerController extends Controller
 
         $request->validate([
             'logo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        ], [
+            'logo.required' => 'Please choose a logo image to upload.',
+            'logo.uploaded' => 'The logo is too large for the server to accept. Please use an image under 5MB (and start the backend with start-backend.bat).',
+            'logo.image'    => 'The logo must be an image file.',
+            'logo.mimes'    => 'The logo must be a JPG, PNG or WEBP file.',
+            'logo.max'      => 'The logo may not be larger than 5MB.',
         ]);
 
         if ($dealer->logo) {

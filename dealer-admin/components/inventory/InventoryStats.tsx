@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { CarFront, CheckCircle2, Clock, DollarSign } from "lucide-react";
 import { getCurrentDealerPlan } from "@/lib/planConfig";
-import { fetchMyVehicles, Vehicle } from "@/lib/vehicle";
+import { fetchAllMyVehicles, Vehicle } from "@/lib/vehicle";
 
 export default function InventoryStats() {
   const currentPlan = getCurrentDealerPlan();
@@ -13,7 +13,7 @@ export default function InventoryStats() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetchMyVehicles({ per_page: 100 });
+        const res = await fetchAllMyVehicles();
         if (res.success) setVehicles(res.vehicles ?? []);
       } catch (err) {
         console.error("Load inventory stats failed:", err);
@@ -27,10 +27,12 @@ export default function InventoryStats() {
   const reserved = vehicles.filter((v) => v.status === "pending").length;
   const totalValue = vehicles.reduce((sum, v) => sum + Number(v.price ?? 0), 0);
 
-  const isUnlimited = currentPlan.maxVehicleListings === "unlimited";
-  const usagePercent = isUnlimited
-    ? 0
-    : Math.min(100, (totalVehicles / currentPlan.maxVehicleListings) * 100);
+  const maxListings = currentPlan.maxVehicleListings;
+  const isUnlimited = maxListings === "unlimited";
+  const usagePercent =
+    maxListings === "unlimited"
+      ? 0
+      : Math.min(100, (totalVehicles / maxListings) * 100);
   const isNearLimit = !isUnlimited && usagePercent >= 80;
 
   return (

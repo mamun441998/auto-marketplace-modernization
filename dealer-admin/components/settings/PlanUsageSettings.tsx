@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Zap, Gauge, Check, Clock, AlertTriangle, Loader2 } from "lucide-react";
 import {
   fetchSubscription,
@@ -27,6 +28,7 @@ export default function PlanUsageSettings() {
   const [plans, setPlans] = useState<Record<string, PlanConfig>>({});
   const [loading, setLoading] = useState(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -207,9 +209,10 @@ export default function PlanUsageSettings() {
                     <button
                       disabled={isActive}
                       onClick={() => {
-                        // 💳 Phase 2: Stripe checkout will start here.
-                        alert(`Checkout for "${tier.name}" — payment gateway (Stripe) will be connected later.`);
+                        // Real subscription checkout lives on the Billing page
+                        // (POST /dealer/subscription/checkout → gateway).
                         setShowUpgradeModal(false);
+                        router.push("/billing");
                       }}
                       className={`w-full py-2.5 rounded-xl font-semibold text-sm transition-colors ${isActive ? "bg-[#111B33] text-[#64748B] border border-[#1e2a4a] cursor-not-allowed" : "bg-[#FC5E01] text-white hover:bg-[#E5540A]"}`}
                     >

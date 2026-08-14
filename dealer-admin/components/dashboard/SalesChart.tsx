@@ -45,7 +45,7 @@ export default function SalesChart() {
               color: "#fff",
             }}
             labelStyle={{ color: "#94A3B8" }}
-            formatter={(value: number) => [value, "Sales"]}
+            formatter={(value) => [value, "Sales"]}
           />
           <Area
             type="monotone"

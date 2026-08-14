@@ -109,6 +109,29 @@ export async function fetchMyLeads(filters: LeadFilters = {}) {
   }>(`/dealer/leads${buildQuery(filters)}`);
 }
 
+/**
+ * Fetch EVERY lead for the dealer by paging through the API.
+ * The backend caps per_page at 100, so a single request silently loses data for
+ * dealers with more than 100 leads. Returns the same shape as fetchMyLeads.
+ */
+export async function fetchAllMyLeads(filters: LeadFilters = {}) {
+  const perPage = 100;
+  const all: Lead[] = [];
+  let page = 1;
+  let meta: LeadPaginationMeta | undefined;
+
+  for (let i = 0; i < 200; i++) {
+    const res = await fetchMyLeads({ ...filters, per_page: perPage, page });
+    const list = res?.leads ?? [];
+    all.push(...list);
+    meta = res?.meta;
+    if (!meta || page >= meta.last_page || list.length === 0) break;
+    page++;
+  }
+
+  return { success: true, leads: all, meta };
+}
+
 /** GET /api/dealer/leads/stats */
 export async function fetchLeadStats() {
   return apiGet<{ success: boolean; stats: LeadStats }>(`/dealer/leads/stats`);

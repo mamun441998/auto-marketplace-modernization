@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { clearAuth, FRONTEND_URL } from "@/lib/auth";
+import { apiPost } from "@/lib/apiClient";
 import {
   LayoutDashboard,
   CarFront,
@@ -103,7 +105,18 @@ export default function DealerSidebar() {
 
       {/* Logout */}
       <div className="border-t border-[#1e2a4a] p-3">
-        <button className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#94A3B8] hover:bg-[#111B33] hover:text-rose-400 transition-colors">
+        <button
+          onClick={async () => {
+            try {
+              await apiPost("/logout", {});
+            } catch {
+              // ignore network errors — clear locally either way
+            }
+            clearAuth();
+            window.location.href = `${FRONTEND_URL}/sign-in`;
+          }}
+          className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#94A3B8] hover:bg-[#111B33] hover:text-rose-400 transition-colors"
+        >
           <LogOut size={18} />
           Log Out
         </button>

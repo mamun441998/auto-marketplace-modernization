@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Pencil, Eye, Trash2, CarFront, Loader2 } from "lucide-react";
 import InventoryFilters from "./InventoryFilters";
 import EmptyState from "@/components/shared/EmptyState";
-import { fetchMyVehicles, deleteVehicle, Vehicle } from "@/lib/vehicle";
+import { fetchAllMyVehicles, deleteVehicle, Vehicle } from "@/lib/vehicle";
 
 /** Map backend status -> display label + colour. */
 const statusMap: Record<string, { label: string; className: string }> = {
@@ -61,7 +61,7 @@ export default function VehicleTable() {
     setIsLoading(true);
     setLoadError(null);
     try {
-      const res = await fetchMyVehicles({ per_page: 100, sort_by: "created_at", sort_dir: "desc" });
+      const res = await fetchAllMyVehicles({ sort_by: "created_at", sort_dir: "desc" });
       if (res.success) {
         setVehicles(res.vehicles ?? []);
       } else {
