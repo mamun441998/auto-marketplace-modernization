@@ -4,8 +4,15 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
+// API backend root — a lightweight health/status response. (The default
+// welcome view uses @vite, whose manifest doesn't exist in an API-only
+// deploy, so rendering it would 500. This app serves JSON under /api/*.)
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json([
+        'app'    => config('app.name'),
+        'status' => 'ok',
+        'api'    => url('/api'),
+    ]);
 });
 
 // Email open / click tracking (public — hit by email clients & browsers)

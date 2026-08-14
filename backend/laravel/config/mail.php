@@ -58,7 +58,7 @@ return [
     'local_domain' => env(
         'MAIL_EHLO_DOMAIN',
         parse_url(
-            env('APP_URL'),
+            env('APP_URL') ?? '',
             PHP_URL_HOST
         )
     ),
