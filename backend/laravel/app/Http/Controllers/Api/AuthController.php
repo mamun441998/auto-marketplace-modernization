@@ -41,7 +41,7 @@ class AuthController extends Controller
         DB::beginTransaction();
 
         try {
-                        $user = User::create([
+            $user = User::create([
                 'name'                => trim($request->name),
                 'email'               => strtolower(trim($request->email)),
                 'password'            => $request->password,
@@ -52,19 +52,7 @@ class AuthController extends Controller
                 'plan'                => null,
             ]);
 
-            $code = (string) random_int(100000, 999999);
-
-            Cache::put('email_verification_' . $user->id, $code, now()->addMinutes(10));
-
-            Mail::to($user->email)->send(new VerifyEmailMail($user, $code));
-
             DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Account created successfully. Please check your email for the verification code.',
-                'user'    => new UserResource($user),
-            ], 201);
 
         } catch (QueryException $exception) {
             DB::rollBack();
@@ -99,6 +87,26 @@ class AuthController extends Controller
                 'message' => 'Unable to create account.',
             ], 500);
         }
+
+        // The account is committed. Sending the verification code is best-effort:
+        // an SMTP/mail failure must NOT roll back a successful registration
+        // (the user can request a new code from the verify-email screen).
+        try {
+            $code = (string) random_int(100000, 999999);
+            Cache::put('email_verification_' . $user->id, $code, now()->addMinutes(10));
+            Mail::to($user->email)->send(new VerifyEmailMail($user, $code));
+        } catch (Throwable $exception) {
+            Log::error('Verification email failed to send', [
+                'user_id' => $user->id,
+                'message' => $exception->getMessage(),
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Account created successfully. Please check your email for the verification code.',
+            'user'    => new UserResource($user),
+        ], 201);
     }
 
     /** Login */
