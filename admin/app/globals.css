@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+:root {
+  /* ==================== Brand Colors (Dark Theme) ==================== */
+  --color-primary: #fc5e01;
+  --color-primary-hover: #e5540a;
+
+  /* ==================== Background ==================== */
+  --color-background: #0a0f1e;
+  --color-surface: #111b33;
+  --color-surface-alt: #0d1424;
+
+  /* ==================== Text ==================== */
+  --color-text: #ffffff;
+  --color-text-muted: #94a3b8;
+
+  /* ==================== Border ==================== */
+  --color-border: #1e2a4a;
+
+  /* ==================== Status ==================== */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-text);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-primary);
+  color: white;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ==================== Scrollbar ==================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
