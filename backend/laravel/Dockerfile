@@ -1,11 +1,11 @@
 # ============================================================================
 #  MotoHave Laravel API — production image for Render (or any Docker host)
 # ----------------------------------------------------------------------------
-#  Apache + mod_php 8.3. Serves from /public, runs Laravel routing via the
+#  Apache + mod_php 8.4. Serves from /public, runs Laravel routing via the
 #  existing public/.htaccess, connects to PostgreSQL (Supabase), and binds to
 #  the $PORT that Render provides at runtime.
 # ============================================================================
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # ---- System libraries + PHP extensions ------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
