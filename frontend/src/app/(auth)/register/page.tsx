@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { AuthLayout } from "@/components/auth/layout/AuthLayout";
 import { AuthNavbar } from "@/components/auth/layout/AuthNavbar";
 import { AuthGrid } from "@/components/auth/layout/AuthGrid";
@@ -15,9 +16,13 @@ export default function RegisterPage() {
     <AuthLayout>
       <div className="w-full max-w-7xl mx-auto flex flex-col space-y-4 lg:space-y-0">
         <AuthNavbar mode="register" />
-        <AuthGrid 
-          brandingNode={<AuthLeftContent />} 
-          formNode={<RegisterCard />} 
+        <AuthGrid
+          brandingNode={<AuthLeftContent />}
+          formNode={
+            <Suspense fallback={null}>
+              <RegisterCard />
+            </Suspense>
+          }
         />
       </div>
     </AuthLayout>
