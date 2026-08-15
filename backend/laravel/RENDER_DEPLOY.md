@@ -53,13 +53,15 @@ QUEUE_CONNECTION=sync        # no separate worker → emails send inline
 FILESYSTEM_DISK=public
 BCRYPT_ROUNDS=12
 
-# Mail (your Gmail app-password setup)
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=YOUR-GMAIL
-MAIL_PASSWORD=YOUR-GMAIL-APP-PASSWORD
-MAIL_FROM_ADDRESS=YOUR-GMAIL
+# Mail — use Resend (HTTP API). Render BLOCKS outbound SMTP (25/465/587), so
+# Gmail/SMTP will hang and time out. Resend sends over HTTPS and works on Render.
+#   1. Sign up at https://resend.com (free), create an API key.
+#   2. For quick testing use MAIL_FROM_ADDRESS=onboarding@resend.dev and register
+#      with the same email you signed up to Resend with.
+#   3. For production, verify your domain in Resend and use noreply@yourdomain.
+MAIL_MAILER=resend
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxx
+MAIL_FROM_ADDRESS=onboarding@resend.dev
 MAIL_FROM_NAME=MotoHave
 
 # Payments (Stripe) — test keys for now
