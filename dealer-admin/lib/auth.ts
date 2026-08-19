@@ -2,7 +2,8 @@ export const TOKEN_KEY = "motohave_token";
 export const USER_KEY = "motohave_user";
 
 // login/marketing app-এর URL (unauthorized হলে এখানে ফেরত যাবে)
-export const FRONTEND_URL = "http://localhost:3000";
+export const FRONTEND_URL =
+  process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;

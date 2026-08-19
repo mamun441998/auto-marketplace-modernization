@@ -98,7 +98,7 @@ class VehicleImage extends Model
             return null;
         }
 
-        return url('media/' . $this->image_path);
+        return \App\Support\Media::url($this->image_path);
     }
 
     /**

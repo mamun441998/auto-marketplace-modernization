@@ -123,11 +123,11 @@ class DealerWebsiteController extends Controller
             'image' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,avif,gif,svg', 'max:5120'],
         ]);
 
-        $path = $request->file('image')->store("websites/{$dealer->id}", 'public');
+        $path = $request->file('image')->storePublicly("websites/{$dealer->id}", \App\Support\Media::disk());
 
         return response()->json([
             'success' => true,
-            'url'     => url('media/' . $path),
+            'url'     => \App\Support\Media::url($path),
             'path'    => $path,
         ]);
     }

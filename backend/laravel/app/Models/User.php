@@ -89,7 +89,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return null;
         }
 
-        return url('media/' . $this->avatar);
+        return \App\Support\Media::url($this->avatar);
     }
 
     /*

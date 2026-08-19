@@ -16,6 +16,14 @@ return [
     'default' => env('FILESYSTEM_DISK', 'local'),
 
     /*
+    | Disk used for user uploads (logos, vehicle images, website assets).
+    | Local dev: 'public' (served through the /media route). Production on an
+    | ephemeral host (Render) should use 's3' pointed at Supabase Storage so
+    | uploads survive redeploys. Set MEDIA_DISK=s3 there.
+    */
+    'media_disk' => env('MEDIA_DISK', 'public'),
+
+    /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------

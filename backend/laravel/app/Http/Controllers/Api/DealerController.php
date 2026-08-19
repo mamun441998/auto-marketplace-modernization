@@ -232,10 +232,10 @@ class DealerController extends Controller
         ]);
 
         if ($dealer->logo) {
-            Storage::disk('public')->delete($dealer->logo);
+            Storage::disk(\App\Support\Media::disk())->delete($dealer->logo);
         }
 
-        $path = $request->file('logo')->store('dealers/logos', 'public');
+        $path = $request->file('logo')->storePublicly('dealers/logos', \App\Support\Media::disk());
         $dealer->update(['logo' => $path]);
 
         return response()->json([
@@ -255,10 +255,10 @@ class DealerController extends Controller
         ]);
 
         if ($dealer->cover_image) {
-            Storage::disk('public')->delete($dealer->cover_image);
+            Storage::disk(\App\Support\Media::disk())->delete($dealer->cover_image);
         }
 
-        $path = $request->file('cover_image')->store('dealers/covers', 'public');
+        $path = $request->file('cover_image')->storePublicly('dealers/covers', \App\Support\Media::disk());
         $dealer->update(['cover_image' => $path]);
 
         return response()->json([
