@@ -53,7 +53,7 @@ return [
 
     'password' => env('MAIL_PASSWORD'),
 
-    'timeout' => 30,
+    'timeout' => env('MAIL_TIMEOUT', 10),
 
     'local_domain' => env(
         'MAIL_EHLO_DOMAIN',

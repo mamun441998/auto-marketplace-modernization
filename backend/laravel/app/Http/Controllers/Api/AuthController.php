@@ -88,19 +88,22 @@ class AuthController extends Controller
             ], 500);
         }
 
-        // The account is committed. Sending the verification code is best-effort:
-        // an SMTP/mail failure must NOT roll back a successful registration
-        // (the user can request a new code from the verify-email screen).
-        try {
-            $code = (string) random_int(100000, 999999);
-            Cache::put('email_verification_' . $user->id, $code, now()->addMinutes(10));
-            Mail::to($user->email)->send(new VerifyEmailMail($user, $code));
-        } catch (Throwable $exception) {
-            Log::error('Verification email failed to send', [
-                'user_id' => $user->id,
-                'message' => $exception->getMessage(),
-            ]);
-        }
+        // The account is committed. Store the code now, but SEND the email AFTER
+        // the response is flushed (defer) so a slow/blocked mail transport can
+        // never delay or time out the signup response.
+        $code = (string) random_int(100000, 999999);
+        Cache::put('email_verification_' . $user->id, $code, now()->addMinutes(10));
+
+        defer(function () use ($user, $code) {
+            try {
+                Mail::to($user->email)->send(new VerifyEmailMail($user, $code));
+            } catch (Throwable $exception) {
+                Log::error('Verification email failed to send', [
+                    'user_id' => $user->id,
+                    'message' => $exception->getMessage(),
+                ]);
+            }
+        });
 
         return response()->json([
             'success' => true,
@@ -205,13 +208,15 @@ class AuthController extends Controller
             $code = (string) random_int(100000, 999999);
             Cache::put('password_reset_' . $user->email, $code, now()->addMinutes(60));
 
-            try {
-                Mail::to($user->email)->send(new ResetPasswordMail($user, $code));
-            } catch (Throwable $e) {
-                Log::error('Forgot Password Mail Error', [
-                    'message' => $e->getMessage(),
-                ]);
-            }
+            defer(function () use ($user, $code) {
+                try {
+                    Mail::to($user->email)->send(new ResetPasswordMail($user, $code));
+                } catch (Throwable $e) {
+                    Log::error('Forgot Password Mail Error', [
+                        'message' => $e->getMessage(),
+                    ]);
+                }
+            });
         }
 
         return response()->json([
@@ -296,13 +301,15 @@ class AuthController extends Controller
             $code = (string) random_int(100000, 999999);
             Cache::put('email_verification_' . $user->id, $code, now()->addMinutes(10));
 
-            try {
-                Mail::to($user->email)->send(new VerifyEmailMail($user, $code));
-            } catch (Throwable $e) {
-                Log::error('Resend Verification Mail Error', [
-                    'message' => $e->getMessage(),
-                ]);
-            }
+            defer(function () use ($user, $code) {
+                try {
+                    Mail::to($user->email)->send(new VerifyEmailMail($user, $code));
+                } catch (Throwable $e) {
+                    Log::error('Resend Verification Mail Error', [
+                        'message' => $e->getMessage(),
+                    ]);
+                }
+            });
         }
 
         return response()->json([
