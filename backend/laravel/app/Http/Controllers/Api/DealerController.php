@@ -232,10 +232,30 @@ class DealerController extends Controller
         ]);
 
         if ($dealer->logo) {
-            Storage::disk(\App\Support\Media::disk())->delete($dealer->logo);
+            try {
+                Storage::disk(\App\Support\Media::disk())->delete($dealer->logo);
+            } catch (\Throwable $e) {
+                // ignore delete failures
+            }
         }
 
-        $path = $request->file('logo')->storePublicly('dealers/logos', \App\Support\Media::disk());
+        try {
+            $path = $request->file('logo')->storePublicly('dealers/logos', \App\Support\Media::disk());
+        } catch (\Throwable $e) {
+            \Log::error('Logo storage upload failed', ['message' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Could not save the logo to storage: ' . $e->getMessage(),
+            ], 500);
+        }
+
+        if (! $path) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Logo upload to storage failed. Check the storage bucket is public and the S3 credentials are correct.',
+            ], 500);
+        }
+
         $dealer->update(['logo' => $path]);
 
         return response()->json([
