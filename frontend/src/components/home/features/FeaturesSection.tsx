@@ -16,13 +16,13 @@ const AUTO_PLAY_INTERVAL = 10000;
 export default function FeaturesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [direction, setDirection] = useState(1); // স্লাইড অ্যানিমেশনের ডিরেকশন ট্র্যাক করার জন্য
+  const [direction, setDirection] = useState(1);
   const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const totalFeatures = featuresData.length;
   const currentFeature = featuresData[activeIndex] || featuresData[0];
 
-  // অটো-প্লে স্লাইডার লজিক (১০ সেকেন্ড)
+  // ১০ সেকেন্ড পর পর অটো স্লাইড হওয়ার লজিক
   useEffect(() => {
     if (!isAutoPlaying) return;
 
@@ -58,7 +58,7 @@ export default function FeaturesSection() {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      {/* ব্যাকগ্রাউন্ড ডায়নামিক গ্লো ইফেক্ট */}
+      {/* ব্যাকগ্রাউন্ড গ্লো ইফেক্ট */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
@@ -75,10 +75,9 @@ export default function FeaturesSection() {
       </div>
 
       <div className="relative z-10 w-full max-w-[1700px] mx-auto px-4 sm:px-6 md:px-10 xl:px-16 flex flex-col gap-8 md:gap-12">
-        {/* সেকশন হেডার */}
         <FeaturesHeader />
 
-        {/* রেসপন্সিভ ট্যাব বার (মোবাইল ও ডেক্সটপ ফ্রেন্ডলি স্ক্রোলযোগ্য) */}
+        {/* ট্যাব বার */}
         <div className="w-full overflow-x-auto no-scrollbar py-2">
           <div className="flex items-center justify-start md:justify-center gap-2 sm:gap-3 min-w-max mx-auto px-2">
             {featuresData.map((item, index) => {
@@ -127,7 +126,6 @@ export default function FeaturesSection() {
               transition={{ duration: 0.45, ease: "easeInOut" }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
             >
-              {/* বাম পাশ: ফিচারের বিবরণ */}
               <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold tracking-wide uppercase w-fit">
                   <span>{currentFeature.badge}</span>
@@ -156,19 +154,17 @@ export default function FeaturesSection() {
                 </div>
               </div>
 
-              {/* মাঝের অংশ: অ্যানিমেশন প্রিভিউ */}
               <div className="lg:col-span-3 flex items-center justify-center bg-[#0D0D10]/50 border border-white/5 rounded-2xl p-4 min-h-[260px]">
                 <FeatureAnimation id={Number(currentFeature.id)} />
               </div>
 
-              {/* ডান পাশ: হাই-রেজুলেশন স্ক্রিনশট বা মকআপ */}
               <div className="lg:col-span-4 flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0D0D10]">
                 <FeatureImage feature={currentFeature} />
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* স্লাইডারের ফুটার: কাউন্টার ও নেভিগেশন কন্ট্রোল অ্যারো */}
+          {/* ফুটার কন্ট্রোল */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
             <div className="text-sm font-mono text-white/50 flex items-center gap-2">
               <span className="text-orange-500 font-bold text-base">{String(activeIndex + 1).padStart(2, "0")}</span>
@@ -179,7 +175,6 @@ export default function FeaturesSection() {
               </span>
             </div>
 
-            {/* অ্যারো নেভিগেশন বাটন */}
             <div className="flex items-center gap-3">
               <div className="flex items-center rounded-full bg-[#0D0D10] border border-white/10 p-1">
                 <button
