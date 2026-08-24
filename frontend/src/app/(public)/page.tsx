@@ -1,6 +1,6 @@
 "use client";
 
-import Hero from "@/components/home/Hero/Hero";
+import Hero from "@/components/home/hero/Hero"; // Check if 'hero' folder is lowercase here
 import TrustedBrands from "@/components/home/TrustedBrands/TrustedBrands";
 import EverythingSection from "@/components/home/Everything/EverythingSection";
 import ProductShowcase from "@/components/home/ProductShowcase/ProductShowcase";

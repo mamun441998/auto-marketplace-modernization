@@ -1,113 +1,206 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, useScroll, useMotionValueEvent, useTransform } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 
 import { featuresData } from "./featuresData";
 import { FeaturesHeader } from "./FeaturesHeader";
 import FeatureContent from "./FeatureContent";
 import FeatureAnimation from "./FeatureAnimation";
 import FeatureImage from "./FeatureImage";
-import FeatureProgress from "./FeatureProgress";
+
+// Duration in milliseconds for auto-advancing tabs when user is idle
+const AUTO_PLAY_INTERVAL = 6000;
 
 export default function FeaturesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeRef = useRef(0); // avoids redundant re-renders → smoother
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const totalFeatures = featuresData.length;
-  const feature = featuresData[activeIndex] || featuresData[0];
+  const currentFeature = featuresData[activeIndex] || featuresData[0];
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
+  // Auto-play timer logic for seamless automatic tab rotation
+  useEffect(() => {
+    if (!isAutoPlaying) return;
 
-  // Scroll progress → active index (only update when it actually changes)
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const p = Math.max(0, Math.min(0.9999, latest));
-    const idx = Math.min(Math.floor(p * totalFeatures), totalFeatures - 1);
-    if (idx !== activeRef.current) {
-      activeRef.current = idx;
-      setActiveIndex(idx);
-    }
-  });
+    autoPlayTimerRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % totalFeatures);
+    }, AUTO_PLAY_INTERVAL);
 
-  const scale = useTransform(scrollYProgress, [0.85, 1], [1, 0.96]);
-  const opacity = useTransform(scrollYProgress, [0.9, 1], [1, 0.85]);
+    return () => {
+      if (autoPlayTimerRef.current) {
+        clearInterval(autoPlayTimerRef.current);
+      }
+    };
+  }, [isAutoPlaying, totalFeatures]);
 
-  const go = (dir: number) => {
-    setActiveIndex((prev) => {
-      const next = (prev + dir + totalFeatures) % totalFeatures;
-      activeRef.current = next;
-      return next;
-    });
+  // Handle manual tab navigation by direct user click
+  const handleSelectTab = (index: number) => {
+    setIsAutoPlaying(false); // Pause auto-play when user interacts manually
+    setActiveIndex(index);
+  };
+
+  // Handle directional arrows (Previous / Next)
+  const handleNavigate = (direction: number) => {
+    setIsAutoPlaying(false); // Pause auto-play on explicit control click
+    setActiveIndex((prev) => (prev + direction + totalFeatures) % totalFeatures);
   };
 
   return (
-    <div ref={containerRef} className="relative h-[400vh] bg-[#0D0D10]">
-      <motion.section
-        style={{ scale, opacity }}
-        className="sticky top-0 h-screen overflow-hidden border-t border-white/10 flex flex-col justify-center py-4 xl:py-6 z-10 origin-top bg-[#171617] rounded-b-[32px] shadow-2xl"
-      >
-        {/* Background */}
-        <div className="absolute inset-0 pointer-events-none z-0 rounded-b-[32px] overflow-hidden">
+    <section 
+      className="relative w-full bg-[#0D0D10] text-white py-16 md:py-24 overflow-hidden border-t border-white/10"
+      onMouseEnter={() => setIsAutoPlaying(false)}
+      onMouseLeave={() => setIsAutoPlaying(true)}
+    >
+      {/* Dynamic Background Effects */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <AnimatePresence mode="wait">
           <motion.div
-            key={feature.id}
+            key={currentFeature.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className={`absolute inset-0 ${feature.background}`}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className={`absolute inset-0 ${currentFeature.background || "bg-gradient-to-b from-orange-500/5 via-transparent to-transparent"}`}
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,.04)_1px,transparent_1px)] [background-size:36px_36px] opacity-30" />
-          <div className="absolute inset-0 bg-black/40" />
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,.03)_1px,transparent_1px)] [background-size:32px_32px] opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0D0D10]/80 via-transparent to-[#0D0D10]" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-[1700px] mx-auto px-4 sm:px-6 md:px-10 xl:px-16 flex flex-col gap-8 md:gap-12">
+        {/* Header Component */}
+        <FeaturesHeader />
+
+        {/* Horizontal Tab Bar Navigation */}
+        <div className="w-full overflow-x-auto no-scrollbar py-2">
+          <div className="flex items-center justify-start md:justify-center gap-2 sm:gap-3 min-w-max mx-auto px-2">
+            {featuresData.map((item, index) => {
+              const isActive = activeIndex === index;
+              return (
+                <button
+                  key={item.id || index}
+                  onClick={() => handleSelectTab(index)}
+                  className={`relative flex items-center gap-2.5 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 cursor-pointer border ${
+                    isActive
+                      ? "bg-[#1C1C22] text-white border-orange-500/50 shadow-lg shadow-orange-500/10"
+                      : "bg-[#141419]/60 text-white/60 border-white/5 hover:bg-[#1C1C22]/60 hover:text-white/90"
+                  }`}
+                >
+                  <span
+                    className={`flex items-center justify-center h-6 w-6 rounded-md text-xs font-mono font-bold transition-colors ${
+                      isActive ? "bg-orange-500 text-white" : "bg-white/10 text-white/70"
+                    }`}
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span>{item.title}</span>
+
+                  {/* Active Progress Line Indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-500 rounded-full"
+                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="relative z-20 flex w-full flex-col">
-          <FeaturesHeader />
+        {/* Main Interactive Feature Showcase Card */}
+        <div className="w-full bg-[#16161C] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentFeature.id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
+            >
+              {/* Left Column: Feature Details & Value Proposition */}
+              <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold tracking-wide uppercase w-fit">
+                  <span>{currentFeature.badge}</span>
+                </div>
 
-          <div className="w-full max-w-[1700px] mx-auto px-6 md:px-10 xl:px-16 mt-2">
-            <div className="flex flex-col xl:grid w-full items-center gap-4 xl:grid-cols-[380px_280px_minmax(0,1fr)_160px] 2xl:grid-cols-[420px_320px_minmax(0,1fr)_180px]">
-              {/* Left Content */}
-              <div className="w-full">
-                <FeatureContent feature={feature} allFeatures={featuresData} activeIndex={activeIndex} />
+                <div className="space-y-3">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight">
+                    {currentFeature.title}
+                  </h3>
+                  <p className="text-white/70 text-base sm:text-lg leading-relaxed">
+                    {currentFeature.description}
+                  </p>
+                </div>
+
+                {/* Highlight / Benefit Badge Item */}
+                {currentFeature.highlightText && (
+                  <div className="flex items-center gap-3 pt-2">
+                    <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white/90 text-sm sm:text-base font-medium">
+                      <CheckCircle2 className="h-5 w-5 text-orange-500 shrink-0" />
+                      <span>{currentFeature.highlightText}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action CTA & Feature Content Render */}
+                <div className="pt-4 flex flex-wrap items-center gap-4">
+                  <FeatureContent feature={currentFeature} allFeatures={featuresData} activeIndex={activeIndex} />
+                </div>
               </div>
 
-              {/* Center Animation */}
-              <div className="w-full flex justify-center my-1 xl:my-0">
-                <FeatureAnimation id={feature.id} />
+              {/* Middle Column: Interactive Animation Preview */}
+              <div className="lg:col-span-3 flex items-center justify-center bg-[#0D0D10]/50 border border-white/5 rounded-2xl p-4 min-h-[260px]">
+                <FeatureAnimation id={Number(currentFeature.id)} />
               </div>
 
-              {/* Image */}
-              <div className="w-full">
-                <FeatureImage feature={feature} />
+              {/* Right Column: High-Res Feature Display / Mockup */}
+              <div className="lg:col-span-4 flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0D0D10]">
+                <FeatureImage feature={currentFeature} />
               </div>
+            </motion.div>
+          </AnimatePresence>
 
-              {/* Progress */}
-              <FeatureProgress features={featuresData} activeIndex={activeIndex} onSelect={(index) => { activeRef.current = index; setActiveIndex(index); }} />
+          {/* Bottom Bar: Counter & Manual Navigation Buttons */}
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
+            {/* Slide Index Counter */}
+            <div className="text-sm font-mono text-white/50 flex items-center gap-2">
+              <span className="text-orange-500 font-bold text-base">{String(activeIndex + 1).padStart(2, "0")}</span>
+              <span>/</span>
+              <span>{String(totalFeatures).padStart(2, "0")}</span>
+              <span className="hidden sm:inline-block ml-4 text-xs text-white/40">
+                {isAutoPlaying ? "• Auto-rotating" : "• Paused"}
+              </span>
             </div>
 
-            {/* Navigation */}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
-              <div className="text-xs font-mono text-white/50">
-                <span className="text-white font-bold">{String(activeIndex + 1).padStart(2, "0")}</span> / {String(totalFeatures).padStart(2, "0")}
-              </div>
-
-              <div className="flex items-center rounded-full bg-[#16171B] border border-white/10 p-1 shadow-lg">
-                <button onClick={() => go(-1)} aria-label="Previous Feature" className="flex h-9 w-11 items-center justify-center rounded-full text-white/85 transition-all hover:bg-orange-500/10 hover:text-orange-500 active:scale-95 cursor-pointer">
-                  <ChevronLeft className="h-4 w-4" />
+            {/* Controls */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center rounded-full bg-[#0D0D10] border border-white/10 p-1">
+                <button
+                  onClick={() => handleNavigate(-1)}
+                  aria-label="Previous Feature"
+                  className="flex h-9 w-10 items-center justify-center rounded-full text-white/80 transition-all hover:bg-orange-500/20 hover:text-orange-400 active:scale-95 cursor-pointer"
+                >
+                  <ChevronLeft className="h-5 w-5" />
                 </button>
                 <div className="h-4 w-[1px] bg-white/10" />
-                <button onClick={() => go(1)} aria-label="Next Feature" className="flex h-9 w-11 items-center justify-center rounded-full text-white/85 transition-all hover:bg-orange-500/10 hover:text-orange-500 active:scale-95 cursor-pointer">
-                  <ChevronRight className="h-4 w-4" />
+                <button
+                  onClick={() => handleNavigate(1)}
+                  aria-label="Next Feature"
+                  className="flex h-9 w-10 items-center justify-center rounded-full text-white/80 transition-all hover:bg-orange-500/20 hover:text-orange-400 active:scale-95 cursor-pointer"
+                >
+                  <ChevronRight className="h-5 w-5" />
                 </button>
               </div>
             </div>
           </div>
         </div>
-      </motion.section>
-    </div>
+      </div>
+    </section>
   );
 }
