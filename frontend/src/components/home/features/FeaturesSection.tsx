@@ -2,16 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle2, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 import { featuresData } from "./featuresData";
 import { FeaturesHeader } from "./FeaturesHeader";
-import FeatureContent from "./FeatureContent";
 import FeatureAnimation from "./FeatureAnimation";
 import FeatureImage from "./FeatureImage";
 
-// ১০ সেকেন্ড পর পর অটো স্লাইড হবে
-const AUTO_PLAY_INTERVAL = 10000;
+const AUTO_PLAY_INTERVAL = 10000; // ১০ সেকেন্ড পর পর অটো স্লাইড
 
 export default function FeaturesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -22,7 +21,7 @@ export default function FeaturesSection() {
   const totalFeatures = featuresData.length;
   const currentFeature = featuresData[activeIndex] || featuresData[0];
 
-  // ১০ সেকেন্ড পর পর অটো স্লাইড হওয়ার লজিক
+  // অটো-প্লে লজিক
   useEffect(() => {
     if (!isAutoPlaying) return;
 
@@ -38,14 +37,14 @@ export default function FeaturesSection() {
     };
   }, [isAutoPlaying, totalFeatures]);
 
-  // ম্যানুয়াল ট্যাব ক্লিক হ্যান্ডলার
+  // ট্যাব ক্লিক হ্যান্ডলার
   const handleSelectTab = (index: number) => {
     setIsAutoPlaying(false);
     setDirection(index > activeIndex ? 1 : -1);
     setActiveIndex(index);
   };
 
-  // অ্যারো বাটন নেভিগেশন (ডান/বাম)
+  // অ্যারো নেভিগেশন
   const handleNavigate = (dir: number) => {
     setIsAutoPlaying(false);
     setDirection(dir);
@@ -58,7 +57,7 @@ export default function FeaturesSection() {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      {/* ব্যাকগ্রাউন্ড গ্লো ইফেক্ট */}
+      {/* ব্যাকগ্রাউন্ড গ্লো */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
@@ -77,14 +76,14 @@ export default function FeaturesSection() {
       <div className="relative z-10 w-full max-w-[1700px] mx-auto px-4 sm:px-6 md:px-10 xl:px-16 flex flex-col gap-8 md:gap-12">
         <FeaturesHeader />
 
-        {/* ট্যাব বার */}
+        {/* টপ ট্যাব বার (যাতে সহজেই ক্লিক করে পরিবর্তন করা যায়) */}
         <div className="w-full overflow-x-auto no-scrollbar py-2">
           <div className="flex items-center justify-start md:justify-center gap-2 sm:gap-3 min-w-max mx-auto px-2">
             {featuresData.map((item, index) => {
               const isActive = activeIndex === index;
               return (
                 <button
-                  key={item.id || index}
+                  key={item.id}
                   onClick={() => handleSelectTab(index)}
                   className={`relative flex items-center gap-2.5 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 cursor-pointer border ${
                     isActive
@@ -99,7 +98,7 @@ export default function FeaturesSection() {
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <span>{item.title}</span>
+                  <span>{item.badge}</span>
 
                   {isActive && (
                     <motion.div
@@ -114,20 +113,22 @@ export default function FeaturesSection() {
           </div>
         </div>
 
-        {/* মেইন স্লাইডার কন্টেন্ট কার্ড */}
+        {/* মেইন স্লাইডার বক্স */}
         <div className="w-full bg-[#16161C] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm overflow-hidden">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentFeature.id}
               custom={direction}
-              initial={{ opacity: 0, x: direction * 50 }}
+              initial={{ opacity: 0, x: direction * 40 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction * -50 }}
-              transition={{ duration: 0.45, ease: "easeInOut" }}
+              exit={{ opacity: 0, x: direction * -40 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
             >
+              {/* বাম পাশের টেক্সট কন্টেন্ট */}
               <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold tracking-wide uppercase w-fit">
+                  <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
                   <span>{currentFeature.badge}</span>
                 </div>
 
@@ -149,22 +150,30 @@ export default function FeaturesSection() {
                   </div>
                 )}
 
-                <div className="pt-4 flex flex-wrap items-center gap-4">
-                  <FeatureContent feature={currentFeature} allFeatures={featuresData} activeIndex={activeIndex} />
+                <div className="pt-2">
+                  <Link
+                    href={currentFeature.linkHref || "#"}
+                    className="group inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-orange-500"
+                  >
+                    <span>{currentFeature.linkText || "Explore Feature"}</span>
+                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
                 </div>
               </div>
 
+              {/* মাঝখানের অ্যানিমেশন */}
               <div className="lg:col-span-3 flex items-center justify-center bg-[#0D0D10]/50 border border-white/5 rounded-2xl p-4 min-h-[260px]">
                 <FeatureAnimation id={Number(currentFeature.id)} />
               </div>
 
+              {/* ডান পাশের প্রিভিউ ইমেজ */}
               <div className="lg:col-span-4 flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0D0D10]">
                 <FeatureImage feature={currentFeature} />
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* ফুটার কন্ট্রোল */}
+          {/* ফুটার কন্ট্রোল (অ্যারো ও কাউন্টার) */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
             <div className="text-sm font-mono text-white/50 flex items-center gap-2">
               <span className="text-orange-500 font-bold text-base">{String(activeIndex + 1).padStart(2, "0")}</span>

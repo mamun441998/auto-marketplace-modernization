@@ -797,13 +797,14 @@ export default function FeatureAnimation({ id }: Props) {
 
   return (
     <div className="relative flex w-full h-full items-center justify-center overflow-visible bg-transparent">
-      <AnimatePresence mode="popLayout" initial={false}>
+      {/* popLayout à¦à¦° à¦¬à¦¦à¦²à§‡ mode="wait" à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¾ à¦¹à¦²à§‹ à¦¯à¦¾à¦¤à§‡ à¦ªà§à¦°à¦¿à¦­à¦¿à¦¯à¦¼à¦¾à¦¸ à¦…à§à¦¯à¦¾à¦¨à¦¿à¦®à§‡à¦¶à¦¨ à¦¶à§‡à¦· à¦¹à¦¯à¦¼à§‡ à¦¨à¦¤à§à¦¨à¦Ÿà¦¾ à¦¸à§à¦®à§à¦¥à¦²à¦¿ à¦†à¦¸à§‡ */}
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={id}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.45, ease: EASE }}
+          initial={{ opacity: 0, scale: 0.92, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.92, y: -10 }}
+          transition={{ duration: 0.35, ease: EASE }}
           style={{ willChange: "transform, opacity" }}
           className="relative flex items-center justify-center w-full bg-transparent border-none shadow-none outline-none"
         >
@@ -846,7 +847,6 @@ const child = {
 export default function FeatureContent({ allFeatures, activeIndex }: Props) {
   return (
     <div className="flex flex-col items-start text-left w-full">
-      {/* Grid-stack: height stays constant (tallest item), no layout shift */}
       <div className="grid w-full grid-cols-1 grid-rows-1">
         {allFeatures.map((item, index) => {
           const isActive = index === activeIndex;
@@ -893,7 +893,7 @@ export default function FeatureContent({ allFeatures, activeIndex }: Props) {
                   tabIndex={isActive ? 0 : -1}
                   className="group inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-[#FC5E01]"
                 >
-                  <span>{item.linkText}</span>
+                  <span>{item.linkText || "Explore Feature"}</span>
                   <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </motion.div>
@@ -1076,7 +1076,7 @@ export const featuresData: readonly FeatureItem[] = [
     title: "AI-Powered Automotive Marketing",
     description:
       "Launch and optimize Facebook, Instagram and Google campaigns automatically with AI.",
-    highlightText: "3Ã— Higher Lead Conversion",
+    highlightText: "3x Higher Lead Conversion",
     image: "/images/features/1-Overview.png",
     accent: "#FC5E01",
     background:
@@ -1279,22 +1279,24 @@ import FeatureContent from "./FeatureContent";
 import FeatureAnimation from "./FeatureAnimation";
 import FeatureImage from "./FeatureImage";
 
-// Duration in milliseconds for auto-advancing tabs when user is idle
-const AUTO_PLAY_INTERVAL = 6000;
+// à§§à§¦ à¦¸à§‡à¦•à§‡à¦¨à§à¦¡ à¦ªà¦° à¦ªà¦° à¦…à¦Ÿà§‹ à¦¸à§à¦²à¦¾à¦‡à¦¡ à¦¹à¦¬à§‡
+const AUTO_PLAY_INTERVAL = 10000;
 
 export default function FeaturesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [direction, setDirection] = useState(1);
   const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const totalFeatures = featuresData.length;
   const currentFeature = featuresData[activeIndex] || featuresData[0];
 
-  // Auto-play timer logic for seamless automatic tab rotation
+  // à§§à§¦ à¦¸à§‡à¦•à§‡à¦¨à§à¦¡ à¦ªà¦° à¦ªà¦° à¦…à¦Ÿà§‹ à¦¸à§à¦²à¦¾à¦‡à¦¡ à¦¹à¦“à§Ÿà¦¾à¦° à¦²à¦œà¦¿à¦•
   useEffect(() => {
     if (!isAutoPlaying) return;
 
     autoPlayTimerRef.current = setInterval(() => {
+      setDirection(1);
       setActiveIndex((prev) => (prev + 1) % totalFeatures);
     }, AUTO_PLAY_INTERVAL);
 
@@ -1305,16 +1307,18 @@ export default function FeaturesSection() {
     };
   }, [isAutoPlaying, totalFeatures]);
 
-  // Handle manual tab navigation by direct user click
+  // à¦®à§à¦¯à¦¾à¦¨à§à¦¯à¦¼à¦¾à¦² à¦Ÿà§à¦¯à¦¾à¦¬ à¦•à§à¦²à¦¿à¦• à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
   const handleSelectTab = (index: number) => {
-    setIsAutoPlaying(false); // Pause auto-play when user interacts manually
+    setIsAutoPlaying(false);
+    setDirection(index > activeIndex ? 1 : -1);
     setActiveIndex(index);
   };
 
-  // Handle directional arrows (Previous / Next)
-  const handleNavigate = (direction: number) => {
-    setIsAutoPlaying(false); // Pause auto-play on explicit control click
-    setActiveIndex((prev) => (prev + direction + totalFeatures) % totalFeatures);
+  // à¦…à§à¦¯à¦¾à¦°à§‹ à¦¬à¦¾à¦Ÿà¦¨ à¦¨à§‡à¦­à¦¿à¦—à§‡à¦¶à¦¨ (à¦¡à¦¾à¦¨/à¦¬à¦¾à¦®)
+  const handleNavigate = (dir: number) => {
+    setIsAutoPlaying(false);
+    setDirection(dir);
+    setActiveIndex((prev) => (prev + dir + totalFeatures) % totalFeatures);
   };
 
   return (
@@ -1323,7 +1327,7 @@ export default function FeaturesSection() {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      {/* Dynamic Background Effects */}
+      {/* à¦¬à§à¦¯à¦¾à¦•à¦—à§à¦°à¦¾à¦‰à¦¨à§à¦¡ à¦—à§à¦²à§‹ à¦‡à¦«à§‡à¦•à§à¦Ÿ */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
@@ -1340,10 +1344,9 @@ export default function FeaturesSection() {
       </div>
 
       <div className="relative z-10 w-full max-w-[1700px] mx-auto px-4 sm:px-6 md:px-10 xl:px-16 flex flex-col gap-8 md:gap-12">
-        {/* Header Component */}
         <FeaturesHeader />
 
-        {/* Horizontal Tab Bar Navigation */}
+        {/* à¦Ÿà§à¦¯à¦¾à¦¬ à¦¬à¦¾à¦° */}
         <div className="w-full overflow-x-auto no-scrollbar py-2">
           <div className="flex items-center justify-start md:justify-center gap-2 sm:gap-3 min-w-max mx-auto px-2">
             {featuresData.map((item, index) => {
@@ -1367,7 +1370,6 @@ export default function FeaturesSection() {
                   </span>
                   <span>{item.title}</span>
 
-                  {/* Active Progress Line Indicator */}
                   {isActive && (
                     <motion.div
                       layoutId="activeTabIndicator"
@@ -1381,18 +1383,18 @@ export default function FeaturesSection() {
           </div>
         </div>
 
-        {/* Main Interactive Feature Showcase Card */}
-        <div className="w-full bg-[#16161C] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
-          <AnimatePresence mode="wait">
+        {/* à¦®à§‡à¦‡à¦¨ à¦¸à§à¦²à¦¾à¦‡à¦¡à¦¾à¦° à¦•à¦¨à§à¦Ÿà§‡à¦¨à§à¦Ÿ à¦•à¦¾à¦°à§à¦¡ */}
+        <div className="w-full bg-[#16161C] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentFeature.id}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              custom={direction}
+              initial={{ opacity: 0, x: direction * 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction * -50 }}
+              transition={{ duration: 0.45, ease: "easeInOut" }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
             >
-              {/* Left Column: Feature Details & Value Proposition */}
               <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold tracking-wide uppercase w-fit">
                   <span>{currentFeature.badge}</span>
@@ -1407,7 +1409,6 @@ export default function FeaturesSection() {
                   </p>
                 </div>
 
-                {/* Highlight / Benefit Badge Item */}
                 {currentFeature.highlightText && (
                   <div className="flex items-center gap-3 pt-2">
                     <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white/90 text-sm sm:text-base font-medium">
@@ -1417,37 +1418,32 @@ export default function FeaturesSection() {
                   </div>
                 )}
 
-                {/* Action CTA & Feature Content Render */}
                 <div className="pt-4 flex flex-wrap items-center gap-4">
                   <FeatureContent feature={currentFeature} allFeatures={featuresData} activeIndex={activeIndex} />
                 </div>
               </div>
 
-              {/* Middle Column: Interactive Animation Preview */}
               <div className="lg:col-span-3 flex items-center justify-center bg-[#0D0D10]/50 border border-white/5 rounded-2xl p-4 min-h-[260px]">
                 <FeatureAnimation id={Number(currentFeature.id)} />
               </div>
 
-              {/* Right Column: High-Res Feature Display / Mockup */}
               <div className="lg:col-span-4 flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0D0D10]">
                 <FeatureImage feature={currentFeature} />
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Bottom Bar: Counter & Manual Navigation Buttons */}
+          {/* à¦«à§à¦Ÿà¦¾à¦° à¦•à¦¨à§à¦Ÿà§à¦°à§‹à¦² */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
-            {/* Slide Index Counter */}
             <div className="text-sm font-mono text-white/50 flex items-center gap-2">
               <span className="text-orange-500 font-bold text-base">{String(activeIndex + 1).padStart(2, "0")}</span>
               <span>/</span>
               <span>{String(totalFeatures).padStart(2, "0")}</span>
               <span className="hidden sm:inline-block ml-4 text-xs text-white/40">
-                {isAutoPlaying ? "â€¢ Auto-rotating" : "â€¢ Paused"}
+                {isAutoPlaying ? "â€¢ Auto-sliding (10s)" : "â€¢ Paused"}
               </span>
             </div>
 
-            {/* Controls */}
             <div className="flex items-center gap-3">
               <div className="flex items-center rounded-full bg-[#0D0D10] border border-white/10 p-1">
                 <button
