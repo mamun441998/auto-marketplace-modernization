@@ -18,7 +18,7 @@ export const featuresData: readonly FeatureItem[] = [
     title: "AI-Powered Automotive Marketing",
     description:
       "Launch and optimize Facebook, Instagram and Google campaigns automatically with AI.",
-    highlightText: "3× Higher Lead Conversion",
+    highlightText: "3x Higher Lead Conversion",
     image: "/images/features/1-Overview.png",
     accent: "#FC5E01",
     background:

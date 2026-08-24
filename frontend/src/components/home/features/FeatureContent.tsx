@@ -26,7 +26,6 @@ const child = {
 export default function FeatureContent({ allFeatures, activeIndex }: Props) {
   return (
     <div className="flex flex-col items-start text-left w-full">
-      {/* Grid-stack: height stays constant (tallest item), no layout shift */}
       <div className="grid w-full grid-cols-1 grid-rows-1">
         {allFeatures.map((item, index) => {
           const isActive = index === activeIndex;
@@ -73,7 +72,7 @@ export default function FeatureContent({ allFeatures, activeIndex }: Props) {
                   tabIndex={isActive ? 0 : -1}
                   className="group inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-[#FC5E01]"
                 >
-                  <span>{item.linkText}</span>
+                  <span>{item.linkText || "Explore Feature"}</span>
                   <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </motion.div>

@@ -1,0 +1,1477 @@
+﻿====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\animations\AIMarketingAnimation.tsx
+====================
+"use client";
+
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Globe, Mail } from "lucide-react";
+
+import motoCenterLogo from "@/assets/Footer-logo/Moto-center.png";
+
+const orbitIcons = [
+  // Facebook SVG Icon
+  {
+    icon: (
+      <svg className="w-6 h-6 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+      </svg>
+    ),
+    top: "8%",
+    left: "50%",
+  },
+  // Instagram SVG Icon
+  {
+    icon: (
+      <svg className="w-6 h-6 text-[#E4405F]" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+    ),
+    top: "50%",
+    left: "92%",
+  },
+  { 
+    icon: <Globe className="w-6 h-6 text-[#4285F4]" />, 
+    top: "92%", 
+    left: "50%" 
+  },
+  { 
+    icon: <Mail className="w-6 h-6 text-[#EA4335]" />, 
+    top: "50%", 
+    left: "8%" 
+  },
+];
+
+export default function AIMarketingAnimation() {
+  return (
+    <div className="relative h-[340px] w-[340px]">
+      {/* Glow */}
+      <motion.div
+        animate={{
+          opacity: [0.18, 0.38, 0.18],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 5,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0 rounded-full bg-[#FC5E01]/20 blur-[90px]"
+      />
+
+      {/* Outer Ring */}
+      <motion.div
+        animate={{
+          rotate: 360,
+        }}
+        transition={{
+          duration: 28,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        className="
+          absolute
+          left-1/2
+          top-1/2
+          h-[255px]
+          w-[255px]
+          -translate-x-1/2
+          -translate-y-1/2
+          rounded-full
+          border
+          border-dashed
+          border-[#FC5E01]/25
+        "
+      />
+
+      {/* Center Logo */}
+      <motion.div
+        animate={{
+          scale: [1, 1.06, 1],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 2.2,
+          ease: "easeInOut",
+        }}
+        className="
+          absolute
+          left-1/2
+          top-1/2
+          flex
+          h-24
+          w-24
+          -translate-x-1/2
+          -translate-y-1/2
+          items-center
+          justify-center
+          rounded-full
+          border
+          border-white/10
+          bg-[#18191D]
+          shadow-[0_0_40px_rgba(252,94,1,.35)]
+        "
+      >
+        <Image
+          src={motoCenterLogo}
+          alt="MotoHave Logo"
+          width={64}
+          height={64}
+          priority
+          className="h-16 w-16 object-contain select-none"
+        />
+      </motion.div>
+
+      {/* Orbit Cards with Email Icon */}
+      {orbitIcons.map((item, index) => (
+        <motion.div
+          key={index}
+          animate={{
+            y: [0, -8, 0],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 2.4,
+            ease: "easeInOut",
+            delay: index * 0.25,
+          }}
+          style={{
+            top: item.top,
+            left: item.left,
+          }}
+          className="
+            absolute
+            flex
+            h-14
+            w-14
+            -translate-x-1/2
+            -translate-y-1/2
+            items-center
+            justify-center
+            rounded-2xl
+            border
+            border-white/10
+            bg-[#17181D]
+            shadow-lg
+          "
+        >
+          {item.icon}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\animations\AnalyticsAnimation.tsx
+====================
+"use client";
+
+import { motion } from "framer-motion";
+
+const bars = [45, 78, 62, 92, 70, 100, 82];
+
+export default function AnalyticsAnimation() {
+  return (
+    <div className="relative h-[320px] w-[320px] flex items-center justify-center">
+      {/* Glow */}
+      <motion.div
+        animate={{
+          opacity: [0.15, 0.35, 0.15],
+          scale: [1, 1.06, 1],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 5,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0 rounded-full bg-blue-500/20 blur-[60px]"
+      />
+
+      {/* Dashboard Card (Compact & Perfectly Fitted) */}
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: 15,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        className="
+          relative
+          h-full
+          w-full
+          max-w-[280px]
+          rounded-2xl
+          border
+          border-white/10
+          bg-[#121317]
+          p-3.5
+          flex
+          flex-col
+          justify-between
+          shadow-2xl
+        "
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Analytics
+            </p>
+            <h3 className="text-base font-black text-white">
+              $248.2K
+            </h3>
+          </div>
+
+          <div className="rounded-lg bg-blue-500/10 px-2.5 py-0.5 text-[11px] font-bold text-blue-400">
+            +18%
+          </div>
+        </div>
+
+        {/* Chart (Compact height) */}
+        <div className="flex h-[95px] items-end gap-1.5 my-2">
+          {bars.map((bar, index) => (
+            <motion.div
+              key={index}
+              initial={{
+                height: 10,
+              }}
+              animate={{
+                height: `${bar}%`,
+              }}
+              transition={{
+                delay: index * 0.08,
+                duration: 0.8,
+                ease: "easeInOut",
+              }}
+              className="
+                flex-1
+                rounded-t-md
+                bg-gradient-to-t
+                from-blue-600
+                to-cyan-400
+              "
+            />
+          ))}
+        </div>
+
+        {/* Bottom KPIs */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            {
+              title: "Leads",
+              value: "124",
+            },
+            {
+              title: "Cars",
+              value: "92",
+            },
+            {
+              title: "Sales",
+              value: "38",
+            },
+          ].map((item) => (
+            <motion.div
+              key={item.title}
+              whileHover={{
+                scale: 1.03,
+              }}
+              className="
+                rounded-xl
+                border
+                border-white/5
+                bg-white/[0.03]
+                p-2
+                text-center
+              "
+            >
+              <p className="text-[9px] uppercase tracking-widest text-slate-500">
+                {item.title}
+              </p>
+              <p className="text-sm font-black text-white">
+                {item.value}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\animations\CRMAnimation.tsx
+====================
+"use client";
+
+import { motion } from "framer-motion";
+
+const pipeline = [
+  {
+    stage: "New Lead",
+    color: "bg-blue-500",
+    count: 24,
+    width: "85%",
+  },
+  {
+    stage: "Contacted",
+    color: "bg-cyan-500",
+    count: 18,
+    width: "65%",
+  },
+  {
+    stage: "Negotiation",
+    color: "bg-yellow-500",
+    count: 9,
+    width: "35%",
+  },
+  {
+    stage: "Closed",
+    color: "bg-emerald-500",
+    count: 5,
+    width: "20%",
+  },
+];
+
+export default function CRMAnimation() {
+  return (
+    <div className="relative h-[320px] w-[320px] flex items-center justify-center">
+      {/* Glow */}
+      <motion.div
+        animate={{
+          opacity: [0.15, 0.32, 0.15],
+          scale: [1, 1.06, 1],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0 rounded-full bg-emerald-500/20 blur-[60px]"
+      />
+
+      {/* CRM Card (Compact & Perfectly Fitted) */}
+      <div
+        className="
+          relative
+          h-full
+          w-full
+          max-w-[280px]
+          rounded-2xl
+          border
+          border-white/10
+          bg-[#111216]
+          p-3.5
+          flex
+          flex-col
+          justify-between
+          shadow-2xl
+        "
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              CRM Pipeline
+            </p>
+            <h3 className="text-base font-black text-white">
+              56 Active Leads
+            </h3>
+          </div>
+
+          <div className="rounded-lg bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-400">
+            Live
+          </div>
+        </div>
+
+        {/* Pipeline (Optimized Spacing) */}
+        <div className="space-y-2 my-1">
+          {pipeline.map((item, index) => (
+            <motion.div
+              key={item.stage}
+              initial={{
+                opacity: 0,
+                x: -15,
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+              }}
+              transition={{
+                delay: index * 0.1,
+                ease: "easeOut",
+              }}
+            >
+              <div className="mb-1 flex items-center justify-between text-xs">
+                <span className="font-medium text-white/90">
+                  {item.stage}
+                </span>
+                <span className="font-bold text-slate-400">
+                  {item.count}
+                </span>
+              </div>
+
+              <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                <motion.div
+                  initial={{ width: "0%" }}
+                  animate={{
+                    width: [ "0%", item.width, item.width ],
+                  }}
+                  transition={{
+                    duration: 1,
+                    delay: index * 0.1,
+                    ease: "easeInOut",
+                  }}
+                  className={`h-full rounded-full ${item.color}`}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Footer Badge */}
+        <motion.div
+          animate={{
+            scale: [1, 1.02, 1],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="
+            rounded-xl
+            border
+            border-emerald-500/30
+            bg-emerald-500/10
+            py-2
+            px-3
+            text-center
+            text-xs
+            font-bold
+            text-emerald-300
+          "
+        >
+          AI Following Up Automatically
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\animations\ListingAnimation.tsx
+====================
+"use client";
+
+import { motion } from "framer-motion";
+import { Car } from "lucide-react";
+
+export default function ListingAnimation() {
+  return (
+    <div className="relative h-[320px] w-[320px] flex items-center justify-center">
+      {/* Purple Glow */}
+      <motion.div
+        animate={{
+          opacity: [0.15, 0.3, 0.15],
+          scale: [1, 1.05, 1],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0 rounded-full bg-violet-500/20 blur-[60px]"
+      />
+
+      {/* Main Container Card */}
+      <div
+        className="
+          relative
+          h-full
+          w-full
+          max-w-[280px]
+          rounded-2xl
+          border
+          border-white/10
+          bg-[#111216]
+          p-3
+          flex
+          flex-col
+          justify-between
+          shadow-2xl
+        "
+      >
+        {/* Top Vehicle Preview Box */}
+        <div className="relative overflow-hidden rounded-xl border border-white/10 h-[95px] w-full bg-black/40 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-1 text-violet-400">
+            <Car className="w-8 h-8 opacity-80" />
+            <span className="text-[10px] tracking-wider uppercase font-semibold text-white/60">Vehicle Scanner</span>
+          </div>
+
+          {/* Scan Line */}
+          <motion.div
+            animate={{
+              top: ["0%", "100%", "0%"],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="
+              absolute
+              left-0
+              right-0
+              h-[2px]
+              bg-violet-400
+              shadow-[0_0_12px_#8B5CF6]
+            "
+          />
+        </div>
+
+        {/* Detection Items */}
+        <div className="space-y-1.5 my-1">
+          {[
+            "BMW X5 2023",
+            "Mileage: 18,400 km",
+            "Automatic â€¢ Petrol",
+          ].map((item, index) => (
+            <motion.div
+              key={item}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.15 }}
+              className="flex items-center gap-2"
+            >
+              <div className="h-1.5 w-1.5 rounded-full bg-violet-400 flex-shrink-0" />
+              <span className="text-xs text-white/90 font-medium">
+                {item}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Ready Badge */}
+        <motion.div
+          animate={{
+            scale: [1, 1.02, 1],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="
+            rounded-xl
+            border
+            border-violet-500/30
+            bg-violet-500/10
+            py-2
+            px-3
+            text-center
+            text-xs
+            font-bold
+            text-violet-300
+          "
+        >
+          Listing Ready To Publish
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\animations\WebsiteAnimation.tsx
+====================
+"use client";
+
+import { motion } from "framer-motion";
+import { LayoutTemplate } from "lucide-react";
+
+export default function WebsiteAnimation() {
+  return (
+    <div className="relative h-[320px] w-[320px] flex items-center justify-center">
+      {/* Cyan Glow */}
+      <motion.div
+        animate={{
+          opacity: [0.18, 0.35, 0.18],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0 rounded-full bg-cyan-500/20 blur-[60px]"
+      />
+
+      {/* Browser Card (Compact & Fitted) */}
+      <div
+        className="
+          relative
+          h-full
+          w-full
+          max-w-[280px]
+          rounded-2xl
+          border
+          border-white/10
+          bg-[#111216]
+          overflow-hidden
+          flex
+          flex-col
+          justify-between
+          shadow-2xl
+        "
+      >
+        {/* Browser Header */}
+        <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2.5 flex-shrink-0">
+          <div className="h-2 w-2 rounded-full bg-red-500" />
+          <div className="h-2 w-2 rounded-full bg-yellow-500" />
+          <div className="h-2 w-2 rounded-full bg-green-500" />
+
+          <div className="ml-2 rounded-md bg-[#1A1C22] px-2.5 py-0.5 text-[9px] text-slate-400 font-mono">
+            dealer.motohave.com
+          </div>
+        </div>
+
+        {/* Website Preview Content Area */}
+        <div className="relative p-3 flex-1 flex flex-col justify-between">
+          <div className="relative overflow-hidden rounded-xl border border-white/10 h-[100px] w-full bg-black/40 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-1 text-cyan-400">
+              <LayoutTemplate className="w-7 h-7 opacity-80" />
+              <span className="text-[10px] tracking-wider uppercase font-semibold text-white/60">Website Builder</span>
+            </div>
+          </div>
+
+          {/* Publish Button */}
+          <div className="mt-2">
+            <motion.button
+              animate={{
+                scale: [1, 1.02, 1],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="
+                w-full
+                rounded-xl
+                bg-cyan-500
+                py-2.5
+                text-xs
+                font-bold
+                text-white
+                shadow-[0_0_20px_rgba(6,182,212,0.4)]
+              "
+            >
+              Publish Website
+            </motion.button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\hooks\usePinnedFeature.ts
+====================
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+const TOTAL_FEATURES = 5;
+
+export interface UsePinnedFeatureReturn {
+  sectionRef: React.RefObject<HTMLElement | null>;
+  activeIndex: number;
+}
+
+export function usePinnedFeature(): UsePinnedFeatureReturn {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const currentIndex = useRef<number>(0);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const update = () => {
+      if (!sectionRef.current) {
+        ticking = false;
+        return;
+      }
+
+      const rect = sectionRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const totalScrollable = rect.height - viewportHeight;
+
+      if (totalScrollable <= 0) {
+        ticking = false;
+        return;
+      }
+
+      const progress = Math.max(
+        0,
+        Math.min(1, -rect.top / totalScrollable)
+      );
+
+      let index = Math.floor(progress * TOTAL_FEATURES);
+
+      if (index >= TOTAL_FEATURES) {
+        index = TOTAL_FEATURES - 1;
+      }
+
+      if (currentIndex.current !== index) {
+        currentIndex.current = index;
+        setActiveIndex(index);
+      }
+
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    update();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
+
+  return {
+    sectionRef,
+    activeIndex,
+  };
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\FeatureAnimation.tsx
+====================
+"use client";
+
+import { AnimatePresence, motion } from "framer-motion";
+
+import AIMarketingAnimation from "./animations/AIMarketingAnimation";
+import AnalyticsAnimation from "./animations/AnalyticsAnimation";
+import ListingAnimation from "./animations/ListingAnimation";
+import WebsiteAnimation from "./animations/WebsiteAnimation";
+import CRMAnimation from "./animations/CRMAnimation";
+
+interface Props {
+  id: number;
+}
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+export default function FeatureAnimation({ id }: Props) {
+  const renderAnimation = () => {
+    switch (id) {
+      case 1: return <AIMarketingAnimation />;
+      case 2: return <AnalyticsAnimation />;
+      case 3: return <ListingAnimation />;
+      case 4: return <WebsiteAnimation />;
+      case 5: return <CRMAnimation />;
+      default: return <AIMarketingAnimation />;
+    }
+  };
+
+  return (
+    <div className="relative flex w-full h-full items-center justify-center overflow-visible bg-transparent">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          key={id}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.45, ease: EASE }}
+          style={{ willChange: "transform, opacity" }}
+          className="relative flex items-center justify-center w-full bg-transparent border-none shadow-none outline-none"
+        >
+          {renderAnimation()}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\FeatureContent.tsx
+====================
+"use client";
+
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { FeatureItem } from "./featuresData";
+
+interface Props {
+  feature: FeatureItem;
+  allFeatures: readonly FeatureItem[];
+  activeIndex: number;
+}
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+const container = {
+  hide: { transition: { staggerChildren: 0.02, staggerDirection: -1 } },
+  show: { transition: { staggerChildren: 0.07, delayChildren: 0.06 } },
+};
+
+const child = {
+  hide: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+};
+
+export default function FeatureContent({ allFeatures, activeIndex }: Props) {
+  return (
+    <div className="flex flex-col items-start text-left w-full">
+      {/* Grid-stack: height stays constant (tallest item), no layout shift */}
+      <div className="grid w-full grid-cols-1 grid-rows-1">
+        {allFeatures.map((item, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <motion.div
+              key={item.id}
+              variants={container}
+              initial="hide"
+              animate={isActive ? "show" : "hide"}
+              className={`col-start-1 row-start-1 flex flex-col justify-start ${
+                isActive ? "pointer-events-auto z-10" : "pointer-events-none z-0 select-none"
+              }`}
+              aria-hidden={!isActive}
+            >
+              {/* Badge */}
+              <motion.div
+                variants={child}
+                className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-white/90 backdrop-blur-md"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-[#FC5E01]" />
+                {item.badge}
+              </motion.div>
+
+              {/* Title */}
+              <motion.h2
+                variants={child}
+                className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight"
+              >
+                {item.title}
+              </motion.h2>
+
+              {/* Description */}
+              <motion.p
+                variants={child}
+                className="mt-4 text-sm sm:text-base text-white/60 leading-relaxed max-w-xl"
+              >
+                {item.description}
+              </motion.p>
+
+              {/* Action Link */}
+              <motion.div variants={child} className="mt-6">
+                <Link
+                  href={item.linkHref || "#"}
+                  tabIndex={isActive ? 0 : -1}
+                  className="group inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-[#FC5E01]"
+                >
+                  <span>{item.linkText}</span>
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </motion.div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\FeatureImage.tsx
+====================
+"use client";
+
+import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
+import { FeatureItem } from "./featuresData";
+
+interface Props {
+  feature: FeatureItem;
+}
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+export default function FeatureImage({ feature }: Props) {
+  return (
+    <div className="relative mx-auto w-full max-w-[900px]">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          key={feature.id}
+          initial={{ opacity: 0, scale: 0.97, y: 22 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.97, y: -22 }}
+          transition={{ duration: 0.55, ease: EASE }}
+          style={{ willChange: "transform, opacity" }}
+          className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#111216] shadow-[0_50px_120px_rgba(0,0,0,.55)]"
+        >
+          {/* Browser Top */}
+          <div className="flex items-center gap-2 border-b border-white/10 bg-[#15161B] px-4 py-3">
+            <div className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+            <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
+            <div className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
+            <div className="ml-3 h-5 w-[150px] sm:w-[180px] rounded-md bg-white/5" />
+          </div>
+
+          {/* Screenshot + sheen */}
+          <div className="relative overflow-hidden w-full">
+            <Image
+              src={feature.image}
+              alt={feature.title}
+              width={1600}
+              height={1000}
+              priority
+              className="h-auto w-full object-cover"
+            />
+            <motion.div
+              aria-hidden
+              animate={{ x: ["-120%", "160%"] }}
+              transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
+              className="pointer-events-none absolute inset-y-0 w-32 rotate-12 bg-white/10 blur-xl"
+            />
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\FeatureProgress.tsx
+====================
+"use client";
+
+import { motion } from "framer-motion";
+import { FeatureItem } from "./featuresData";
+
+interface Props {
+  features: readonly FeatureItem[];
+  activeIndex: number;
+  onSelect?: (index: number) => void;
+}
+
+export default function FeatureProgress({
+  features,
+  activeIndex,
+  onSelect,
+}: Props) {
+  return (
+    <div className="hidden xl:flex flex-col justify-center gap-5">
+      {features.map((feature, index) => {
+        const active = index === activeIndex;
+
+        return (
+          <motion.div
+            key={feature.id}
+            onClick={() => onSelect?.(index)}
+            layout
+            transition={{
+              duration: 0.35,
+            }}
+            className="group flex items-center gap-4 cursor-pointer select-none py-1"
+          >
+            {/* Line / Indicator */}
+            <div className="relative flex flex-col items-center">
+              <motion.div
+                animate={{
+                  height: active ? 44 : 22,
+                  width: active ? 4 : 2,
+                  backgroundColor: active
+                    ? feature.accent || "#FC5E01"
+                    : "rgba(255, 255, 255, 0.15)",
+                }}
+                whileHover={{
+                  backgroundColor: active
+                    ? feature.accent || "#FC5E01"
+                    : "rgba(255, 255, 255, 0.4)",
+                }}
+                transition={{
+                  duration: 0.3,
+                }}
+                className="rounded-full shadow-sm"
+              />
+            </div>
+
+            {/* Text */}
+            <div>
+              <motion.p
+                animate={{
+                  color: active ? "#ffffff" : "#64748B",
+                }}
+                whileHover={{
+                  color: active ? "#ffffff" : "#cbd5e1",
+                }}
+                className="text-sm font-semibold tracking-wide transition-colors"
+              >
+                {feature.badge}
+              </motion.p>
+
+              <motion.p
+                animate={{
+                  opacity: active ? 1 : 0.35,
+                }}
+                className="mt-1 text-xs text-slate-500 font-mono"
+              >
+                {String(index + 1).padStart(2, "0")}
+              </motion.p>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\featuresData.ts
+====================
+export interface FeatureItem {
+  readonly id: number;
+  readonly badge: string;
+  readonly title: string;
+  readonly description: string;
+  readonly highlightText: string;
+  readonly image: string;
+  readonly accent: string;
+  readonly background: string;
+  readonly linkHref?: string;
+  readonly linkText?: string;
+}
+
+export const featuresData: readonly FeatureItem[] = [
+  {
+    id: 1,
+    badge: "AI MARKETING",
+    title: "AI-Powered Automotive Marketing",
+    description:
+      "Launch and optimize Facebook, Instagram and Google campaigns automatically with AI.",
+    highlightText: "3Ã— Higher Lead Conversion",
+    image: "/images/features/1-Overview.png",
+    accent: "#FC5E01",
+    background:
+      "bg-[radial-gradient(circle_at_center,rgba(252,94,1,.18)_0%,transparent_70%)]",
+  },
+  {
+    id: 2,
+    badge: "LIVE ANALYTICS",
+    title: "Real-Time Business Analytics",
+    description:
+      "Track revenue, inventory, customer engagement and dealership performance from one dashboard.",
+    highlightText: "Everything In One Dashboard",
+    image: "/images/features/5-Analytics.png",
+    accent: "#2563EB",
+    background:
+      "bg-[radial-gradient(circle_at_center,rgba(37,99,235,.18)_0%,transparent_70%)]",
+  },
+  {
+    id: 3,
+    badge: "SMART INVENTORY",
+    title: "Smart Inventory Management",
+    description:
+      "Manage inventory, pricing and vehicle availability with intelligent automation.",
+    highlightText: "90% Faster Inventory Updates",
+    image: "/images/features/2-Inventory.png",
+    accent: "#8B5CF6",
+    background:
+      "bg-[radial-gradient(circle_at_center,rgba(139,92,246,.18)_0%,transparent_70%)]",
+  },
+  {
+    id: 4,
+    badge: "WEBSITE BUILDER",
+    title: "No-Code Dealership Website Builder",
+    description:
+      "Design, customize and publish a professional dealership website with drag-and-drop tools.",
+    highlightText: "Launch In Minutes",
+    image: "/images/features/4-Website.png",
+    accent: "#06B6D4",
+    background:
+      "bg-[radial-gradient(circle_at_center,rgba(6,182,212,.18)_0%,transparent_70%)]",
+  },
+  {
+    id: 5,
+    badge: "CRM AUTOMATION",
+    title: "AI CRM & Lead Management",
+    description:
+      "Convert more buyers using automated follow-ups, lead scoring and intelligent sales workflows.",
+    highlightText: "Never Lose A Lead",
+    image: "/images/features/3-Leads-CRM.png",
+    accent: "#10B981",
+    background:
+      "bg-[radial-gradient(circle_at_center,rgba(16,185,129,.18)_0%,transparent_70%)]",
+  },
+] as const;
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\FeaturesHeader.tsx
+====================
+"use client";
+
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 24,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  },
+};
+
+export function FeaturesHeader() {
+  return (
+    <motion.header
+      id="features-heading"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{
+        once: true,
+        amount: 0.5,
+      }}
+      className="
+        relative
+        z-20
+        mx-auto
+        w-full
+        max-w-[1700px]
+        px-6
+        pt-10
+        pb-10
+        sm:px-8
+        lg:px-12
+        xl:px-16
+      "
+    >
+      {/* Background Glow */}
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          left-1/2
+          top-0
+          h-[340px]
+          w-[340px]
+          -translate-x-1/2
+          rounded-full
+          bg-[#FC5E01]/10
+          blur-[150px]
+        "
+      />
+
+      <div className="mx-auto max-w-[1600px] text-center">
+        {/* Badge */}
+        <motion.div
+          variants={itemVariants}
+          className="
+            inline-flex
+            items-center
+            gap-2
+            rounded-full
+            border
+            border-white/10
+            bg-white/[0.03]
+            px-5
+            py-2
+            backdrop-blur-xl
+          "
+        >
+          <span className="h-2 w-2 rounded-full bg-[#FC5E01]" />
+          <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/75">
+            Automotive AI Platform
+          </span>
+        </motion.div>
+
+        {/* Heading */}
+        <motion.h2
+          variants={itemVariants}
+          className="mt-4 text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight"
+        >
+          Grow Your Dealership{" "}
+          <span className="bg-gradient-to-r from-[#FC5E01] via-[#FF8A3D] to-[#FC5E01] bg-clip-text text-transparent">
+            with Intelligent Automation
+          </span>
+        </motion.h2>
+
+        {/* Description */}
+        <motion.p
+          variants={itemVariants}
+          className="
+            mx-auto
+            mt-6
+            max-w-[1250px]
+            text-[17px]
+            leading-relaxed
+            text-white/65
+            lg:text-[19px]
+          "
+        >
+          Everything your dealership needs in one intelligent platformâ€”from
+          AI-powered marketing and inventory automation to analytics,
+          inventory management, secure checkout, CRM and customer engagement.
+        </motion.p>
+      </div>
+    </motion.header>
+  );
+}
+
+
+====================
+FILE: E:\4- Web Development Project\auto-marketplace-modernization\frontend\src\components\home\features\FeaturesSection.tsx
+====================
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+
+import { featuresData } from "./featuresData";
+import { FeaturesHeader } from "./FeaturesHeader";
+import FeatureContent from "./FeatureContent";
+import FeatureAnimation from "./FeatureAnimation";
+import FeatureImage from "./FeatureImage";
+
+// Duration in milliseconds for auto-advancing tabs when user is idle
+const AUTO_PLAY_INTERVAL = 6000;
+
+export default function FeaturesSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const totalFeatures = featuresData.length;
+  const currentFeature = featuresData[activeIndex] || featuresData[0];
+
+  // Auto-play timer logic for seamless automatic tab rotation
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+
+    autoPlayTimerRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % totalFeatures);
+    }, AUTO_PLAY_INTERVAL);
+
+    return () => {
+      if (autoPlayTimerRef.current) {
+        clearInterval(autoPlayTimerRef.current);
+      }
+    };
+  }, [isAutoPlaying, totalFeatures]);
+
+  // Handle manual tab navigation by direct user click
+  const handleSelectTab = (index: number) => {
+    setIsAutoPlaying(false); // Pause auto-play when user interacts manually
+    setActiveIndex(index);
+  };
+
+  // Handle directional arrows (Previous / Next)
+  const handleNavigate = (direction: number) => {
+    setIsAutoPlaying(false); // Pause auto-play on explicit control click
+    setActiveIndex((prev) => (prev + direction + totalFeatures) % totalFeatures);
+  };
+
+  return (
+    <section 
+      className="relative w-full bg-[#0D0D10] text-white py-16 md:py-24 overflow-hidden border-t border-white/10"
+      onMouseEnter={() => setIsAutoPlaying(false)}
+      onMouseLeave={() => setIsAutoPlaying(true)}
+    >
+      {/* Dynamic Background Effects */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentFeature.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className={`absolute inset-0 ${currentFeature.background || "bg-gradient-to-b from-orange-500/5 via-transparent to-transparent"}`}
+          />
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,.03)_1px,transparent_1px)] [background-size:32px_32px] opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0D0D10]/80 via-transparent to-[#0D0D10]" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-[1700px] mx-auto px-4 sm:px-6 md:px-10 xl:px-16 flex flex-col gap-8 md:gap-12">
+        {/* Header Component */}
+        <FeaturesHeader />
+
+        {/* Horizontal Tab Bar Navigation */}
+        <div className="w-full overflow-x-auto no-scrollbar py-2">
+          <div className="flex items-center justify-start md:justify-center gap-2 sm:gap-3 min-w-max mx-auto px-2">
+            {featuresData.map((item, index) => {
+              const isActive = activeIndex === index;
+              return (
+                <button
+                  key={item.id || index}
+                  onClick={() => handleSelectTab(index)}
+                  className={`relative flex items-center gap-2.5 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 cursor-pointer border ${
+                    isActive
+                      ? "bg-[#1C1C22] text-white border-orange-500/50 shadow-lg shadow-orange-500/10"
+                      : "bg-[#141419]/60 text-white/60 border-white/5 hover:bg-[#1C1C22]/60 hover:text-white/90"
+                  }`}
+                >
+                  <span
+                    className={`flex items-center justify-center h-6 w-6 rounded-md text-xs font-mono font-bold transition-colors ${
+                      isActive ? "bg-orange-500 text-white" : "bg-white/10 text-white/70"
+                    }`}
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span>{item.title}</span>
+
+                  {/* Active Progress Line Indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-500 rounded-full"
+                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Main Interactive Feature Showcase Card */}
+        <div className="w-full bg-[#16161C] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentFeature.id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
+            >
+              {/* Left Column: Feature Details & Value Proposition */}
+              <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold tracking-wide uppercase w-fit">
+                  <span>{currentFeature.badge}</span>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight">
+                    {currentFeature.title}
+                  </h3>
+                  <p className="text-white/70 text-base sm:text-lg leading-relaxed">
+                    {currentFeature.description}
+                  </p>
+                </div>
+
+                {/* Highlight / Benefit Badge Item */}
+                {currentFeature.highlightText && (
+                  <div className="flex items-center gap-3 pt-2">
+                    <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white/90 text-sm sm:text-base font-medium">
+                      <CheckCircle2 className="h-5 w-5 text-orange-500 shrink-0" />
+                      <span>{currentFeature.highlightText}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action CTA & Feature Content Render */}
+                <div className="pt-4 flex flex-wrap items-center gap-4">
+                  <FeatureContent feature={currentFeature} allFeatures={featuresData} activeIndex={activeIndex} />
+                </div>
+              </div>
+
+              {/* Middle Column: Interactive Animation Preview */}
+              <div className="lg:col-span-3 flex items-center justify-center bg-[#0D0D10]/50 border border-white/5 rounded-2xl p-4 min-h-[260px]">
+                <FeatureAnimation id={Number(currentFeature.id)} />
+              </div>
+
+              {/* Right Column: High-Res Feature Display / Mockup */}
+              <div className="lg:col-span-4 flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0D0D10]">
+                <FeatureImage feature={currentFeature} />
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Bottom Bar: Counter & Manual Navigation Buttons */}
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
+            {/* Slide Index Counter */}
+            <div className="text-sm font-mono text-white/50 flex items-center gap-2">
+              <span className="text-orange-500 font-bold text-base">{String(activeIndex + 1).padStart(2, "0")}</span>
+              <span>/</span>
+              <span>{String(totalFeatures).padStart(2, "0")}</span>
+              <span className="hidden sm:inline-block ml-4 text-xs text-white/40">
+                {isAutoPlaying ? "â€¢ Auto-rotating" : "â€¢ Paused"}
+              </span>
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center rounded-full bg-[#0D0D10] border border-white/10 p-1">
+                <button
+                  onClick={() => handleNavigate(-1)}
+                  aria-label="Previous Feature"
+                  className="flex h-9 w-10 items-center justify-center rounded-full text-white/80 transition-all hover:bg-orange-500/20 hover:text-orange-400 active:scale-95 cursor-pointer"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <div className="h-4 w-[1px] bg-white/10" />
+                <button
+                  onClick={() => handleNavigate(1)}
+                  aria-label="Next Feature"
+                  className="flex h-9 w-10 items-center justify-center rounded-full text-white/80 transition-all hover:bg-orange-500/20 hover:text-orange-400 active:scale-95 cursor-pointer"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+

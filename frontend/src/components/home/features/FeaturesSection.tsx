@@ -10,7 +10,6 @@ import FeatureContent from "./FeatureContent";
 import FeatureAnimation from "./FeatureAnimation";
 import FeatureImage from "./FeatureImage";
 
-// Duration in milliseconds for auto-advancing tabs when user is idle
 const AUTO_PLAY_INTERVAL = 6000;
 
 export default function FeaturesSection() {
@@ -21,7 +20,6 @@ export default function FeaturesSection() {
   const totalFeatures = featuresData.length;
   const currentFeature = featuresData[activeIndex] || featuresData[0];
 
-  // Auto-play timer logic for seamless automatic tab rotation
   useEffect(() => {
     if (!isAutoPlaying) return;
 
@@ -36,15 +34,13 @@ export default function FeaturesSection() {
     };
   }, [isAutoPlaying, totalFeatures]);
 
-  // Handle manual tab navigation by direct user click
   const handleSelectTab = (index: number) => {
-    setIsAutoPlaying(false); // Pause auto-play when user interacts manually
+    setIsAutoPlaying(false);
     setActiveIndex(index);
   };
 
-  // Handle directional arrows (Previous / Next)
   const handleNavigate = (direction: number) => {
-    setIsAutoPlaying(false); // Pause auto-play on explicit control click
+    setIsAutoPlaying(false);
     setActiveIndex((prev) => (prev + direction + totalFeatures) % totalFeatures);
   };
 
@@ -71,7 +67,6 @@ export default function FeaturesSection() {
       </div>
 
       <div className="relative z-10 w-full max-w-[1700px] mx-auto px-4 sm:px-6 md:px-10 xl:px-16 flex flex-col gap-8 md:gap-12">
-        {/* Header Component */}
         <FeaturesHeader />
 
         {/* Horizontal Tab Bar Navigation */}
@@ -98,7 +93,6 @@ export default function FeaturesSection() {
                   </span>
                   <span>{item.title}</span>
 
-                  {/* Active Progress Line Indicator */}
                   {isActive && (
                     <motion.div
                       layoutId="activeTabIndicator"
@@ -138,7 +132,6 @@ export default function FeaturesSection() {
                   </p>
                 </div>
 
-                {/* Highlight / Benefit Badge Item */}
                 {currentFeature.highlightText && (
                   <div className="flex items-center gap-3 pt-2">
                     <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white/90 text-sm sm:text-base font-medium">
@@ -148,7 +141,6 @@ export default function FeaturesSection() {
                   </div>
                 )}
 
-                {/* Action CTA & Feature Content Render */}
                 <div className="pt-4 flex flex-wrap items-center gap-4">
                   <FeatureContent feature={currentFeature} allFeatures={featuresData} activeIndex={activeIndex} />
                 </div>
@@ -168,7 +160,6 @@ export default function FeaturesSection() {
 
           {/* Bottom Bar: Counter & Manual Navigation Buttons */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
-            {/* Slide Index Counter */}
             <div className="text-sm font-mono text-white/50 flex items-center gap-2">
               <span className="text-orange-500 font-bold text-base">{String(activeIndex + 1).padStart(2, "0")}</span>
               <span>/</span>
@@ -178,7 +169,6 @@ export default function FeaturesSection() {
               </span>
             </div>
 
-            {/* Controls */}
             <div className="flex items-center gap-3">
               <div className="flex items-center rounded-full bg-[#0D0D10] border border-white/10 p-1">
                 <button
