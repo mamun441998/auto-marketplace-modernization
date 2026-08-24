@@ -10,20 +10,24 @@ import FeatureContent from "./FeatureContent";
 import FeatureAnimation from "./FeatureAnimation";
 import FeatureImage from "./FeatureImage";
 
-const AUTO_PLAY_INTERVAL = 6000;
+// ১০ সেকেন্ড পর পর অটো স্লাইড হবে
+const AUTO_PLAY_INTERVAL = 10000;
 
 export default function FeaturesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [direction, setDirection] = useState(1); // স্লাইড অ্যানিমেশনের ডিরেকশন ট্র্যাক করার জন্য
   const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const totalFeatures = featuresData.length;
   const currentFeature = featuresData[activeIndex] || featuresData[0];
 
+  // অটো-প্লে স্লাইডার লজিক (১০ সেকেন্ড)
   useEffect(() => {
     if (!isAutoPlaying) return;
 
     autoPlayTimerRef.current = setInterval(() => {
+      setDirection(1);
       setActiveIndex((prev) => (prev + 1) % totalFeatures);
     }, AUTO_PLAY_INTERVAL);
 
@@ -34,14 +38,18 @@ export default function FeaturesSection() {
     };
   }, [isAutoPlaying, totalFeatures]);
 
+  // ম্যানুয়াল ট্যাব ক্লিক হ্যান্ডলার
   const handleSelectTab = (index: number) => {
     setIsAutoPlaying(false);
+    setDirection(index > activeIndex ? 1 : -1);
     setActiveIndex(index);
   };
 
-  const handleNavigate = (direction: number) => {
+  // অ্যারো বাটন নেভিগেশন (ডান/বাম)
+  const handleNavigate = (dir: number) => {
     setIsAutoPlaying(false);
-    setActiveIndex((prev) => (prev + direction + totalFeatures) % totalFeatures);
+    setDirection(dir);
+    setActiveIndex((prev) => (prev + dir + totalFeatures) % totalFeatures);
   };
 
   return (
@@ -50,7 +58,7 @@ export default function FeaturesSection() {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      {/* Dynamic Background Effects */}
+      {/* ব্যাকগ্রাউন্ড ডায়নামিক গ্লো ইফেক্ট */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
@@ -67,9 +75,10 @@ export default function FeaturesSection() {
       </div>
 
       <div className="relative z-10 w-full max-w-[1700px] mx-auto px-4 sm:px-6 md:px-10 xl:px-16 flex flex-col gap-8 md:gap-12">
+        {/* সেকশন হেডার */}
         <FeaturesHeader />
 
-        {/* Horizontal Tab Bar Navigation */}
+        {/* রেসপন্সিভ ট্যাব বার (মোবাইল ও ডেক্সটপ ফ্রেন্ডলি স্ক্রোলযোগ্য) */}
         <div className="w-full overflow-x-auto no-scrollbar py-2">
           <div className="flex items-center justify-start md:justify-center gap-2 sm:gap-3 min-w-max mx-auto px-2">
             {featuresData.map((item, index) => {
@@ -106,18 +115,19 @@ export default function FeaturesSection() {
           </div>
         </div>
 
-        {/* Main Interactive Feature Showcase Card */}
-        <div className="w-full bg-[#16161C] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
-          <AnimatePresence mode="wait">
+        {/* মেইন স্লাইডার কন্টেন্ট কার্ড */}
+        <div className="w-full bg-[#16161C] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentFeature.id}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              custom={direction}
+              initial={{ opacity: 0, x: direction * 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction * -50 }}
+              transition={{ duration: 0.45, ease: "easeInOut" }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
             >
-              {/* Left Column: Feature Details & Value Proposition */}
+              {/* বাম পাশ: ফিচারের বিবরণ */}
               <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold tracking-wide uppercase w-fit">
                   <span>{currentFeature.badge}</span>
@@ -146,29 +156,30 @@ export default function FeaturesSection() {
                 </div>
               </div>
 
-              {/* Middle Column: Interactive Animation Preview */}
+              {/* মাঝের অংশ: অ্যানিমেশন প্রিভিউ */}
               <div className="lg:col-span-3 flex items-center justify-center bg-[#0D0D10]/50 border border-white/5 rounded-2xl p-4 min-h-[260px]">
                 <FeatureAnimation id={Number(currentFeature.id)} />
               </div>
 
-              {/* Right Column: High-Res Feature Display / Mockup */}
+              {/* ডান পাশ: হাই-রেজুলেশন স্ক্রিনশট বা মকআপ */}
               <div className="lg:col-span-4 flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0D0D10]">
                 <FeatureImage feature={currentFeature} />
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Bottom Bar: Counter & Manual Navigation Buttons */}
+          {/* স্লাইডারের ফুটার: কাউন্টার ও নেভিগেশন কন্ট্রোল অ্যারো */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
             <div className="text-sm font-mono text-white/50 flex items-center gap-2">
               <span className="text-orange-500 font-bold text-base">{String(activeIndex + 1).padStart(2, "0")}</span>
               <span>/</span>
               <span>{String(totalFeatures).padStart(2, "0")}</span>
               <span className="hidden sm:inline-block ml-4 text-xs text-white/40">
-                {isAutoPlaying ? "• Auto-rotating" : "• Paused"}
+                {isAutoPlaying ? "• Auto-sliding (10s)" : "• Paused"}
               </span>
             </div>
 
+            {/* অ্যারো নেভিগেশন বাটন */}
             <div className="flex items-center gap-3">
               <div className="flex items-center rounded-full bg-[#0D0D10] border border-white/10 p-1">
                 <button
