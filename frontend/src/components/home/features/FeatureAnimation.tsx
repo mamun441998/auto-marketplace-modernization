@@ -28,13 +28,14 @@ export default function FeatureAnimation({ id }: Props) {
 
   return (
     <div className="relative flex w-full h-full items-center justify-center overflow-visible bg-transparent">
-      <AnimatePresence mode="popLayout" initial={false}>
+      {/* popLayout এর বদলে mode="wait" ব্যবহার করা হলো যাতে প্রিভিয়াস অ্যানিমেশন শেষ হয়ে নতুনটা স্মুথলি আসে */}
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={id}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.45, ease: EASE }}
+          initial={{ opacity: 0, scale: 0.92, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.92, y: -10 }}
+          transition={{ duration: 0.35, ease: EASE }}
           style={{ willChange: "transform, opacity" }}
           className="relative flex items-center justify-center w-full bg-transparent border-none shadow-none outline-none"
         >
